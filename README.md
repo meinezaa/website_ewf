@@ -27,6 +27,41 @@ Laravel has the most extensive and thorough [documentation](https://laravel.com/
 
 If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
 
+## Reset kata sandi
+
+Fitur **Lupa kata sandi** mengirim tautan reset melalui mailer Laravel. Token reset berlaku 60 menit dan permintaan tautan dibatasi untuk mencegah penyalahgunaan. `MAIL_MAILER=log` hanya mencatat email di `storage/logs/laravel.log`.
+
+Untuk mengirim dari Gmail pribadi, aktifkan verifikasi 2 langkah akun Google, buat App Password, lalu isi konfigurasi berikut di `.env` lokal. Jangan commit atau bagikan App Password:
+
+```dotenv
+MAIL_MAILER=smtp
+MAIL_SCHEME=smtp
+MAIL_HOST=smtp.gmail.com
+MAIL_PORT=587
+MAIL_USERNAME=alamat-gmail-anda@gmail.com
+MAIL_PASSWORD=app-password-google
+MAIL_FROM_ADDRESS=alamat-gmail-anda@gmail.com
+MAIL_FROM_NAME="Galeri Magang"
+```
+
+Alternatif tanpa SMTP adalah Resend API, tetapi memerlukan API key dan domain pengirim yang Anda miliki serta verifikasi DNS. Untuk kedua cara, `APP_URL` harus alamat publik aplikasi yang dapat dibuka penerima; `localhost` dan `127.0.0.1` tidak dapat dibuka dari ponsel. Setelah mengubah `.env`, jalankan `php artisan config:clear`, mulai ulang server, lalu minta tautan reset lagi.
+
+## Akun pelamar
+
+Akun login dan pendaftaran pelamar menggunakan satu baris akun di tabel MySQL `users`. Saat memperbarui aplikasi dari penyimpanan akun JSON lama, jalankan:
+
+```powershell
+php artisan config:clear
+php artisan migrate --force
+php artisan storage:link
+php artisan auth:import-file-users --dry-run
+php artisan auth:import-file-users
+```
+
+Simpan `storage/app/private/auth-users.json` sebagai cadangan sampai proses impor berhasil diverifikasi. Penghapusan pendaftaran di `staff_registrations` atau `internship_registrations` menonaktifkan akun terkait; pemilik harus mendaftar kembali. Penghapusan akun dari halaman Profil juga menghapus lamaran dan dokumen terkait.
+
+Pendaftaran magang berstatus `pending` yang sudah ada saat migrasi 18 November 2026 dijalankan akan ditandai selesai untuk menampilkan halaman dokumen penyelesaian. Pendaftaran magang baru tetap mengikuti status normal. Tombol unduh sertifikat dan LOA baru aktif setelah PDF tersedia.
+
 ## Laravel Sponsors
 
 We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).

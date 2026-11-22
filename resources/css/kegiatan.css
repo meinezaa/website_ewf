@@ -93,7 +93,7 @@
     .kg-collage .kg-c3 img{object-position:center 66%}
     @keyframes kg-in{from{opacity:0;transform:translateY(40px) rotate(0) scale(.94)}to{opacity:1;transform:translateY(0) rotate(var(--r)) scale(1)}}
     @keyframes kg-bob{0%,100%{translate:0 0}50%{translate:0 -10px}}
-    .kg-collage::before{content:"";position:absolute;z-index:0;left:14%;top:14%;width:72%;height:72%;border:5px solid #fff;border-radius:38px;background:linear-gradient(135deg,rgba(244,123,32,.2),rgba(249,185,135,.12)),url("/images/kegiatan%2012.jpeg") center 64%/cover;box-shadow:0 30px 60px -32px rgba(17,24,39,.55);transform:rotate(6deg)}
+    .kg-collage::before{content:"";position:absolute;z-index:0;left:14%;top:14%;width:72%;height:72%;border:5px solid #fff;border-radius:38px;background:linear-gradient(135deg,rgba(244,123,32,.2),rgba(249,185,135,.12)),url("/image/kegiatan%2012.jpeg") center 64%/cover;box-shadow:0 30px 60px -32px rgba(17,24,39,.55);transform:rotate(6deg)}
     .kg-chip{position:absolute;z-index:3;display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.96);border:1px solid var(--kg-orange-b);border-radius:16px;padding:10px 14px;box-shadow:0 14px 28px -16px rgba(17,24,39,.45);animation:kg-chip 5s ease-in-out infinite}
     .kg-chip .kg-ci{width:34px;height:34px;border-radius:11px;background:var(--kg-orange-l);display:grid;place-items:center;font-size:16px}
     .kg-chip b{display:block;font-size:12.5px;color:var(--kg-ink);line-height:1.25}

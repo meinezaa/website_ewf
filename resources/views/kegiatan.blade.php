@@ -46,13 +46,13 @@
 
             <div class="kg-collage" id="kgCollage" aria-hidden="true">
               <div class="kg-photo kg-c1">
-                <img src="{{ asset('images/kegiatan 3.jpeg') }}" alt="">
+                <img src="{{ asset('image/kegiatan 3.jpeg') }}" alt="">
               </div>
               <div class="kg-photo kg-c2">
-                <img src="{{ asset('images/magang 11.jpeg') }}" alt="">
+                <img src="{{ asset('image/magang 11.jpeg') }}" alt="">
               </div>
               <div class="kg-photo kg-c3">
-                <img src="{{ asset('images/magang 5.jpeg') }}" alt="">
+                <img src="{{ asset('image/magang 5.jpeg') }}" alt="">
               </div>
               <div class="kg-chip kg-chip--a"><div class="kg-ci">📸</div><div><b>Momen Terbaik</b><span>Dokumentasi kegiatan</span></div></div>
               <div class="kg-chip kg-chip--b"><div class="kg-ci">🤝</div><div><b>Belajar Bersama</b><span>Mentor &amp; peserta</span></div></div>
@@ -82,8 +82,8 @@
           <article class="kg-feature" data-kg-reveal="zoom">
             <div class="kg-photo kg-feature-gallery" id="kgFeatureGallery">
               <button class="kg-feature-switch" id="kgFeatureSwitch" type="button" aria-label="Tampilkan foto kedua" aria-pressed="false">
-                <img class="kg-feature-image kg-feature-back" src="{{ asset('images/magang 13.jpeg') }}" alt="Peserta magang bersama pembimbing, foto kedua">
-                <img class="kg-feature-image kg-feature-front" src="{{ asset('images/magang 7.jpeg') }}" alt="Peserta magang bersama pembimbing di kantor Surabaya Trillium">
+                <img class="kg-feature-image kg-feature-back" src="{{ asset('image/magang 13.jpeg') }}" alt="Peserta magang bersama pembimbing, foto kedua">
+                <img class="kg-feature-image kg-feature-front" src="{{ asset('image/magang 7.jpeg') }}" alt="Peserta magang bersama pembimbing di kantor Surabaya Trillium">
               </button>
             </div>
             <div class="kg-feature-body">
@@ -113,7 +113,7 @@
 
             <figure class="kg-card kg-card--big" data-kg-reveal tabindex="0" role="button" aria-label="Buka foto jalan-jalan ke PRJ bersama mentor">
               <div class="kg-photo">
-                <img src="{{ asset('images/kegiatan 12.jpeg') }}" alt="Peserta magang dan mentor menikmati acara PRJ bersama">
+                <img src="{{ asset('image/kegiatan 12.jpeg') }}" alt="Peserta magang dan mentor menikmati acara PRJ bersama">
               </div>
               <span class="kg-zoom"><svg viewBox="0 0 24 24"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></span>
               <figcaption class="kg-cap"><b>Sehari di PRJ Bersama Mentor</b><span>Jajan, berbagi cerita, dan menikmati waktu bersama.</span></figcaption>
@@ -121,7 +121,7 @@
 
             <figure class="kg-card" data-kg-reveal tabindex="0" role="button" aria-label="Buka foto Sesi Mentoring">
               <div class="kg-photo">
-                <img src="{{ asset('images/mentoring.jpeg') }}" alt="Peserta magang mengikuti sesi mentoring bersama pembimbing">
+                <img src="{{ asset('image/mentoring.jpeg') }}" alt="Peserta magang mengikuti sesi mentoring bersama pembimbing">
               </div>
               <span class="kg-zoom"><svg viewBox="0 0 24 24"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></span>
               <figcaption class="kg-cap"><b>Belajar Bersama Mentor</b><span>Berbagi ilmu, pengalaman, dan semangat untuk terus berkembang.</span></figcaption>
@@ -129,7 +129,7 @@
 
             <figure class="kg-card kg-card--wide" data-kg-reveal tabindex="0" role="button" aria-label="Buka foto penyerahan hadiah lomba">
               <div class="kg-photo">
-                <img src="{{ asset('images/kegiatan 10.jpeg') }}" alt="Peserta menerima hadiah setelah memenangkan lomba">
+                <img src="{{ asset('image/kegiatan 10.jpeg') }}" alt="Peserta menerima hadiah setelah memenangkan lomba">
               </div>
               <span class="kg-zoom"><svg viewBox="0 0 24 24"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></span>
               <figcaption class="kg-cap"><b>Apresiasi untuk Para Pemenang</b><span>Kerja keras dan semangat berkompetisi mendapat penghargaan.</span></figcaption>
@@ -137,7 +137,7 @@
 
             <figure class="kg-card kg-card--wide" data-kg-reveal tabindex="0" role="button" aria-label="Buka foto makan bersama">
               <div class="kg-photo">
-                <img src="{{ asset('images/kegiatan 9.jpeg') }}" alt="Peserta dan mentor makan bersama dalam suasana akrab">
+                <img src="{{ asset('image/kegiatan 9.jpeg') }}" alt="Peserta dan mentor makan bersama dalam suasana akrab">
               </div>
               <span class="kg-zoom"><svg viewBox="0 0 24 24"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></span>
               <figcaption class="kg-cap"><b>Makan Bersama</b><span>Obrolan ringan dan tawa yang mengeratkan kebersamaan.</span></figcaption>
@@ -145,7 +145,7 @@
 
             <figure class="kg-card kg-card--wide" data-kg-reveal tabindex="0" role="button" aria-label="Buka foto kunjungan kantor">
               <div class="kg-photo">
-                <img src="{{ asset('images/kunjungan kantor.jpeg') }}" alt="Peserta berkunjung dan mengenal lingkungan kantor">
+                <img src="{{ asset('image/kunjungan kantor.jpeg') }}" alt="Peserta berkunjung dan mengenal lingkungan kantor">
               </div>
               <span class="kg-zoom"><svg viewBox="0 0 24 24"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></span>
               <figcaption class="kg-cap"><b>Mengenal Lebih Dekat Dunia Kerja</b><span>Kunjungan kantor menjadi ruang untuk belajar dan bertanya.</span></figcaption>
@@ -153,7 +153,7 @@
 
             <figure class="kg-card kg-card--wide" data-kg-reveal tabindex="0" role="button" aria-label="Buka foto perayaan Hari Kemerdekaan Indonesia">
               <div class="kg-photo">
-                <img src="{{ asset('images/kegiatan 6.jpeg') }}" alt="Peserta merayakan Hari Kemerdekaan Indonesia bersama">
+                <img src="{{ asset('image/kegiatan 6.jpeg') }}" alt="Peserta merayakan Hari Kemerdekaan Indonesia bersama">
               </div>
               <span class="kg-zoom"><svg viewBox="0 0 24 24"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></span>
               <figcaption class="kg-cap"><b>Merayakan Hari Kemerdekaan</b><span>Semangat kebersamaan dalam balutan merah putih.</span></figcaption>
@@ -161,32 +161,32 @@
 
             <figure class="kg-card kg-card--wide" data-kg-reveal tabindex="0" role="button" aria-label="Buka foto presentasi akhir peserta magang">
               <div class="kg-photo">
-                <img src="{{ asset('images/magang 3.jpeg') }}" alt="Peserta menyampaikan presentasi akhir program magang">
+                <img src="{{ asset('image/magang 3.jpeg') }}" alt="Peserta menyampaikan presentasi akhir program magang">
               </div>
               <span class="kg-zoom"><svg viewBox="0 0 24 24"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></span>
               <figcaption class="kg-cap"><b>Presentasi Akhir</b><span>Merangkum proses belajar dan langkah yang sudah ditempuh.</span></figcaption>
             </figure>
 
             <figure class="kg-card kg-card--wide" data-kg-reveal tabindex="0" role="button" aria-label="Buka foto bermain badminton bersama">
-              <div class="kg-photo"><img src="{{ asset('images/kegiatan 4.jpeg') }}" alt="Peserta bermain badminton bersama"></div>
+              <div class="kg-photo"><img src="{{ asset('image/kegiatan 4.jpeg') }}" alt="Peserta bermain badminton bersama"></div>
               <span class="kg-zoom"><svg viewBox="0 0 24 24"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></span>
               <figcaption class="kg-cap"><b>Badminton Bareng</b><span>Bergerak aktif, saling menyemangati, dan menikmati waktu bersama.</span></figcaption>
             </figure>
 
             <figure class="kg-card kg-card--tall" data-kg-reveal tabindex="0" role="button" aria-label="Buka foto penyerahan hadiah lomba">
-              <div class="kg-photo"><img src="{{ asset('images/kegiatan 5.jpeg') }}" alt="Peserta menerima hadiah atas pencapaian lomba"></div>
+              <div class="kg-photo"><img src="{{ asset('image/kegiatan 5.jpeg') }}" alt="Peserta menerima hadiah atas pencapaian lomba"></div>
               <span class="kg-zoom"><svg viewBox="0 0 24 24"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></span>
               <figcaption class="kg-cap"><b>Apresiasi Prestasi</b><span>Setiap usaha layak dirayakan.</span></figcaption>
             </figure>
 
             <figure class="kg-card" data-kg-reveal tabindex="0" role="button" aria-label="Buka foto kebersamaan peserta magang">
-              <div class="kg-photo"><img src="{{ asset('images/kegiatan 7.jpeg') }}" alt="Peserta magang berkumpul dalam momen kebersamaan"></div>
+              <div class="kg-photo"><img src="{{ asset('image/kegiatan 7.jpeg') }}" alt="Peserta magang berkumpul dalam momen kebersamaan"></div>
               <span class="kg-zoom"><svg viewBox="0 0 24 24"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></span>
               <figcaption class="kg-cap"><b>Momen Kebersamaan</b><span>Kenangan kecil yang terasa berarti saat dijalani bersama.</span></figcaption>
             </figure>
 
             <figure class="kg-card" data-kg-reveal tabindex="0" role="button" aria-label="Buka foto penyerahan hadiah lomba">
-              <div class="kg-photo"><img src="{{ asset('images/kegiatan 11.jpeg') }}" alt="Pemenang lomba menerima hadiah bersama mentor"></div>
+              <div class="kg-photo"><img src="{{ asset('image/kegiatan 11.jpeg') }}" alt="Pemenang lomba menerima hadiah bersama mentor"></div>
               <span class="kg-zoom"><svg viewBox="0 0 24 24"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></span>
               <figcaption class="kg-cap"><b>Merayakan Pencapaian</b><span>Bangga atas usaha dan hasil yang diraih bersama.</span></figcaption>
             </figure>
@@ -213,7 +213,7 @@
                 <h3>Orientasi &amp; Perkenalan</h3>
                 <p>Peserta mengenal perusahaan, budaya kerja, dan tim yang akan mendampingi selama program.</p>
               </div>
-              <div class="kg-photo" data-kg-reveal="right"><img src="{{ asset('images/magang 9.jpeg') }}" alt="Peserta magang mengikuti orientasi dan berkenalan bersama"></div>
+              <div class="kg-photo" data-kg-reveal="right"><img src="{{ asset('image/magang 9.jpeg') }}" alt="Peserta magang mengikuti orientasi dan berkenalan bersama"></div>
             </div>
 
             <div class="kg-step" data-kg-step>
@@ -222,7 +222,7 @@
                 <h3>Pelatihan &amp; Mentoring</h3>
                 <p>Belajar materi dasar dan praktik langsung bersama mentor berpengalaman di setiap divisi.</p>
               </div>
-              <div class="kg-photo" data-kg-reveal="left"><img src="{{ asset('images/mentoring.jpeg') }}" alt="Mentor menjelaskan materi kepada peserta magang"></div>
+              <div class="kg-photo" data-kg-reveal="left"><img src="{{ asset('image/mentoring.jpeg') }}" alt="Mentor menjelaskan materi kepada peserta magang"></div>
             </div>
 
             <div class="kg-step" data-kg-step>
@@ -231,7 +231,7 @@
                 <h3>Proyek &amp; Kebersamaan</h3>
                 <p>Mengerjakan proyek nyata sambil membangun relasi lewat kegiatan tim.</p>
               </div>
-              <div class="kg-photo" data-kg-reveal="right"><img src="{{ asset('images/kegiatan 9.jpeg') }}" alt="Peserta dan mentor makan bersama dalam suasana akrab"></div>
+              <div class="kg-photo" data-kg-reveal="right"><img src="{{ asset('image/kegiatan 9.jpeg') }}" alt="Peserta dan mentor makan bersama dalam suasana akrab"></div>
             </div>
 
             <div class="kg-step" data-kg-step>
@@ -243,8 +243,8 @@
               </div>
               <div class="kg-photo kg-timeline-gallery" id="kgFinalGallery" data-kg-reveal="left">
                 <button class="kg-timeline-switch" id="kgFinalPhotoSwitch" type="button" aria-label="Tampilkan foto kedua" aria-pressed="false">
-                  <img class="kg-timeline-image kg-timeline-back" src="{{ asset('images/magang 6.jpeg') }}" alt="Peserta magang bersama mentor, foto kedua">
-                  <img class="kg-timeline-image kg-timeline-front" src="{{ asset('images/magang 11.jpeg') }}" alt="Peserta magang bersama mentor, foto pertama">
+                  <img class="kg-timeline-image kg-timeline-back" src="{{ asset('image/magang 6.jpeg') }}" alt="Peserta magang bersama mentor, foto kedua">
+                  <img class="kg-timeline-image kg-timeline-front" src="{{ asset('image/magang 11.jpeg') }}" alt="Peserta magang bersama mentor, foto pertama">
                 </button>
               </div>
             </div>

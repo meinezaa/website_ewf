@@ -22,7 +22,7 @@ class ProductSpecificationTest extends TestCase
         $response = $this->get(route('home'))->assertOk();
 
         $response->assertSee('href="' . route('produk') . '"', false);
-        $response->assertSee(asset('images/ewf_logo 1.png'))
+        $response->assertSee(asset('image/ewf_logo 1.png'))
             ->assertSee('href="' . route('home') . '#tentang"', false)
             ->assertSee('href="' . route('berita') . '"', false)
             ->assertSee('href="' . route('home') . '#karir"', false);
@@ -60,7 +60,7 @@ class ProductSpecificationTest extends TestCase
             ->assertOk()
             ->assertSee($specificationRoute, false)
             ->assertSee("id:'gol250'", false)
-            ->assertSee(asset('images/ewf_logo 1.png'));
+            ->assertSee(asset('image/ewf_logo 1.png'));
     }
 
     public function test_each_product_has_a_specification_page(): void
@@ -69,7 +69,7 @@ class ProductSpecificationTest extends TestCase
             $this->get(route('produk.spesifikasi', ['product' => $id]))
                 ->assertOk()
                 ->assertSeeText($product['name'])
-                ->assertSee(asset('images/' . $product['image']));
+                ->assertSee(asset('image/' . $product['image']));
         }
     }
 

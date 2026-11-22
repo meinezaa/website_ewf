@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Certificate extends Model
 {
+    const UPDATED_AT = null;
+
     protected $fillable = [
         'internship_registration_id',
         'certificate_number',

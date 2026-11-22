@@ -64,14 +64,11 @@ return [
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
-            'model' => env('AUTH_MODEL', User::class),
+            'model' => User::class,
         ],
-
-        // 'users' => [
-        //     'driver' => 'database',
-        //     'table' => 'users',
-        // ],
     ],
+
+    'legacy_users_file' => env('AUTH_USERS_FILE', storage_path('app/private/auth-users.json')),
 
     /*
     |--------------------------------------------------------------------------

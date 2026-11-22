@@ -1,0 +1,199 @@
+body.auth-register{--o:#e8651a;--o2:#f08a3c;--od:#c24e0a;--cream:#fff6ec;--peach:#fde7d3;--ink:#1d1a17;--mut:#6f665e;--line:#f0dfcd;--navy:#10243d}
+        body.auth-register{@apply box-border m-0}
+        body.auth-register *{@apply box-border m-0}
+        html:has(body.auth-register), body.auth-register{min-height:100%}
+        body.auth-register{@apply relative grid place-items-center overflow-x-hidden;font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:var(--ink);background:#f7ece0;padding:40px 20px}
+        body.auth-register a{@apply text-inherit no-underline}
+
+        /* latar: blur + orb melayang */
+        body.auth-register .bg{@apply fixed inset-0 -z-[1] overflow-hidden;background:linear-gradient(135deg,#fff3e6,#f4e3d3 55%,#ead9cc)}
+        body.auth-register .bg .orb{@apply absolute rounded-full;filter:blur(70px);animation:daftar-drift 16s ease-in-out infinite alternate}
+        body.auth-register .bg .o1{width:420px;height:420px;left:-120px;top:-80px;background:#ffb06b;opacity:.5}
+        body.auth-register .bg .o2{width:460px;height:460px;right:-140px;bottom:-120px;background:#ff8a3d;opacity:.32;animation-duration:20s}
+        body.auth-register .bg .o3{width:220px;height:220px;left:40%;top:55%;background:#ffd2a1;opacity:.6;animation-duration:12s}
+        @keyframes daftar-drift{to{translate:60px -50px;scale:1.18}}
+
+        /* kartu utama */
+        body.auth-register .stage{@apply w-full;perspective:1400px;max-width:1192px}
+        body.auth-register .shell{@apply relative grid overflow-hidden rounded-[40px] bg-white;grid-template-columns:1.38fr 1fr;min-height:660px;transform-style:preserve-3d;
+            box-shadow:0 2px 0 #fff inset,14px 14px 0 -4px #ffe3cb,28px 28px 0 -8px #ffeee0,0 50px 90px rgba(120,60,10,.28);
+            animation:daftar-enter 1s cubic-bezier(.2,.8,.2,1) both;transition:transform .45s cubic-bezier(.5,0,.3,1),opacity .35s}
+        @keyframes daftar-enter{from{opacity:0;transform:rotateX(10deg) translateY(50px) scale(.95)}}
+        body.auth-register .shell.leave{opacity:0;transform:rotateY(-9deg) translateX(-40px) scale(.97)}
+
+        /* sisi form */
+        body.auth-register .form-side{@apply relative z-[2] flex flex-col;padding:56px 56px 40px}
+        body.auth-register .form-side>*{animation:daftar-rise .8s both cubic-bezier(.2,.7,.2,1)}
+        body.auth-register .form-side>:nth-child(1){animation-delay:.25s}body.auth-register .form-side>:nth-child(2){animation-delay:.33s}body.auth-register .form-side>:nth-child(3){animation-delay:.41s}
+        body.auth-register .form-side>:nth-child(4){animation-delay:.49s}body.auth-register .form-side>:nth-child(5){animation-delay:.57s}body.auth-register .form-side>:nth-child(6){animation-delay:.65s}body.auth-register .form-side>:nth-child(7){animation-delay:.73s}
+        @keyframes daftar-rise{from{opacity:0;translate:0 24px}}
+        body.auth-register h1{font-size:clamp(30px,4vw,38px);font-weight:800;letter-spacing:-1px;line-height:1.1}
+        body.auth-register .sub{color:var(--mut);font-size:15px;line-height:1.6;margin-top:8px}
+
+        body.auth-register .tabs{@apply relative grid rounded-2xl isolate;grid-template-columns:1fr 1fr;margin-top:22px;padding:5px;background:var(--peach);box-shadow:inset 0 2px 4px rgba(194,78,10,.1)}
+        body.auth-register .tabs::before{content:"";position:absolute;z-index:-1;top:5px;bottom:5px;left:5px;width:calc(50% - 5px);border-radius:12px;background:#fff;box-shadow:0 3px 0 #f1dfcc,0 8px 16px rgba(120,60,10,.12);transition:transform .45s cubic-bezier(.34,1.4,.5,1)}
+        body.auth-register .tabs.to-daftar::before{transform:translateX(100%)}
+        body.auth-register .tabs a{text-align:center;padding:11px;font-size:14px;font-weight:700;color:var(--mut);border-radius:12px;transition:color .3s}
+        body.auth-register .tabs a.on{color:var(--od)}
+
+        body.auth-register .notice{display:none;margin-top:16px;padding:12px 14px;border-radius:14px;background:#fff7ef;border:1px solid #f3d0b1;color:#785b44;font-size:13px;line-height:1.55;gap:10px;align-items:flex-start}
+        body.auth-register .notice.show{display:flex}
+        body.auth-register .notice i{color:var(--o);font-size:17px}
+        body.auth-register .err{display:none;margin-top:14px;padding:11px 14px;border-radius:12px;background:#fdecea;border:1px solid #f4c4be;color:#a3261b;font-size:13px;line-height:1.5}
+        body.auth-register .err.show{display:block;animation:daftar-shake .45s}
+        body.auth-register .err a{font-weight:700;text-decoration:underline}
+        @keyframes daftar-shake{25%{translate:-6px 0}50%{translate:6px 0}75%{translate:-3px 0}}
+
+        body.auth-register form{margin-top:20px}
+        body.auth-register .lbl{display:block;margin:16px 0 7px;font-size:11.5px;font-weight:800;letter-spacing:.4px;color:var(--ink)}
+        body.auth-register .fld{@apply flex items-center gap-3 rounded-[15px];padding:0 16px;height:52px;background:var(--cream);border:1.5px solid transparent;
+            box-shadow:inset 0 2px 5px rgba(120,60,10,.09);transition:transform .25s,box-shadow .25s,border-color .25s,background .25s}
+        body.auth-register .fld>i{color:#8b7f76;font-size:18px;transition:color .25s}
+        body.auth-register .fld input{flex:1;min-width:0;height:100%;border:0;outline:0;background:transparent;font:500 15px 'Plus Jakarta Sans',sans-serif;color:var(--ink)}
+        body.auth-register .fld input::placeholder{color:#b3a79d}
+        body.auth-register .fld:focus-within{transform:translateY(-3px);background:#fff;border-color:var(--o2);box-shadow:0 0 0 4px rgba(240,138,60,.16),0 12px 22px rgba(232,101,26,.14)}
+        body.auth-register .fld:focus-within>i{color:var(--o)}
+        body.auth-register .fld.bad{border-color:#e5776b;background:#fff6f4}
+        body.auth-register .eye{border:0;background:none;cursor:pointer;color:#8b7f76;font-size:18px;padding:4px;transition:color .2s,transform .2s}
+        body.auth-register .eye:hover{color:var(--o);transform:scale(1.15)}
+
+        body.auth-register .btn{@apply relative w-full overflow-hidden cursor-pointer rounded-[15px] text-white;margin-top:24px;height:54px;border:0;font:800 17px 'Plus Jakarta Sans',sans-serif;
+            background:linear-gradient(135deg,var(--o2),var(--o));box-shadow:0 5px 0 var(--od),0 18px 28px rgba(232,101,26,.34);transition:transform .18s,box-shadow .18s}
+        body.auth-register .btn:hover{transform:translateY(-3px);box-shadow:0 8px 0 var(--od),0 24px 34px rgba(232,101,26,.4)}
+        body.auth-register .btn:active{transform:translateY(4px);box-shadow:0 1px 0 var(--od),0 5px 10px rgba(232,101,26,.3)}
+        body.auth-register .btn::after{content:"";position:absolute;top:0;bottom:0;width:38%;left:-60%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.55),transparent);transform:skewX(-20deg);transition:left .7s}
+        body.auth-register .btn:hover::after{left:130%}
+        body.auth-register .btn.load{pointer-events:none;opacity:.9}
+        body.auth-register .btn.load span{display:none}
+        body.auth-register .btn.load::before{content:"";display:inline-block;width:20px;height:20px;border-radius:50%;border:3px solid rgba(255,255,255,.4);border-top-color:#fff;animation:daftar-spin .7s linear infinite;vertical-align:middle}
+        @keyframes daftar-spin{to{rotate:360deg}}
+
+        body.auth-register .or{display:flex;align-items:center;gap:12px;margin:22px 0 14px;color:#8b7f76;font-size:11px;font-weight:800;letter-spacing:.4px}
+        body.auth-register .or::before, body.auth-register .or::after{content:"";flex:1;height:1px;background:var(--line)}
+        body.auth-register .google{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;height:50px;border-radius:15px;border:1.5px solid var(--line);background:#fff;cursor:pointer;
+            font:700 14px 'Plus Jakarta Sans',sans-serif;color:var(--ink);box-shadow:0 3px 0 #ecd2b8,0 10px 18px rgba(120,60,10,.07);transition:transform .18s,box-shadow .18s}
+        body.auth-register .google:hover{transform:translateY(-3px);box-shadow:0 6px 0 #ecd2b8,0 16px 24px rgba(120,60,10,.12)}
+        body.auth-register .google:active{transform:translateY(3px);box-shadow:0 1px 0 #ecd2b8}
+        body.auth-register .switch{margin-top:auto;padding-top:28px;text-align:center;font-size:14px;color:var(--mut)}
+        body.auth-register .switch a{color:var(--od);font-weight:800;margin-left:4px;border-bottom:2px solid transparent;transition:border-color .2s}
+        body.auth-register .switch a:hover{border-color:var(--o)}
+
+        /* sisi foto */
+        body.auth-register .photo-side{@apply relative grid place-items-center overflow-hidden;background:linear-gradient(180deg,#2a3f5a,var(--navy) 70%)}
+        body.auth-register .photo-side .blur{position:absolute;inset:-20px;background-image:var(--register-photo-image, none);background-position:center;background-size:cover;filter:blur(6px) saturate(.9);opacity:.75}
+        body.auth-register .photo-side::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(16,36,61,.1),rgba(16,36,61,.85))}
+        body.auth-register .wave{position:absolute;left:-1px;top:0;bottom:0;width:96px;height:100%;z-index:3}
+        body.auth-register .holder{position:relative;z-index:4;transform-style:preserve-3d;padding:0 30px}
+        body.auth-register .tag{@apply absolute z-[6] inline-flex items-center gap-2 rounded-full text-[11px] font-extrabold;top:-26px;left:20px;padding:6px 14px;border-radius:99px;background:rgba(255,255,255,.92);color:var(--ink);box-shadow:0 8px 18px rgba(0,0,0,.18);translate:0 0;animation:daftar-bob 5s ease-in-out infinite}
+        body.auth-register .tag::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--o)}
+        @keyframes daftar-bob{50%{translate:0 -8px}}
+        body.auth-register .frame{width:min(320px,100%);aspect-ratio:1/1.02;border-radius:30px;padding:7px;background:linear-gradient(145deg,#f4f7fb,#b8c4d4);
+            box-shadow:0 2px 0 #fff inset,0 30px 60px rgba(0,0,0,.45),0 12px 0 -4px rgba(255,255,255,.12);transition:transform .2s ease-out;animation:daftar-float 6s ease-in-out infinite}
+        @keyframes daftar-float{50%{translate:0 -12px}}
+        body.auth-register .frame .in{width:100%;height:100%;border-radius:24px;overflow:hidden;background:linear-gradient(160deg,#fff7ef,#ffe0c6);display:grid;place-items:center}
+        body.auth-register .frame img.photo{width:100%;height:100%;object-fit:cover}
+        body.auth-register .frame img.logo{width:70%;object-fit:contain}
+        body.auth-register .caption{position:relative;z-index:4;margin-top:26px;text-align:center;color:#fff;font-size:13px;line-height:1.6;opacity:.92;padding:0 30px}
+        body.auth-register .caption b{display:block;font-size:15px;margin-bottom:2px}
+        body.auth-register .photo-side .col{display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;z-index:4;padding:40px 0}
+
+        body.auth-register #toast{position:fixed;left:50%;bottom:30px;translate:-50% 30px;opacity:0;pointer-events:none;padding:12px 20px;border-radius:14px;background:var(--ink);color:#fff;font-size:13.5px;font-weight:600;box-shadow:0 14px 30px rgba(0,0,0,.25);transition:.35s;z-index:20}
+        body.auth-register #toast.show{opacity:1;translate:-50% 0}
+
+        @media(max-width:900px){
+            body.auth-register .shell{grid-template-columns:1fr}
+            body.auth-register .photo-side{display:none}
+            body.auth-register .form-side{padding:40px 28px 30px}
+        }
+        @media(prefers-reduced-motion:reduce){body.auth-register, body.auth-register *, body.auth-register *::before, body.auth-register *::after{animation:none!important;transition:none!important}}
+
+        /* ===== khusus halaman Daftar: foto di kiri, form di kanan ===== */
+        body.auth-register .shell{grid-template-columns:1fr 1.34fr}
+        body.auth-register .shell.leave{transform:rotateY(9deg) translateX(40px) scale(.97)}
+        body.auth-register .wave{left:auto;right:-1px;transform:scaleX(-1)}
+        body.auth-register .form-side{padding:48px 52px 34px}
+        body.auth-register form{margin-top:6px}
+        body.auth-register .row2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+        body.auth-register .lbl{margin:14px 0 7px}
+        body.auth-register .meter{display:grid;grid-template-columns:repeat(4,1fr) auto;gap:8px;align-items:center;margin-top:10px}
+        body.auth-register .meter i{display:block;height:6px;border-radius:99px;background:var(--peach);transition:background .35s,transform .35s;transform-origin:left}
+        body.auth-register .meter i.on{background:linear-gradient(90deg,var(--o2),var(--o));animation:daftar-grow .4s both}
+        @keyframes daftar-grow{from{transform:scaleX(0)}}
+        body.auth-register .meter em{font-style:normal;font-size:11.5px;font-weight:700;color:var(--o);min-width:44px;text-align:right}
+        body.auth-register .hint{margin-top:6px;font-size:12px;color:var(--mut)}
+        body.auth-register .btn{margin-top:20px}
+        body.auth-register .switch{padding-top:20px;font-size:13px}
+        @media(max-width:900px){body.auth-register .row2{grid-template-columns:1fr}body.auth-register .form-side{padding:36px 24px 28px}}
+        html:has(body.auth-register), body.auth-register{width:100%;min-height:100%;height:auto}
+        body.auth-register{min-height:100vh;min-height:100dvh;display:block;padding:0;background:#fff}
+        body.auth-register .bg{display:none}
+        body.auth-register .stage{width:100%;max-width:none;min-height:100vh;min-height:100dvh;perspective:none}
+        body.auth-register .shell{width:100%;min-height:100vh;min-height:100dvh;grid-template-columns:minmax(0,.92fr) minmax(0,1.08fr);border-radius:0;box-shadow:none;overflow:hidden;animation:none;transition:none}
+        body.auth-register .shell.leave, body.auth-register .shell.auth-switching-to-login{opacity:1;transform:none}
+        body.auth-register .form-side{width:100%;max-width:760px;min-height:100vh;min-height:100dvh;justify-content:center;margin:0 auto;padding:clamp(28px,5vw,72px);transition:transform .72s cubic-bezier(.76,0,.24,1),opacity .55s ease;will-change:transform,opacity}
+        body.auth-register .form-side>*{max-width:560px;width:100%;margin-left:auto;margin-right:auto}
+        body.auth-register .photo-side{display:grid;min-height:100vh;min-height:100dvh;background:#5e5147;transition:transform .78s cubic-bezier(.76,0,.24,1);will-change:transform;z-index:3}
+
+        /* === DAFTAR: foto di tengah, sedikit geser ke KIRI (ubah angka 1vw untuk atur presisi) === */
+        body.auth-register .photo-side .blur{inset:0;background-position:calc(50% - 1vw) center;background-size:cover;background-repeat:no-repeat;filter:none;opacity:1}
+
+        body.auth-register .photo-side::after{background:linear-gradient(145deg,rgba(33,28,24,.12),rgba(33,28,24,.42))}
+        body.auth-register .photo-side::before{content:"";position:absolute;z-index:2;top:-8%;bottom:-8%;right:-125px;width:160px;border-radius:50%;background:#fff;box-shadow:-12px 0 34px rgba(28,24,20,.12);pointer-events:none}
+        body.auth-register .wave{left:auto;right:-1px;transform:scaleX(-1);display:none}
+        body.auth-register .holder{display:none}
+        body.auth-register .photo-side .col{justify-content:center;align-items:flex-start;width:min(100%,660px);padding:clamp(32px,7vw,88px);margin:0 auto}
+        body.auth-register .caption{max-width:430px;margin:calc(min(190px,42%) + 30px) 0 0;padding:0 0 0 4px;text-align:left;font-size:15px;line-height:1.7;color:#fff;opacity:1;text-shadow:0 2px 8px rgba(0,0,0,.78),0 0 20px rgba(0,0,0,.36)}
+        body.auth-register .caption b{font-size:clamp(22px,3vw,30px);line-height:1.2;margin-bottom:9px;color:#fff;text-shadow:0 2px 9px rgba(0,0,0,.82),0 0 22px rgba(0,0,0,.42)}
+        body.auth-register .tabs{max-width:560px}
+        body.auth-register .form-side h1{font-size:clamp(34px,4.2vw,48px)}
+
+        /* ===== transisi halus Login <-> Daftar (View Transitions) =====
+           Foto meluncur pelan ke sisi seberang, form lama memudar lalu form baru muncul setelah foto lewat. */
+        html:has(body.auth-register){--vt-x:44px;--vt-y:0px}
+        body.auth-register .stage{view-transition-name:auth-stage}
+        body.auth-register .photo-side{view-transition-name:auth-photo}
+        body.auth-login .form-side{view-transition-name:auth-form-login}
+        body.auth-register .form-side{view-transition-name:auth-form-register}
+        /* saat tiba lewat transisi, form tidak memakai animasi "rise" halaman (supaya tidak dobel) */
+        html:has(body.auth-register).vt-nav .form-side>*{animation:none}
+
+        /* latar putih diam, tidak ikut memudar */
+        html:has(body.auth-register)::view-transition-old(auth-stage), html:has(body.auth-register)::view-transition-new(auth-stage){animation:none}
+
+        /* foto: meluncur 1.5 detik dengan percepatan-perlambatan lembut */
+        html:has(body.auth-register)::view-transition-group(auth-photo){animation-duration:1.5s;animation-timing-function:cubic-bezier(.65,0,.35,1);z-index:3}
+        html:has(body.auth-register)::view-transition-old(auth-photo), html:has(body.auth-register)::view-transition-new(auth-photo){animation-duration:1.5s;animation-timing-function:cubic-bezier(.65,0,.35,1)}
+
+        /* form: yang lama memudar sambil bergeser, yang baru masuk setelah foto hampir lewat */
+        html:has(body.auth-register)::view-transition-group(auth-form-login), html:has(body.auth-register)::view-transition-group(auth-form-register){z-index:2}
+        html:has(body.auth-register)::view-transition-old(auth-form-login){animation:daftar-vtFormOutR .6s cubic-bezier(.4,0,.2,1) both}
+        html:has(body.auth-register)::view-transition-old(auth-form-register){animation:daftar-vtFormOutL .6s cubic-bezier(.4,0,.2,1) both}
+        html:has(body.auth-register)::view-transition-new(auth-form-login){animation:daftar-vtFormInFromR .9s .7s cubic-bezier(.22,.8,.24,1) both}
+        html:has(body.auth-register)::view-transition-new(auth-form-register){animation:daftar-vtFormInFromL .9s .7s cubic-bezier(.22,.8,.24,1) both}
+        @keyframes daftar-vtFormOutR{to{opacity:0;transform:translate(var(--vt-x),var(--vt-y))}}
+        @keyframes daftar-vtFormOutL{to{opacity:0;transform:translate(calc(var(--vt-x) * -1),var(--vt-y))}}
+        @keyframes daftar-vtFormInFromR{from{opacity:0;transform:translate(var(--vt-x),var(--vt-y))}}
+        @keyframes daftar-vtFormInFromL{from{opacity:0;transform:translate(calc(var(--vt-x) * -1),var(--vt-y))}}
+
+        @media(max-width:900px){
+            body.auth-register .shell{grid-template-columns:minmax(0,.8fr) minmax(0,1fr)}
+            body.auth-register .photo-side{display:grid}
+            body.auth-register .form-side{padding:32px}
+        }
+        @media(max-width:680px){
+            html:has(body.auth-register){--vt-x:0px;--vt-y:22px}
+            body.auth-register .photo-side .blur{inset:0;background-position:center}
+            body.auth-register .shell{grid-template-columns:1fr}
+            body.auth-register .photo-side{min-height:190px;height:24vh;max-height:250px;order:0}
+            body.auth-register .form-side{min-height:calc(100vh - 190px);min-height:calc(100dvh - 190px);padding:28px 22px 34px;order:1}
+            body.auth-register .photo-side .col{padding:24px}
+            body.auth-register .photo-side::before{right:-72px;width:144px}
+            body.auth-register .photo-side::before{left:-8%;right:-8%;top:auto;bottom:-80px;width:auto;height:160px;box-shadow:0 12px 30px rgba(28,24,20,.1)}
+            body.auth-register .caption b{font-size:22px}
+            body.auth-register .caption{font-size:13px;margin-top:0}
+            body.auth-register .row2{grid-template-columns:1fr}
+        }
+        @media(prefers-reduced-motion:reduce){
+            body.auth-register .shell, body.auth-register .form-side, body.auth-register .photo-side{animation:none!important;transition:none!important}
+            html:has(body.auth-register)::view-transition-group(*), html:has(body.auth-register)::view-transition-old(*), html:has(body.auth-register)::view-transition-new(*){animation-duration:.01ms!important;animation-delay:0s!important}
+        }

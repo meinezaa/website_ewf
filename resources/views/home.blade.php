@@ -46,10 +46,10 @@
 
       <div class="hero-photo hr" style="--d:300ms">
         <div class="frame">
-          <img src="/images/magang%201.jpeg?v={{ filemtime(public_path('images/magang 1.jpeg')) }}" alt="Tim dan peserta magang PT Equityworld Futures" onerror="this.style.visibility='hidden'">
+          <img src="/image/magang%201.jpeg?v={{ filemtime(public_path('image/magang 1.jpeg')) }}" alt="Tim dan peserta magang PT Equityworld Futures" onerror="this.style.visibility='hidden'">
         </div>
         <div class="hero-chip hero-chip--b">
-          <div class="ci"><img src="/images/logo%20galeri%20magang.png" alt="Logo Galeri Magang"></div>
+          <div class="ci"><img src="/image/logo%20galeri%20magang.png" alt="Logo Galeri Magang"></div>
           <div><b>Galeri Magang</b><span>Website resmi</span></div>
         </div>
       </div>
@@ -82,7 +82,7 @@
   <div class="container">
     <div class="company-intro-grid">
       <div class="company-intro-photo">
-        <img src="/images/lobi%20ewf.jpeg?v={{ filemtime(public_path('images/lobi ewf.jpeg')) }}" alt="Lobi kantor PT Equityworld Futures" loading="lazy">
+        <img src="/image/lobi%20ewf.jpeg?v={{ filemtime(public_path('image/lobi ewf.jpeg')) }}" alt="Lobi kantor PT Equityworld Futures" loading="lazy">
       </div>
       <div class="company-intro-copy">
         <span class="eyebrow"><i></i>TENTANG PERUSAHAAN</span>
@@ -149,15 +149,15 @@
       <span class="gallery-title-line gallery-title-line--accent">Pengalaman yang Nyata</span>
     </h2>
     <div class="gallery-carousel" aria-label="Galeri kegiatan magang">
-      <div class="gallery-next-preview" aria-hidden="true"><img src="/images/magang%208.png?v={{ filemtime(public_path('images/magang 8.png')) }}" alt=""></div>
+      <div class="gallery-next-preview" aria-hidden="true"><img src="/image/magang%208.png?v={{ filemtime(public_path('image/magang 8.png')) }}" alt=""></div>
       <div class="gallery-viewport" tabindex="0" aria-live="polite" aria-label="Foto 1 dari 4. Klik sisi kanan foto atau klik kanan untuk melihat foto berikutnya">
         <div class="gallery-track">
-          <figure class="gallery-slide"><img src="/images/magang%209.jpeg?v={{ filemtime(public_path('images/magang 9.jpeg')) }}" alt="Kegiatan peserta Galeri Magang" loading="eager" draggable="false"><figcaption>Belajar dan bertumbuh bersama</figcaption></figure>
-          <figure class="gallery-slide"><img src="/images/magang%208.png?v={{ filemtime(public_path('images/magang 8.png')) }}" alt="Suasana kegiatan Galeri Magang" loading="lazy" draggable="false"><figcaption>Mengenal pengalaman di dunia kerja</figcaption></figure>
-          <figure class="gallery-slide"><img src="/images/magang%2010.jpeg?v={{ filemtime(public_path('images/magang 10.jpeg')) }}" alt="Aktivitas peserta Galeri Magang" loading="lazy" draggable="false"><figcaption>Mengembangkan potensi dan keterampilan</figcaption></figure>
-          <figure class="gallery-slide"><img src="/images/magang%206.jpeg?v={{ filemtime(public_path('images/magang 6.jpeg')) }}" alt="Kebersamaan dalam kegiatan Galeri Magang" loading="lazy" draggable="false"><figcaption>Mempersiapkan langkah karier berikutnya</figcaption></figure>
+          <figure class="gallery-slide"><img src="/image/magang%209.jpeg?v={{ filemtime(public_path('image/magang 9.jpeg')) }}" alt="Kegiatan peserta Galeri Magang" loading="eager" draggable="false"><figcaption>Belajar dan bertumbuh bersama</figcaption></figure>
+          <figure class="gallery-slide"><img src="/image/magang%208.png?v={{ filemtime(public_path('image/magang 8.png')) }}" alt="Suasana kegiatan Galeri Magang" loading="lazy" draggable="false"><figcaption>Mengenal pengalaman di dunia kerja</figcaption></figure>
+          <figure class="gallery-slide"><img src="/image/magang%2010.jpeg?v={{ filemtime(public_path('image/magang 10.jpeg')) }}" alt="Aktivitas peserta Galeri Magang" loading="lazy" draggable="false"><figcaption>Mengembangkan potensi dan keterampilan</figcaption></figure>
+          <figure class="gallery-slide"><img src="/image/magang%206.jpeg?v={{ filemtime(public_path('image/magang 6.jpeg')) }}" alt="Kebersamaan dalam kegiatan Galeri Magang" loading="lazy" draggable="false"><figcaption>Mempersiapkan langkah karier berikutnya</figcaption></figure>
         </div>
-        <div class="gallery-flip-sheet" aria-hidden="true"><img src="/images/magang%209.jpeg?v={{ filemtime(public_path('images/magang 9.jpeg')) }}" alt=""></div>
+        <div class="gallery-flip-sheet" aria-hidden="true"><img src="/image/magang%209.jpeg?v={{ filemtime(public_path('image/magang 9.jpeg')) }}" alt=""></div>
       </div>
       <div class="gallery-dots" role="group" aria-label="Pilih foto galeri">
         <button class="gallery-dot is-active" type="button" aria-label="Tampilkan foto 1" aria-current="true"></button>
@@ -234,7 +234,7 @@
 
 <script>
 /* ===== KONFIGURASI GAMBAR ===== */
-const IMG_BASE = '/images/';
+const IMG_BASE = '/image/';
 const IMG_EXTENSIONS = {
   'ewf cyber 2': '.jpg',
   'bappepti': '.jpg',
@@ -252,9 +252,9 @@ const IMG_EXTENSIONS = {
 function imageUrlFor(imageName){
   const extension = IMG_EXTENSIONS[imageName] || '.png';
   const version = imageName === 'cabang jkt ssc'
-    ? `?v={{ filemtime(public_path('images/cabang jkt ssc.png')) }}`
+    ? `?v={{ filemtime(public_path('image/cabang jkt ssc.png')) }}`
     : imageName === 'ewf semarang'
-      ? `?v={{ filemtime(public_path('images/ewf Semarang.png')) }}`
+      ? `?v={{ filemtime(public_path('image/ewf Semarang.png')) }}`
     : '';
   return IMG_BASE + encodeURIComponent(imageName) + extension + version;
 }

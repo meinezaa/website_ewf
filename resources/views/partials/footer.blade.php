@@ -1,8 +1,9 @@
 {{-- resources/views/partials/footer.blade.php --}}
 @php
   $footerAboutUrl = Route::has('tentang.kami') ? route('tentang.kami') : route('home').'#tentang-perusahaan';
-  $footerActivitiesUrl = Route::has('tentang.kami') ? route('tentang.kami').'#fasilitas' : route('home').'#galeri-magang';
+  $footerActivitiesUrl = Route::has('kegiatan') ? route('kegiatan') : (Route::has('tentang.kami') ? route('tentang.kami').'#fasilitas' : route('home').'#galeri-magang');
   $footerCareerUrl = Route::has('karir') ? route('karir') : route('home').'#karir';
+  $footerFaqUrl = Route::has('faq') ? route('faq') : route('home').'#faq';
 @endphp
 <style>
   @import url("{{ asset('css/site-shell.css') }}");
@@ -91,7 +92,7 @@
 <footer class="site-footer" @if(request()->routeIs('tentang.kami')) data-page="about" @endif>
   <div class="container">
     <div class="foot-logo">
-      <img src="{{ asset('images/' . rawurlencode('logo galeri magang.png')) }}" alt="Logo Galeri Magang">
+      <img src="{{ asset('image/' . rawurlencode('logo galeri magang.png')) }}" alt="Logo Galeri Magang">
       <b><span class="brand-galeri">GALERI</span> <span class="brand-magang">MAGANG</span></b>
     </div>
     <div class="foot-grid">
@@ -102,7 +103,7 @@
           <li><a href="{{ $footerAboutUrl }}">Tentang Kami</a></li>
           <li><a href="{{ $footerActivitiesUrl }}">Kegiatan</a></li>
           <li><a href="{{ $footerCareerUrl }}">Karir</a></li>
-          <li><a href="{{ route('home') }}#faq">FAQ</a></li>
+          <li><a href="{{ $footerFaqUrl }}">FAQ</a></li>
         </ul>
       </div>
       <div>

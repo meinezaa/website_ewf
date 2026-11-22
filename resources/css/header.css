@@ -1,0 +1,25 @@
+:root{--shell-pad:clamp(20px,3.2vw,56px)}
+  body .site-header .container{
+    max-width:none;width:100%;margin-left:0;margin-right:0;
+    padding-left:var(--shell-pad);padding-right:var(--shell-pad);box-sizing:border-box;
+  }
+  body .site-header .nav .container{@apply flex items-center justify-between}
+  body .site-header .nav-actions form{margin:0}
+  body .site-header .nav-actions form .btn{font:inherit;@apply cursor-pointer}
+  body .site-header .nav-actions .account-link{
+    @apply grid place-items-center overflow-hidden rounded-full;
+    width:42px;height:42px;padding:0;border:1px solid #f1d8c3;
+    background:linear-gradient(145deg,#fff,#fff4e9);color:#d9631d;font-size:23px;
+    box-shadow:0 5px 14px rgba(120,60,10,.1);transition:transform .25s,box-shadow .25s;
+  }
+  body .site-header .nav-actions .account-nav-avatar{@apply w-full h-full rounded-[inherit] object-cover}
+  body .site-header .nav-actions .account-link:hover{
+    transform:translateY(-2px);box-shadow:0 8px 18px rgba(120,60,10,.16);
+  }
+  body .site-header .ticker-wrap{font-size:13px}
+  body .site-header .ticker{min-height:44px}
+  body .site-header .ticker .tag{font-size:10px}
+  @media(max-width:600px){
+    body .site-header .ticker-wrap{font-size:12px}
+    body .site-header .ticker{min-height:42px}
+  }

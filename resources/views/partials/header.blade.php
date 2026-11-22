@@ -37,6 +37,7 @@
     $aboutUrl = Route::has('tentang.kami') ? route('tentang.kami') : route('home').'#tentang-perusahaan';
     $activitiesUrl = Route::has('kegiatan') ? route('kegiatan') : (Route::has('tentang.kami') ? route('tentang.kami').'#fasilitas' : route('home').'#galeri-magang');
     $careerUrl = Route::has('karir') ? route('karir') : route('home').'#karir';
+    $faqUrl = Route::has('faq') ? route('faq') : route('home').'#faq';
     $loginUrl = Route::has('login') ? route('login', ['next' => $currentLocation]) : route('home').'#karir';
     $registerUrl = Route::has('daftar') ? route('daftar', ['next' => $currentLocation]) : route('home').'#karir';
     $profileUrl = Route::has('profile') ? route('profile') : route('home').'#karir';
@@ -56,20 +57,25 @@
   <header class="nav">
     <div class="container">
       <a href="{{ route('home') }}" class="brand">
-        <img src="{{ asset('images/' . rawurlencode('logo galeri magang.png')) }}" alt="Logo Galeri Magang">
+        <img src="{{ asset('image/' . rawurlencode('logo galeri magang.png')) }}" alt="Logo Galeri Magang">
         <div class="name"><span class="brand-galeri">GALERI</span> <span class="brand-magang">MAGANG</span></div>
       </a>
       <nav class="menu" aria-label="Navigasi utama">
         <a href="{{ route('home') }}" class="{{ request()->routeIs('home') ? 'active' : '' }}">Beranda</a>
         <a href="{{ $aboutUrl }}" class="{{ request()->routeIs('tentang.kami') ? 'active' : '' }}">Tentang Kami</a>
-        <a href="{{ $activitiesUrl }}">Kegiatan</a>
+        <a href="{{ $activitiesUrl }}" class="{{ request()->routeIs('kegiatan') ? 'active' : '' }}">Kegiatan</a>
         <a href="{{ $careerUrl }}" class="{{ request()->routeIs('karir') ? 'active' : '' }}">Karir</a>
-        <a href="{{ route('home') }}#faq">FAQ</a>
+        <a href="{{ $faqUrl }}" class="{{ request()->routeIs('faq') ? 'active' : '' }}">FAQ</a>
       </nav>
       <div class="nav-actions">
         @auth
+          @php($accountPhotoUrl = auth()->user()->profilePhotoUrl())
           <a href="{{ $profileUrl }}" class="login account-link" aria-label="Akun saya" title="Akun saya">
-            <i class="bi bi-person-circle" aria-hidden="true"></i>
+            @if($accountPhotoUrl)
+              <img class="account-nav-avatar" src="{{ $accountPhotoUrl }}" alt="">
+            @else
+              <i class="bi bi-person-circle" aria-hidden="true"></i>
+            @endif
           </a>
         @else
           <a href="{{ $loginUrl }}" class="login" data-return-current>Masuk</a>

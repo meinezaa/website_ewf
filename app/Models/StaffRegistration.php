@@ -15,19 +15,42 @@ class StaffRegistration extends Model
         'full_name',
         'email',
         'birth_date',
+        'date_of_birth',
         'gender',
         'address',
+        'location',
         'phone',
         'education',
         'position',
         'document_path',
         'status',
+        'reference',
+        'job_id',
+        'job_title',
+        'company',
+        'headline',
+        'expected_salary',
+        'availability',
+        'portfolio_url',
+        'summary',
+        'privacy_consent_at',
+        'experiences',
+        'education_details',
+        'skills',
+        'cv_path',
+        'documents',
     ];
 
     protected function casts(): array
     {
         return [
             'birth_date' => 'date',
+            'date_of_birth' => 'date',
+            'privacy_consent_at' => 'datetime',
+            'experiences' => 'array',
+            'education_details' => 'array',
+            'skills' => 'array',
+            'documents' => 'array',
         ];
     }
 
