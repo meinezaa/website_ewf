@@ -89,7 +89,7 @@
   }
 </style>
 
-<footer class="site-footer" @if(request()->routeIs('tentang.kami')) data-page="about" @endif>
+<footer class="site-footer" @if(request()->routeIs('home')) data-page="home" @elseif(request()->routeIs('kegiatan')) data-page="activities" @elseif(request()->routeIs('tentang.kami')) data-page="about" @endif>
   <div class="container">
     <div class="foot-logo">
       <img src="{{ asset('image/' . rawurlencode('logo galeri magang.png')) }}" alt="Logo Galeri Magang">

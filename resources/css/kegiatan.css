@@ -14,7 +14,7 @@
       background:
         radial-gradient(ellipse at 0% 30%,rgba(255,221,225,.45),transparent 30%),
         radial-gradient(ellipse at 100% 62%,rgba(255,224,202,.42),transparent 32%),
-        linear-gradient(180deg,#fffaf4 0%,#fff 28%,#fffdfa 70%,#fffaf6 100%);
+        linear-gradient(180deg,#fffaf4 0%,#fff 28%,#fffdfa 70%,#fff 100%);
     }
     .kg-page *{box-sizing:border-box}
     .kg-page a{text-decoration:none;color:inherit}
@@ -131,6 +131,8 @@
     .kg-feature-body{position:relative;padding:44px 42px;display:flex;flex-direction:column;justify-content:center;background:linear-gradient(145deg,#fff,#fffaf6)}
     .kg-feature-body::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:linear-gradient(180deg,#f47b20,#f9b987)}
     .kg-tag{display:inline-flex;align-self:flex-start;align-items:center;gap:6px;font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--kg-green);background:var(--kg-green-l);padding:5px 12px;border-radius:99px}
+    .kg-tag i{display:inline-block;width:7px;height:7px;flex:none;border-radius:50%;background:currentColor;animation:kg-live-pulse 1.8s ease-out infinite}
+    @keyframes kg-live-pulse{0%{box-shadow:0 0 0 0 rgba(22,163,104,.5)}70%{box-shadow:0 0 0 7px rgba(22,163,104,0)}100%{box-shadow:0 0 0 0 rgba(22,163,104,0)}}
     .kg-feature-body h3{font-size:clamp(24px,2.6vw,34px);line-height:1.18;font-weight:800;letter-spacing:-.03em;color:var(--kg-ink);margin:16px 0 12px}
     .kg-feature-body p{color:var(--kg-muted);font-size:15px;line-height:1.8}
     .kg-meta{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}

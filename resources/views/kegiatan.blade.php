@@ -6,6 +6,7 @@
   <meta name="description" content="Kegiatan Galeri Magang Equityworld Futures.">
   <title>Kegiatan | Galeri Magang</title>
   @vite(['resources/css/app.css', 'resources/css/kegiatan.css', 'resources/js/app.js'])
+  @include('partials.navigation-transitions')
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@1&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -87,7 +88,7 @@
               </button>
             </div>
             <div class="kg-feature-body">
-              <span class="kg-tag">● Terbaru</span>
+              <span class="kg-tag"><i aria-hidden="true"></i>Terbaru</span>
               <h3>Orientasi &amp; Penyambutan Peserta Magang 2026</h3>
               <p>Momen kebersamaan 24 peserta magang bersama pembimbing di kantor Surabaya Trillium.</p>
               <ul class="kg-meta">
@@ -253,6 +254,7 @@
       </section>
 
       <!-- ================= CTA ================= -->
+      @guest
       <section class="kg-cta-sec" aria-label="Ajakan bergabung">
         <div class="kg-wrap">
           <div class="kg-cta" data-kg-reveal="zoom">
@@ -260,12 +262,13 @@
             <h2 style="margin-top:18px">Siap Jadi Bagian dari <em>Cerita</em> Berikutnya?</h2>
             <p>Daftar program magang atau posisi staf di PT Equityworld Futures dan rasakan sendiri pengalamannya.</p>
             <div class="kg-hero-cta">
-              <a href="/#karir" class="kg-btn kg-btn--primary">Daftar Sekarang</a>
+              <a href="{{ route('daftar', ['next' => '/karir#lowongan']) }}" class="kg-btn kg-btn--primary">Daftar Sekarang</a>
               <a href="/" class="kg-btn kg-btn--ghost">Kembali ke Beranda</a>
             </div>
           </div>
         </div>
       </section>
+      @endguest
 
       <!-- ================= LIGHTBOX ================= -->
       <div class="kg-lb" id="kgLb" role="dialog" aria-modal="true" aria-label="Pratinjau foto kegiatan">

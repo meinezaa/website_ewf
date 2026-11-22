@@ -304,6 +304,26 @@ class AuthenticationTest extends TestCase
             'password_confirmation' => 'Password123',
             'next' => '/tentang-kami#profil',
         ])->assertRedirect(route('tentang.kami').'#profil');
+
+        $this->post(route('logout'));
+        $this->post(route('daftar.store'), [
+            'name' => 'Hendra Wijaya',
+            'email' => 'hendra@example.test',
+            'phone' => '+628123456789',
+            'password' => 'Password123',
+            'password_confirmation' => 'Password123',
+            'next' => '/karir#lowongan',
+        ])->assertRedirect(route('karir').'#lowongan');
+
+        $this->post(route('logout'));
+        $this->post(route('daftar.store'), [
+            'name' => 'Tia Wulandari',
+            'email' => 'tia@example.test',
+            'phone' => '+628123456789',
+            'password' => 'Password123',
+            'password_confirmation' => 'Password123',
+            'next' => '/#karir',
+        ])->assertRedirect(url('/#karir'));
     }
 
     public function test_registration_preserves_selected_internship_program_when_returning_to_apply_page(): void

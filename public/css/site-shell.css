@@ -7,17 +7,30 @@ body {
   margin: 0;
 }
 
+html {
+  scrollbar-gutter: stable;
+}
+
 .site-header *,
 .site-footer * {
   box-sizing: border-box;
 }
 
 .site-header {
-  position: sticky;
+  position: fixed;
   top: 0;
+  right: 0;
+  left: 0;
   z-index: 100;
   isolation: isolate;
+  view-transition-name: site-header;
+  width: 100%;
+  font-size: 15px;
   line-height: 1.5;
+}
+
+.site-header-spacer {
+  height: var(--site-header-height, 121px);
 }
 
 .site-header a,
@@ -42,9 +55,9 @@ body {
 
 .site-header .nav > .container {
   min-height: 76px;
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   align-items: center;
-  justify-content: space-between;
   gap: 24px;
 }
 
@@ -53,6 +66,7 @@ body {
   align-items: center;
   gap: 10px;
   flex: 0 0 auto;
+  justify-self: start;
 }
 
 .site-header .brand img {
@@ -100,15 +114,19 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  justify-self: center;
   gap: clamp(14px, 2vw, 28px);
   color: #3b342f;
   font-size: 13px;
   font-weight: 600;
+  line-height: 1.5;
 }
 
 .site-header .menu a {
   position: relative;
   padding: 9px 0;
+  font-size: 13px;
+  line-height: 1.5;
   white-space: nowrap;
   transition: color .25s ease;
 }
@@ -140,11 +158,13 @@ body {
 .site-header .nav-actions {
   display: flex;
   align-items: center;
+  justify-self: end;
   gap: 16px;
   flex: 0 0 auto;
   color: #3b342f;
   font-size: 13px;
   font-weight: 600;
+  line-height: 1.5;
 }
 
 .site-header .nav-actions .btn {
@@ -312,16 +332,30 @@ body {
 }
 
 @media (max-width: 1000px) {
+  .site-header-spacer {
+    height: 153px;
+  }
+
   .site-header .nav > .container {
-    flex-wrap: wrap;
-    justify-content: center;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     gap: 6px 22px;
     padding-top: 10px;
     padding-bottom: 10px;
   }
 
+  .site-header .brand {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .site-header .nav-actions {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
   .site-header .menu {
-    order: 3;
+    grid-column: 1 / -1;
+    grid-row: 2;
     width: 100%;
     justify-content: center;
     flex-wrap: wrap;
@@ -334,6 +368,10 @@ body {
 }
 
 @media (max-width: 600px) {
+  .site-header-spacer {
+    height: 70px;
+  }
+
   .site-header .container,
   .site-footer .container {
     width: calc(100% - 32px);
@@ -344,7 +382,7 @@ body {
   }
 
   .site-header .nav > .container {
-    justify-content: space-between;
+    justify-content: initial;
   }
 
   .site-header .brand img {
@@ -403,6 +441,12 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .site-header .ticker-track {
     animation: none;
+  }
+
+  ::view-transition-group(root),
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none !important;
   }
 
   .site-header *,

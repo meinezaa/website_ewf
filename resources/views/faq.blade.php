@@ -51,6 +51,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Pusat Bantuan &amp; FAQ | PT Equityworld Futures</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @include('partials.navigation-transitions')
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -61,12 +62,12 @@
     <main class="faq-page">
         <section class="faq-hero">
             <div class="faq-wrap faq-hero-inner">
-                <div class="faq-hero-copy">
+                <div class="faq-hero-copy" data-faq-reveal>
                     <span class="faq-eyebrow"><i aria-hidden="true"></i>PUSAT INFORMASI</span>
                     <h1>Pusat Bantuan <span>&amp; FAQ</span></h1>
                     <p>Temukan jawaban atas pertanyaan seputar PT Equityworld Futures, lowongan kerja, serta program Magang dan PKL di Galeri Magang.</p>
                 </div>
-                <div class="faq-visual" aria-hidden="true">
+                <div class="faq-visual" aria-hidden="true" data-faq-reveal>
                     <span class="faq-visual-orbit"></span>
                     <span class="faq-visual-mark">?</span>
                     <span class="faq-visual-note"><b>{{ $faqTotal }}</b> jawaban tersedia</span>
@@ -75,7 +76,7 @@
         </section>
 
         <section class="faq-content faq-wrap" aria-label="Pertanyaan yang sering diajukan">
-            <div class="faq-toolbar">
+            <div class="faq-toolbar" data-faq-reveal>
                 <div class="faq-search-row">
                     <div class="faq-search">
                         <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 4.5 4.5"/></svg>
@@ -106,7 +107,7 @@
             <div class="faq-groups" id="faq-groups">
                 @foreach($faqCategories as $category)
                 <section class="faq-group" data-group="{{ $category['id'] }}">
-                    <div class="faq-group-heading">
+                    <div class="faq-group-heading" data-faq-reveal>
                         <span class="faq-group-icon" aria-hidden="true"><i class="bi {{ $category['icon'] }}"></i></span>
                         <div>
                             <h2>{{ $category['title'] }}</h2>
@@ -117,7 +118,7 @@
                     <div class="faq-list">
                         @foreach($faqItems as $index => $item)
                             @if($item['category'] === $category['id'])
-                            <details class="faq-item" data-category="{{ $item['category'] }}">
+                            <details class="faq-item" data-category="{{ $item['category'] }}" data-faq-reveal>
                                 <summary class="faq-question" aria-controls="faq-answer-{{ $index + 1 }}">
                                     <span class="faq-number">{{ str_pad((string) ($index + 1), 2, '0', STR_PAD_LEFT) }}</span>
                                     <span class="faq-question-text">{{ $item['question'] }}</span>
@@ -159,7 +160,7 @@
                 <p>Coba kata kunci lain atau pilih kategori yang berbeda.</p>
             </div>
 
-            <section class="faq-contact">
+            <section class="faq-contact" data-faq-reveal>
                 <div>
                     <h2>Masih ada yang ingin ditanyakan?</h2>
                     <p>Kunjungi halaman Karier untuk melihat informasi posisi dan program yang tersedia.</p>
@@ -238,6 +239,20 @@
             items.forEach(item=>item.addEventListener('toggle',updateExpandLabel));
             filterFaq();
         })();
+
+        const faqRevealTargets=document.querySelectorAll('.faq-page [data-faq-reveal]');
+        if('IntersectionObserver' in window&&!window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+            document.documentElement.classList.add('faq-motion-ready');
+            const faqRevealObserver=new IntersectionObserver(entries=>{
+                entries.forEach(entry=>{
+                    if(entry.isIntersecting){
+                        entry.target.classList.add('is-visible');
+                        faqRevealObserver.unobserve(entry.target);
+                    }
+                });
+            },{threshold:.12,rootMargin:'0px 0px -32px 0px'});
+            faqRevealTargets.forEach(target=>faqRevealObserver.observe(target));
+        }
     </script>
 </body>
 </html>

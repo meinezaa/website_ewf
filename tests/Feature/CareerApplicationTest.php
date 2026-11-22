@@ -736,6 +736,37 @@ class CareerApplicationTest extends TestCase
         $this->assertSame(6, substr_count($response->getContent(), 'class="card internship-major-card"') - count($hiddenMajors[0]));
     }
 
+    public function test_home_career_signup_is_guest_only_and_information_link_opens_careers(): void
+    {
+        $this->get(route('home'))
+            ->assertOk()
+            ->assertSeeText('Formulir Pendaftaran Karir Online')
+            ->assertSeeText('Informasi Detail')
+            ->assertSee(route('karir').'#lowongan', false)
+            ->assertSee(route('daftar', ['next' => '/#karir']), false);
+
+        $this->actingAs($this->applicant())
+            ->get(route('home'))
+            ->assertOk()
+            ->assertDontSeeText('Formulir Pendaftaran Karir Online')
+            ->assertDontSeeText('Informasi Detail')
+            ->assertDontSeeText('Daftar Karir Sekarang');
+    }
+
+    public function test_activities_signup_callout_is_guest_only(): void
+    {
+        $this->get(route('kegiatan'))
+            ->assertOk()
+            ->assertSeeText('Siap Jadi Bagian dari')
+            ->assertSee(route('daftar', ['next' => '/karir#lowongan']), false);
+
+        $this->actingAs($this->applicant())
+            ->get(route('kegiatan'))
+            ->assertOk()
+            ->assertDontSeeText('Siap Jadi Bagian dari')
+            ->assertDontSeeText('Daftar Sekarang');
+    }
+
     public function test_career_page_prefills_selected_internship_major_and_field(): void
     {
         $this->get(route('karir', [

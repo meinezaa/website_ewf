@@ -3,7 +3,6 @@
     max-width:none;width:100%;margin-left:0;margin-right:0;
     padding-left:var(--shell-pad);padding-right:var(--shell-pad);box-sizing:border-box;
   }
-  body .site-header .nav .container{@apply flex items-center justify-between}
   body .site-header .nav-actions form{margin:0}
   body .site-header .nav-actions form .btn{font:inherit;@apply cursor-pointer}
   body .site-header .nav-actions .account-link{

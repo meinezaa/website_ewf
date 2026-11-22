@@ -11,7 +11,6 @@
     max-width:none;width:100%;margin-left:0;margin-right:0;
     padding-left:var(--shell-pad);padding-right:var(--shell-pad);box-sizing:border-box;
   }
-  body .site-header .nav .container{display:flex;align-items:center;justify-content:space-between}
   body .site-header .nav-actions form{margin:0}
   body .site-header .nav-actions form .btn{font:inherit;cursor:pointer}
   body .site-header .nav-actions .account-link{
@@ -106,7 +105,25 @@
   </div>
 </div>
 
+<div class="site-header-spacer" aria-hidden="true"></div>
+
 <script>
+(() => {
+  const header = document.querySelector('.site-header');
+  const spacer = document.querySelector('.site-header-spacer');
+  if (!header || !spacer) return;
+
+  const syncHeaderHeight = () => {
+    const height = header.getBoundingClientRect().height;
+    document.documentElement.style.setProperty('--site-header-height', `${height}px`);
+    spacer.style.height = `${height}px`;
+  };
+
+  syncHeaderHeight();
+  if ('ResizeObserver' in window) new ResizeObserver(syncHeaderHeight).observe(header);
+  window.addEventListener('resize', syncHeaderHeight, { passive: true });
+})();
+
 document.addEventListener('click', event => {
   const link = event.target.closest('a[data-return-current]');
   if (!link || event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
