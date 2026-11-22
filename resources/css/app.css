@@ -1,4 +1,16 @@
+
+@import url('https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css');
+@import '../../public/css/site-shell.css';
 @import 'tailwindcss';
+@import './faq.css';
+@import './karir.css';
+@import './tentang_kami.css';
+@import './header.css';
+@import './footer.css';
+@import './profile.css';
+@import './daftar.css';
+@import './masuk.css';
+@import './password-pages.css';
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
