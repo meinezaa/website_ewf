@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Role;
+use App\Models\ActivityLog;
 use App\Models\User;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Database\QueryException;
@@ -46,6 +47,15 @@ class AuthController extends Controller
         }
 
         $request->session()->regenerate();
+        ActivityLog::create([
+            'user_id' => Auth::id(),
+            'activity' => 'Login berhasil.',
+            'ip_address' => $request->ip(),
+        ]);
+
+        if ($this->isAdmin()) {
+            return redirect()->route('admin.dashboard');
+        }
 
         return redirect()->to($this->safeNext($credentials['next'] ?? null));
     }
@@ -189,12 +199,23 @@ class AuthController extends Controller
 
         Auth::login($user);
         $request->session()->regenerate();
+        ActivityLog::create([
+            'user_id' => $user->getKey(),
+            'activity' => 'Membuat akun baru.',
+            'ip_address' => $request->ip(),
+        ]);
 
         return redirect()->to($this->safeNext($validated['next'] ?? null));
     }
 
     public function logout(Request $request): RedirectResponse
     {
+        ActivityLog::create([
+            'user_id' => $request->user()->getKey(),
+            'activity' => 'Logout.',
+            'ip_address' => $request->ip(),
+        ]);
+
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
@@ -232,6 +253,11 @@ class AuthController extends Controller
         }
 
         return route('profile');
+    }
+
+    private function isAdmin(): bool
+    {
+        return mb_strtolower((string) Auth::user()?->role?->role_name) === 'admin';
     }
 
     private function isAllowedCareerFragment(string $fragment): bool

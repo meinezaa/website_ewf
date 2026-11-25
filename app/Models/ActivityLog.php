@@ -9,7 +9,7 @@ class ActivityLog extends Model
 {
     protected $table = 'activity_logs';
 
-    public $timestamps = false;
+    public const UPDATED_AT = null;
 
     protected $fillable = [
         'user_id',
@@ -19,6 +19,6 @@ class ActivityLog extends Model
 
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class, 'user_id')->withTrashed();
     }
 }

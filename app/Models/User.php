@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Str;
 
 class User extends Authenticatable
 {
@@ -53,6 +54,27 @@ class User extends Authenticatable
         $encodedPath = array_map('rawurlencode', explode('/', $this->profile_photo_path));
 
         return '/storage/'.implode('/', $encodedPath);
+    }
+
+    public function getInitialsAttribute(): string
+    {
+        $words = preg_split('/\s+/u', trim($this->name)) ?: [];
+
+        return collect($words)
+            ->filter()
+            ->take(2)
+            ->map(fn (string $word) => mb_strtoupper(mb_substr($word, 0, 1)))
+            ->implode('');
+    }
+
+    public function getRoleLabelAttribute(): string
+    {
+        return $this->role?->role_name ?? 'Tanpa role';
+    }
+
+    public function getRoleClassAttribute(): string
+    {
+        return Str::slug($this->role_label);
     }
 
     public function role(): BelongsTo

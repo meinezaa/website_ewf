@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\InternshipRegistration;
+use App\Models\Role;
 use App\Models\StaffRegistration;
 use App\Models\User;
 use App\Notifications\ResetPasswordNotification;
@@ -119,6 +120,26 @@ class AuthenticationTest extends TestCase
             'password' => 'Password123',
             'next' => '/karir#apply/internship-4',
         ])->assertRedirect(route('karir').'#apply/internship-4');
+    }
+
+    public function test_admin_login_redirects_to_the_admin_dashboard(): void
+    {
+        $role = Role::create(['role_name' => 'Admin']);
+        $admin = User::create([
+        'role_id' => $role->getKey(),
+        'name' => 'Admin Lokal',
+        'email' => 'admin@example.test',
+        'password' => 'Password123',
+        'status' => 'active',
+        ]);
+
+        $this->post(route('login.store'), [
+        'email' => $admin->email,
+        'password' => 'Password123',
+        'next' => '/karir',
+        ])->assertRedirect(route('admin.dashboard'));
+
+        $this->assertAuthenticatedAs($admin);
     }
 
     public function test_password_reset_sends_a_token_link_and_allows_login_with_the_new_password(): void

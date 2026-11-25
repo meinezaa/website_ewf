@@ -40,7 +40,9 @@
     $faqUrl = Route::has('faq') ? route('faq') : route('home').'#faq';
     $loginUrl = Route::has('login') ? route('login', ['next' => $currentLocation]) : route('home').'#karir';
     $registerUrl = Route::has('daftar') ? route('daftar', ['next' => $currentLocation]) : route('home').'#karir';
-    $profileUrl = Route::has('profile') ? route('profile') : route('home').'#karir';
+    $profileUrl = auth()->check() && mb_strtolower((string) auth()->user()->role?->role_name) === 'admin'
+      ? route('admin.profile')
+      : (Route::has('profile') ? route('profile') : route('home').'#karir');
     $careerController = \App\Http\Controllers\CareerApplicationController::class;
     $careerOpenings = class_exists($careerController) && method_exists($careerController, 'announcementOpenings')
       ? $careerController::announcementOpenings()

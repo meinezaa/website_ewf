@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\InternshipRegistration;
 use App\Models\StaffRegistration;
+use App\Models\ActivityLog;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -43,6 +44,11 @@ class ProfileController extends Controller
 
         $user = $request->user();
         $user->update($validated);
+        ActivityLog::create([
+            'user_id' => $user->getKey(),
+            'activity' => 'Memperbarui profil.',
+            'ip_address' => $request->ip(),
+        ]);
 
         return back()->with('profile_updated', true);
     }
@@ -66,6 +72,11 @@ class ProfileController extends Controller
         }
 
         $user->update(['profile_photo_path' => $newPhotoPath]);
+        ActivityLog::create([
+            'user_id' => $user->getKey(),
+            'activity' => 'Mengubah foto profil.',
+            'ip_address' => $request->ip(),
+        ]);
         if ($oldPhotoPath && $oldPhotoPath !== $newPhotoPath) {
             $publicDisk = Storage::disk('public');
             if ($publicDisk->exists($oldPhotoPath) && ! $publicDisk->delete($oldPhotoPath)) {
@@ -87,6 +98,11 @@ class ProfileController extends Controller
         $user = $request->user();
         $email = $user->email;
         $profilePhotoPath = $user->profile_photo_path;
+        ActivityLog::create([
+            'user_id' => $user->getKey(),
+            'activity' => 'Menghapus akun.',
+            'ip_address' => $request->ip(),
+        ]);
         $applications = StaffRegistration::query()
             ->where('applicant_id', $user->getKey())
             ->orWhere('email', $email)

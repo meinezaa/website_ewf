@@ -1,9 +1,14 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\AdminActivityLogController;
+use App\Http\Controllers\AdminUsersController;
+use App\Http\Controllers\AdminProfileController;
 use App\Http\Controllers\CareerApplicationController;
+use App\Http\Controllers\DashboardAdminController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Middleware\EnsureAdmin;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -30,7 +35,30 @@ Route::middleware('guest')->group(function (): void {
 });
 
 Route::middleware('auth')->group(function (): void {
-    Route::get('/profil', [ProfileController::class, 'show'])->name('profile');
+    Route::middleware(EnsureAdmin::class)->prefix('admin')->name('admin.')->group(function (): void {
+        Route::get('/', DashboardAdminController::class)->name('dashboard');
+        Route::get('/users', [AdminUsersController::class, 'index'])->name('users.index');
+        Route::get('/users/create', [AdminUsersController::class, 'create'])->name('users.create');
+        Route::post('/users', [AdminUsersController::class, 'store'])->name('users.store');
+        Route::get('/users/{user}/edit', [AdminUsersController::class, 'edit'])->whereNumber('user')->name('users.edit');
+        Route::put('/users/{user}', [AdminUsersController::class, 'update'])->whereNumber('user')->name('users.update');
+        Route::delete('/users/{user}', [AdminUsersController::class, 'destroy'])->whereNumber('user')->name('users.destroy');
+        Route::patch('/users/{user}/status', [AdminUsersController::class, 'toggleStatus'])->whereNumber('user')->name('users.status');
+        Route::get('/logs', [AdminActivityLogController::class, 'index'])->name('logs');
+        Route::get('/profile', [AdminProfileController::class, 'show'])->name('profile');
+        Route::put('/profile', [AdminProfileController::class, 'update'])->name('profile.update');
+        Route::post('/profile/photo', [AdminProfileController::class, 'updatePhoto'])
+            ->middleware('throttle:10,1')
+            ->name('profile.photo.update');
+    });
+
+    Route::get('/profil', function (\Illuminate\Http\Request $request) {
+        if (mb_strtolower((string) $request->user()->role?->role_name) === 'admin') {
+            return redirect()->route('admin.profile');
+        }
+
+        return app(ProfileController::class)->show($request);
+    })->name('profile');
     Route::put('/profil', [ProfileController::class, 'update'])->name('profile.update');
     Route::post('/profil/foto', [ProfileController::class, 'updatePhoto'])
         ->middleware('throttle:10,1')

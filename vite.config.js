@@ -10,6 +10,7 @@ export default defineConfig({
                 'resources/css/home.css',
                 'resources/css/kegiatan.css',
                 'resources/css/auth-transitions.css',
+                'resources/css/admin.css',
                 'resources/js/app.js',
             ],
             refresh: true,

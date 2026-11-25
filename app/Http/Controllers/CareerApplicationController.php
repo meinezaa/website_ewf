@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\InternshipRegistration;
 use App\Models\StaffRegistration;
+use App\Models\ActivityLog;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -417,6 +418,12 @@ class CareerApplicationController extends Controller
 
             throw $exception;
         }
+
+        ActivityLog::create([
+            'user_id' => $request->user()->getKey(),
+            'activity' => 'Mengirim lamaran untuk posisi '.$application->job_title.'.',
+            'ip_address' => $request->ip(),
+        ]);
 
         return redirect()
             ->route('karir')
