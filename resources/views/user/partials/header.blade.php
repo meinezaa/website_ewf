@@ -1,4 +1,4 @@
-{{-- resources/views/partials/header.blade.php --}}
+{{-- resources/views/user/partials/header.blade.php --}}
 <style>
   @import url("{{ asset('css/site-shell.css') }}");
   @import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css");
@@ -122,6 +122,28 @@
   syncHeaderHeight();
   if ('ResizeObserver' in window) new ResizeObserver(syncHeaderHeight).observe(header);
   window.addEventListener('resize', syncHeaderHeight, { passive: true });
+})();
+
+(() => {
+  const showDefaultAvatar = image => {
+    const link = image.closest('.site-header .account-link');
+    if (!link || image.parentNode !== link) return;
+    const fallback = document.createElement('i');
+    fallback.className = 'bi bi-person-circle';
+    fallback.setAttribute('aria-hidden', 'true');
+    link.replaceChildren(fallback);
+  };
+
+  document.addEventListener('error', event => {
+    const image = event.target;
+    if (image instanceof HTMLImageElement && image.matches('.site-header .account-link img')) {
+      showDefaultAvatar(image);
+    }
+  }, true);
+
+  document.querySelectorAll('.site-header .account-link img').forEach(image => {
+    if (image.complete && image.naturalWidth === 0) showDefaultAvatar(image);
+  });
 })();
 
 document.addEventListener('click', event => {

@@ -1,6 +1,6 @@
 {{--
-    File: resources/views/tentang_kami.blade.php
-    Route: Route::view('/tentang-kami', 'tentang_kami')->name('tentang.kami');
+    File: resources/views/user/tentang_kami.blade.php
+    Route: Route::view('/tentang-kami', 'user.tentang_kami')->name('tentang.kami');
 
     SEMUA GAMBAR ada di public/image. Kalau nama file Anda berbeda,
     cukup ubah nama file pada array $img di bawah ini (satu tempat saja).
@@ -76,7 +76,7 @@
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <title>Tentang Kami | PT Equityworld Futures</title>
 @vite(['resources/css/app.css'])
-@include('partials.navigation-transitions')
+@include('user.partials.navigation-transitions')
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -85,7 +85,7 @@
 </head>
 <body class="about-page">
 
-@include('partials.header')
+@include('user.partials.header')
 @if(session('account_deleted'))
     <p role="status">Akun Anda berhasil dihapus. Silakan daftar kembali jika ingin menggunakan layanan.</p>
 @endif
@@ -364,7 +364,7 @@
   </div>
 </section>
 
-@include('partials.footer')
+@include('user.partials.footer')
 
 <script>
   // Animasi muncul saat scroll

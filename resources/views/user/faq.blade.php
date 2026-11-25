@@ -51,13 +51,13 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Pusat Bantuan &amp; FAQ | PT Equityworld Futures</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    @include('partials.navigation-transitions')
+    @include('user.partials.navigation-transitions')
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
-    @include('partials.header')
+    @include('user.partials.header')
 
     <main class="faq-page">
         <section class="faq-hero">
@@ -170,7 +170,7 @@
         </section>
     </main>
 
-    @include('partials.footer')
+    @include('user.partials.footer')
 
     <script>
         (function(){

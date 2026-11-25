@@ -12,11 +12,11 @@
     @stack('styles')
 </head>
 <body>
-    @include('partials.header')
+    @include('user.partials.header')
 
     @yield('content')
 
-    @include('partials.footer')
+    @include('user.partials.footer')
 
     @stack('scripts')
 </body>

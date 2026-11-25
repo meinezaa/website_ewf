@@ -1,4 +1,4 @@
-{{-- resources/views/partials/footer.blade.php --}}
+{{-- resources/views/user/partials/footer.blade.php --}}
 @php
   $footerAboutUrl = Route::has('tentang.kami') ? route('tentang.kami') : route('home').'#tentang-perusahaan';
   $footerActivitiesUrl = Route::has('kegiatan') ? route('kegiatan') : (Route::has('tentang.kami') ? route('tentang.kami').'#fasilitas' : route('home').'#galeri-magang');

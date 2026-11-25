@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Http\Controllers\CareerApplicationController;
 use App\Models\InternshipRegistration;
+use App\Models\Role;
 use App\Models\StaffRegistration;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -23,6 +24,87 @@ class CareerApplicationTest extends TestCase
         $this->assertTrue(Schema::hasTable('internship_registrations'));
     }
 
+    public function test_hrd_approval_updates_career_tracking_and_enables_loa_download(): void
+    {
+        Storage::fake('private');
+        $applicant = $this->applicant();
+        $hrd = $this->hrd();
+        $application = InternshipRegistration::create([
+            'applicant_id' => $applicant->id,
+            'full_name' => $applicant->name,
+            'email' => $applicant->email,
+            'phone' => '+628123456789',
+            'status' => 'pending',
+            'reference' => 'INT-APPROVAL-001',
+            'job_id' => 'internship-0',
+            'job_title' => 'Magang Administrasi',
+            'company' => 'PT Equityworld Futures',
+        ]);
+
+        $this->actingAs($hrd)
+            ->postJson(route('hrd.application.status', ['internship', $application->getKey()]), [
+                'status' => 'in_review',
+            ])
+            ->assertOk();
+
+        $this->actingAs($applicant)
+            ->get(route('karir'))
+            ->assertOk()
+            ->assertSeeText('Sedang ditinjau HRD')
+            ->assertSeeText('Seleksi Wawancara')
+            ->assertSeeText('HRD sedang meninjau lamaran dan akan menginformasikan jadwal wawancara bila diperlukan.');
+
+        $this->actingAs($hrd)
+            ->postJson(route('hrd.application.status', ['internship', $application->getKey()]), [
+                'status' => 'accepted',
+            ])
+            ->assertOk();
+
+        $this->actingAs($applicant)
+            ->get(route('karir'))
+            ->assertOk()
+            ->assertSeeText('Disetujui HRD')
+            ->assertSeeText('Lamaran disetujui HRD')
+            ->assertSeeText('Sertifikat tersedia setelah program magang atau PKL selesai.')
+            ->assertDontSee(route('karir.application.document.download', [
+                'applicationId' => $application->getKey(),
+                'document' => 'loa',
+            ]), false);
+
+        $this->actingAs($hrd)
+            ->from(route('hrd.dashboard'))
+            ->post(route('hrd.documents.store'), [
+                'internship_registration_id' => $application->getKey(),
+                'document_type' => 'certificate',
+                'file' => UploadedFile::fake()->create('certificate.pdf', 32, 'application/pdf'),
+            ])
+            ->assertRedirect(route('hrd.dashboard').'#documents')
+            ->assertSessionHasErrors('document_type');
+
+        $this->post(route('hrd.documents.store'), [
+            'internship_registration_id' => $application->getKey(),
+            'document_type' => 'loa',
+            'file' => UploadedFile::fake()->create('loa.pdf', 24, 'application/pdf'),
+        ])->assertRedirect(route('hrd.dashboard').'#documents')
+            ->assertSessionHas('hrd_document_saved', true);
+
+        $application->refresh();
+        $this->assertSame('accepted', $application->status);
+        Storage::disk('private')->assertExists($application->loa_path);
+
+        $this->actingAs($applicant)
+            ->get(route('karir'))
+            ->assertSee(route('karir.application.document.download', [
+                'applicationId' => $application->getKey(),
+                'document' => 'loa',
+            ]), false);
+
+        $this->get(route('karir.application.document.download', [
+            'applicationId' => $application->getKey(),
+            'document' => 'loa',
+        ]))->assertOk()->assertHeader('content-type', 'application/pdf');
+    }
+
     public function test_internship_programs_match_the_requested_majors_and_fields(): void
     {
         $programs = CareerApplicationController::internshipPrograms();
@@ -38,18 +120,71 @@ class CareerApplicationTest extends TestCase
             'Akuntansi' => ['Staff Akuntansi', 'Pajak', 'Audit Internal'],
             'Pemasaran' => ['Marketing Communication', 'Sales & Partnership', 'Brand Strategy'],
         ], array_map(fn (array $fields) => array_column($fields, 'label'), $programs));
+
+        $internationalRelationsFields = collect($programs['Hubungan Internasional']);
+        $this->assertSame(
+            'internship-0',
+            $internationalRelationsFields->firstWhere('label', 'Riset Kebijakan')['job_id']
+        );
+        $this->assertFalse($internationalRelationsFields->contains('job_id', 'internship-2'));
     }
 
-    public function test_transition_marks_existing_pending_internships_as_completed(): void
+    public function test_career_job_applicant_counts_come_from_registration_tables(): void
+    {
+        StaffRegistration::create([
+            'full_name' => 'Staff One',
+            'email' => 'staff-one@example.test',
+            'phone' => '+628123456789',
+            'job_id' => 'professional-0',
+        ]);
+        StaffRegistration::create([
+            'full_name' => 'Staff Two',
+            'email' => 'staff-two@example.test',
+            'phone' => '+628123456780',
+            'job_id' => 'professional-0',
+            'status' => 'rejected',
+        ]);
+        InternshipRegistration::create([
+            'full_name' => 'Intern One',
+            'email' => 'intern-one@example.test',
+            'phone' => '+628123456781',
+            'job_id' => 'internship-2',
+        ]);
+
+        $this->get(route('karir'))
+            ->assertOk()
+            ->assertSee('data-career-applicants="2"', false)
+            ->assertSee('data-career-applicants="1"', false);
+
+        $this->get(route('karir.applicant-counts'))
+            ->assertOk()
+            ->assertJsonPath('counts.professional-0', 2)
+            ->assertJsonPath('counts.professional-1', 0)
+            ->assertJsonPath('counts.internship-2', 1);
+    }
+
+    public function test_transition_completes_only_accepted_internships_with_a_past_end_date(): void
     {
         $applicant = $this->applicant();
-        $application = InternshipRegistration::create([
+        $pendingApplication = InternshipRegistration::create([
             'applicant_id' => $applicant->id,
             'full_name' => $applicant->name,
             'email' => $applicant->email,
             'phone' => '+628123456789',
             'status' => 'pending',
+            'end_date' => today()->subDay(),
             'reference' => 'INT-TRANSITION-001',
+            'job_id' => 'internship-0',
+            'job_title' => 'Magang Administrasi',
+            'company' => 'PT Equityworld Futures',
+        ]);
+        $finishedApplication = InternshipRegistration::create([
+            'full_name' => 'Peserta Selesai',
+            'email' => 'finished@example.test',
+            'phone' => '+628123456780',
+            'status' => 'accepted',
+            'end_date' => today()->subDay(),
+            'reference' => 'INT-TRANSITION-002',
             'job_id' => 'internship-0',
             'job_title' => 'Magang Administrasi',
             'company' => 'PT Equityworld Futures',
@@ -59,19 +194,14 @@ class CareerApplicationTest extends TestCase
         $migration->up();
 
         $this->assertDatabaseHas('internship_registrations', [
-            'id' => $application->getKey(),
+            'id' => $pendingApplication->getKey(),
+            'status' => 'pending',
+        ]);
+        $this->assertFalse($pendingApplication->fresh()->isProgramCompleted());
+        $this->assertDatabaseHas('internship_registrations', [
+            'id' => $finishedApplication->getKey(),
             'status' => 'completed',
         ]);
-
-        $this->actingAs($applicant)
-            ->get(route('karir'))
-            ->assertRedirect(route('karir.documents'));
-
-        $this->get(route('karir.documents'))
-            ->assertOk()
-            ->assertSeeText('Unduh dokumen magang')
-            ->assertSeeText('Sertifikat Magang / PKL')
-            ->assertSeeText('Letter of Acceptance (LOA)');
     }
 
     public function test_applicant_can_submit_a_valid_career_application_with_private_documents(): void
@@ -114,6 +244,12 @@ class CareerApplicationTest extends TestCase
         $this->assertNotNull($application->privacy_consent_at);
         $this->assertSame('', $application->headline);
         $this->assertSame('', $application->summary);
+        $this->assertDatabaseHas('career_application_tracking_events', [
+            'application_type' => 'staff',
+            'application_id' => $application->getKey(),
+            'event_type' => 'application_submitted',
+            'to_status' => 'pending',
+        ]);
         Storage::disk('private')->assertExists($application->cv_path);
         Storage::disk('private')->assertExists($application->documents['ktp']);
         Storage::disk('private')->assertExists($application->documents['diploma']);
@@ -122,21 +258,15 @@ class CareerApplicationTest extends TestCase
             ->assertSeeText('Status pelacakan lamaran')
             ->assertSeeText($application->job_title)
             ->assertSeeText('Pelamar: Indira Prastika')
-            ->assertSeeText('Lamaran diterima')
+            ->assertSeeText('Lamaran dikirim')
             ->assertSeeText('Verifikasi berkas')
-            ->assertSeeText('Seleksi dan wawancara')
+            ->assertSeeText('Seleksi Wawancara')
             ->assertSeeText('Hasil akhir')
             ->assertSeeText('Perusahaan Terverifikasi')
             ->assertSeeText('Tanggal pengiriman')
-            ->assertSeeText($application->created_at->format('d/m/Y, H:i').' WIB')
-            ->assertSeeText('Waktu verifikasi')
-            ->assertSeeText('Menunggu pembaruan HR')
-            ->assertSeeText('Jadwal wawancara')
-            ->assertSeeText('Belum diumumkan')
-            ->assertSeeText('Hadir')
-            ->assertSeeText('Tidak hadir')
-            ->assertSeeText('Konfirmasi aktif setelah jadwal wawancara diumumkan.')
-            ->assertSeeText('Waktu pengumuman hasil')
+            ->assertSeeText($application->created_at->timezone('Asia/Jakarta')->format('d/m/Y, H:i').' WIB')
+            ->assertSeeText('Menunggu pembaruan HRD')
+            ->assertSeeText('Menunggu verifikasi')
             ->assertSee('id="trackingSearchForm"', false)
             ->assertSee('class="career-heading tracking-heading"', false)
             ->assertDontSee('Kawan Pajak')
@@ -295,7 +425,7 @@ class CareerApplicationTest extends TestCase
         $this->get(route('karir'))
             ->assertSeeText('Status pelacakan lamaran')
             ->assertSeeText('Fullstack Developer')
-            ->assertSeeText('Lamaran diterima')
+            ->assertSeeText('Lamaran dikirim')
             ->assertDontSee('id="careerApplicationForm"', false);
 
         $application->update(['status' => 'completed']);
@@ -304,12 +434,12 @@ class CareerApplicationTest extends TestCase
         $this->get(route('karir.documents'))
             ->assertOk()
             ->assertSeeText('Unduh dokumen magang')
-            ->assertSeeText('Selamat menyelesaikan program!')
+            ->assertSeeText('Dokumen penyelesaian program')
             ->assertSeeText('Sertifikat Magang / PKL')
             ->assertSeeText('Letter of Acceptance (LOA)')
-            ->assertSeeText('Unduh')
-            ->assertSeeText('Tombol akan aktif setelah PDF sertifikat dan LOA tersedia.')
-            ->assertDontSeeText('Lamaran diterima');
+            ->assertSeeText('Belum tersedia')
+            ->assertSeeText('Dokumen yang belum diterbitkan HRD akan muncul di sini setelah tersedia.')
+            ->assertDontSee('<section class="tracker"', false);
 
         $certificatePath = 'career-applications/'.$application->reference.'/issued/certificate.pdf';
         $loaPath = 'career-applications/'.$application->reference.'/issued/loa.pdf';
@@ -363,7 +493,7 @@ class CareerApplicationTest extends TestCase
             'full_name' => $applicant->name,
             'email' => $applicant->email,
             'phone' => '+628123456789',
-            'status' => 'pending',
+            'status' => 'accepted',
             'reference' => $reference,
             'job_id' => 'internship-0',
             'job_title' => 'Magang Administrasi',
@@ -805,10 +935,13 @@ class CareerApplicationTest extends TestCase
 
     public function test_authenticated_applicant_can_refresh_the_application_session(): void
     {
-        $this->actingAs($this->applicant())
-            ->get(route('karir.session.refresh'))
-            ->assertNoContent()
+        $response = $this->actingAs($this->applicant())
+            ->get(route('karir.session.refresh'));
+
+        $response->assertOk()
+            ->assertJsonStructure(['csrf_token'])
             ->assertSessionHas('_career_application_activity');
+        $this->assertSame($this->app['session.store']->token(), $response->json('csrf_token'));
     }
 
     private function applicant(): User
@@ -816,6 +949,19 @@ class CareerApplicationTest extends TestCase
         return User::create([
             'name' => 'Indira Prastika',
             'email' => 'indira@example.test',
+            'password' => 'Password123',
+            'status' => 'active',
+        ]);
+    }
+
+    private function hrd(): User
+    {
+        $role = Role::query()->create(['role_name' => 'HRD']);
+
+        return User::create([
+            'role_id' => $role->getKey(),
+            'name' => 'HRD Penguji',
+            'email' => 'hrd@example.test',
             'password' => 'Password123',
             'status' => 'active',
         ]);

@@ -48,6 +48,10 @@ class InternshipRegistration extends Model
         'target_position',
         'certificate_path',
         'loa_path',
+        'interview_at',
+        'interview_information',
+        'interview_attendance',
+        'interview_confirmed_at',
     ];
 
     protected function casts(): array
@@ -58,6 +62,8 @@ class InternshipRegistration extends Model
             'start_date' => 'date',
             'end_date' => 'date',
             'privacy_consent_at' => 'datetime',
+            'interview_at' => 'datetime',
+            'interview_confirmed_at' => 'datetime',
             'experiences' => 'array',
             'education_details' => 'array',
             'skills' => 'array',
@@ -83,6 +89,8 @@ class InternshipRegistration extends Model
     public function isProgramCompleted(): bool
     {
         return $this->status === 'completed'
-            || ($this->end_date !== null && $this->end_date->isBefore(today()));
+            || ($this->status === 'accepted'
+                && $this->end_date !== null
+                && $this->end_date->isBefore(today()));
     }
 }

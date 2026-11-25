@@ -22,8 +22,13 @@ class AuthController extends Controller
     public function showLogin(): View|RedirectResponse
     {
         return Auth::check()
-            ? redirect()->route('profile')
-            : view('register.masuk');
+            ? $this->authenticatedUserRedirect()
+            : view('user.register.masuk', ['hrdLogin' => false]);
+    }
+
+    public function showHrdLogin(): View
+    {
+        return view('user.register.masuk', ['hrdLogin' => true]);
     }
 
     public function login(Request $request): RedirectResponse
@@ -47,14 +52,55 @@ class AuthController extends Controller
 
         $request->session()->regenerate();
 
+        if ($this->isHrdUser($request->user())) {
+            Auth::logout();
+            $request->session()->regenerate();
+
+            return redirect()->route('hrd.login')
+                ->with('status', 'Untuk membuka dashboard HRD, masuk melalui formulir HRD.')
+                ->withInput($request->only('email'));
+        }
+
         return redirect()->to($this->safeNext($credentials['next'] ?? null));
+    }
+
+    public function loginHrd(Request $request): RedirectResponse
+    {
+        $request->merge(['email' => mb_strtolower(trim((string) $request->input('email', '')))]);
+        $credentials = $request->validate([
+            'email' => ['required', 'email:rfc', 'max:255'],
+            'password' => ['required', 'string'],
+        ]);
+
+        if (! Auth::attempt([
+            'email' => $credentials['email'],
+            'password' => $credentials['password'],
+            'status' => 'active',
+        ])) {
+            return back()
+                ->withErrors(['email' => 'Email atau kata sandi tidak sesuai.'])
+                ->withInput($request->only('email'));
+        }
+
+        if (! $this->isHrdUser($request->user())) {
+            Auth::logout();
+            $request->session()->regenerate();
+
+            return back()
+                ->withErrors(['email' => 'Akun ini tidak memiliki akses HRD.'])
+                ->withInput($request->only('email'));
+        }
+
+        $request->session()->regenerate();
+
+        return redirect()->route('hrd.dashboard');
     }
 
     public function showPasswordRequest(): View|RedirectResponse
     {
         return Auth::check()
-            ? redirect()->route('profile')
-            : view('register.lupa-password');
+            ? $this->authenticatedUserRedirect()
+            : view('user.register.lupa-password');
     }
 
     public function sendPasswordResetLink(Request $request): RedirectResponse
@@ -84,8 +130,8 @@ class AuthController extends Controller
         $email = $request->query('email', '');
 
         return Auth::check()
-            ? redirect()->route('profile')
-            : view('register.reset-password', [
+            ? $this->authenticatedUserRedirect()
+            : view('user.register.reset-password', [
                 'token' => $token,
                 'email' => is_string($email) ? $email : '',
             ]);
@@ -131,8 +177,8 @@ class AuthController extends Controller
     public function showRegistration(): View|RedirectResponse
     {
         return Auth::check()
-            ? redirect()->route('profile')
-            : view('register.daftar');
+            ? $this->authenticatedUserRedirect()
+            : view('user.register.daftar');
     }
 
     public function register(Request $request): RedirectResponse
@@ -195,11 +241,30 @@ class AuthController extends Controller
 
     public function logout(Request $request): RedirectResponse
     {
+        $isHrd = $this->isHrdUser($request->user());
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route('home');
+        return $isHrd
+            ? redirect()->route('hrd.login')
+            : redirect()->route('home');
+    }
+
+    private function authenticatedUserRedirect(): RedirectResponse
+    {
+        return redirect()->route('profile');
+    }
+
+    private function isHrdUser(mixed $user): bool
+    {
+        if (! $user instanceof User) {
+            return false;
+        }
+
+        $roleName = $user->role?->role_name;
+
+        return is_string($roleName) && strcasecmp(trim($roleName), 'HRD') === 0;
     }
 
     private function safeNext(?string $next): string

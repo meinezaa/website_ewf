@@ -1,16 +1,18 @@
 {{-- resources/views/login.blade.php --}}
 @php
+    $hrdLogin = $hrdLogin ?? false;
     $foto = asset('image/bg%20tentang%20kami.png');
     $logo = asset('image/logo%20ewf.png');
     $urlDaftar = route('daftar', request()->only('next'));
     $urlKarir = \Illuminate\Support\Facades\Route::has('karir') ? route('karir') : url('/karir');
+    $loginAction = $hrdLogin ? route('hrd.login.store') : route('login.store');
 @endphp
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Masuk ke Akun - PT Equityworld Futures</title>
+    <title>{{ $hrdLogin ? 'Masuk HRD' : 'Masuk ke Akun' }} - PT Equityworld Futures</title>
     {{-- pastikan halaman sudah siap sebelum transisi dimulai (mencegah kedip/patah di awal) --}}
     <link rel="expect" href="#shell" blocking="render">
     {{-- saat tiba lewat transisi, animasi masuk form ditangani transisi (bukan animasi halaman) --}}
@@ -33,8 +35,8 @@
     <main class="shell" id="shell">
         <section class="form-side">
             <div>
-                <h1>Masuk ke Akun</h1>
-                <p class="sub">Akses portal karier resmi PT Equityworld Futures untuk memperoleh informasi peluang karier, mengajukan pendaftaran, dan memantau perkembangan tahapan seleksi secara mudah dan transparan.</p>
+                <h1>{{ $hrdLogin ? 'Masuk HRD' : 'Masuk ke Akun' }}</h1>
+                <p class="sub">{{ $hrdLogin ? 'Masuk dengan akun HRD untuk membuka dashboard pengelolaan.' : 'Akses portal karier resmi PT Equityworld Futures untuk memperoleh informasi peluang karier, mengajukan pendaftaran, dan memantau perkembangan tahapan seleksi secara mudah dan transparan.' }}</p>
             </div>
 
             <div class="tabs" id="tabs">
@@ -54,7 +56,7 @@
                 @endif
             </div>
 
-            <form id="loginForm" action="{{ route('login.store') }}" method="POST">
+            <form id="loginForm" action="{{ $loginAction }}" method="POST">
                 @csrf
                 @if(request()->filled('next'))<input type="hidden" name="next" value="{{ request('next') }}">@endif
                 <label class="lbl" for="email">EMAIL</label>
@@ -68,7 +70,12 @@
                 <button class="btn" type="submit" id="submitBtn"><span>Masuk</span></button>
             </form>
 
-            <p class="switch">Belum punya akun? <a href="{{ $urlDaftar }}" data-go="daftar">Buat akun</a></p>
+            @if($hrdLogin)
+                <p class="switch">Masuk sebagai pengguna? <a href="{{ route('login') }}">Login akun pengguna</a></p>
+            @else
+                <p class="switch">Belum punya akun? <a href="{{ $urlDaftar }}" data-go="daftar">Buat akun</a></p>
+                <p class="switch">Akses khusus HRD? <a href="{{ route('hrd.login') }}">Masuk HRD</a></p>
+            @endif
         </section>
 
         <aside class="photo-side">
@@ -78,7 +85,7 @@
                 <div class="holder">
                     <span class="tag">PT EQUITYWORLD FUTURES</span>
                 </div>
-                <p class="caption"><b>PT Equityworld Futures</b>Kelola profil dan CV untuk mengakses serta mengikuti berbagai peluang karier tanpa dikenakan biaya pendaftaran.</p>
+                <p class="caption"><b>PT Equityworld Futures</b>{{ $hrdLogin ? 'Masuk ke dashboard HRD untuk mengelola profil dan memantau proses rekrutmen.' : 'Kelola profil dan CV untuk mengakses serta mengikuti berbagai peluang karier tanpa dikenakan biaya pendaftaran.' }}</p>
             </div>
         </aside>
     </main>

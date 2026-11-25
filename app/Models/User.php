@@ -19,9 +19,11 @@ class User extends Authenticatable
         'name',
         'email',
         'phone',
+        'department',
         'gender',
         'location',
         'profile_photo_path',
+        'profile_cover_path',
         'headline',
         'password',
         'status',
@@ -51,6 +53,17 @@ class User extends Authenticatable
         }
 
         $encodedPath = array_map('rawurlencode', explode('/', $this->profile_photo_path));
+
+        return '/storage/'.implode('/', $encodedPath);
+    }
+
+    public function profileCoverUrl(): ?string
+    {
+        if (! $this->profile_cover_path) {
+            return null;
+        }
+
+        $encodedPath = array_map('rawurlencode', explode('/', $this->profile_cover_path));
 
         return '/storage/'.implode('/', $encodedPath);
     }

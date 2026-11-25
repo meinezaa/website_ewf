@@ -6,14 +6,14 @@
   <meta name="description" content="Kegiatan Galeri Magang Equityworld Futures.">
   <title>Kegiatan | Galeri Magang</title>
   @vite(['resources/css/app.css', 'resources/css/kegiatan.css', 'resources/js/app.js'])
-  @include('partials.navigation-transitions')
+  @include('user.partials.navigation-transitions')
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@1&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   
 </head>
 <body class="font-sans antialiased">
-  @include('partials.header')
+  @include('user.partials.header')
 
   <main aria-label="Konten kegiatan">
     <div class="kg-page" id="kgPage">
@@ -287,7 +287,7 @@
     </div>
   </main>
 
-  @include('partials.footer')
+  @include('user.partials.footer')
 
   <script>
   (function(){

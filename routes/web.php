@@ -3,16 +3,25 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CareerApplicationController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\HrdDashboardController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
-Route::view('/kegiatan', 'kegiatan')->name('kegiatan');
-Route::view('/tentang-kami', 'tentang_kami')->name('tentang.kami');
+Route::view('/kegiatan', 'user.kegiatan')->name('kegiatan');
+Route::view('/tentang-kami', 'user.tentang_kami')->name('tentang.kami');
 Route::redirect('/edukasi', '/tentang-kami#pengembangan-kompetensi')->name('edukasi');
-Route::view('/faq', 'faq')->name('faq');
+Route::view('/faq', 'user.faq')->name('faq');
 Route::get('/karir', [CareerApplicationController::class, 'index'])->name('karir');
+Route::get('/karir/lowongan/jumlah-pelamar', [CareerApplicationController::class, 'applicantCounts'])
+    ->middleware('throttle:60,1')
+    ->name('karir.applicant-counts');
+
+Route::get('/hrd/login', [AuthController::class, 'showHrdLogin'])->name('hrd.login');
+Route::post('/hrd/login', [AuthController::class, 'loginHrd'])
+    ->middleware('throttle:6,1')
+    ->name('hrd.login.store');
 
 Route::middleware('guest')->group(function (): void {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
@@ -35,11 +44,22 @@ Route::middleware('auth')->group(function (): void {
     Route::post('/profil/foto', [ProfileController::class, 'updatePhoto'])
         ->middleware('throttle:10,1')
         ->name('profile.photo.update');
+    Route::post('/profil/foto-header', [ProfileController::class, 'updateCoverPhoto'])
+        ->middleware('throttle:10,1')
+        ->name('profile.cover-photo.update');
     Route::delete('/profil', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::get('/karir/session', [CareerApplicationController::class, 'refreshApplicationSession'])
-        ->middleware('throttle:6,1')
+        ->middleware('throttle:30,1')
         ->name('karir.session.refresh');
+    Route::get('/karir/pelacakan', [CareerApplicationController::class, 'trackingUpdates'])
+        ->middleware('throttle:60,1')
+        ->name('karir.tracking.updates');
+    Route::post('/karir/lamaran/{type}/{application}/wawancara', [CareerApplicationController::class, 'confirmInterviewAttendance'])
+        ->whereIn('type', ['staff', 'internship'])
+        ->whereNumber('application')
+        ->middleware('throttle:10,1')
+        ->name('karir.interview.confirm');
     Route::get('/karir/dokumen-penyelesaian', [CareerApplicationController::class, 'documents'])
         ->name('karir.documents');
     Route::get('/karir/lamaran/{applicationId}/dokumen/{document}', [CareerApplicationController::class, 'downloadInternshipDocument'])
@@ -49,4 +69,42 @@ Route::middleware('auth')->group(function (): void {
         ->where('selectedJobId', '[a-z]+-\d+')
         ->middleware('throttle:5,1')
         ->name('karir.apply.store');
+});
+
+Route::middleware(['auth', 'hrd'])->group(function (): void {
+    Route::get('/hrd', [HrdDashboardController::class, 'index'])->name('hrd.dashboard');
+    Route::get('/hrd/dashboard/snapshot', [HrdDashboardController::class, 'dashboardSnapshot'])
+        ->middleware('throttle:60,1')
+        ->name('hrd.dashboard.snapshot');
+    Route::get('/hrd/export/{section}', [HrdDashboardController::class, 'export'])
+        ->whereIn('section', ['dashboard', 'staff-applicants', 'intern-applicants', 'staff-data', 'intern-data'])
+        ->name('hrd.export');
+    Route::post('/hrd/applications/{type}/{application}/status', [HrdDashboardController::class, 'updateStatus'])
+        ->whereIn('type', ['staff', 'internship'])
+        ->whereNumber('application')
+        ->name('hrd.application.status');
+    Route::get('/hrd/applications/{type}/{application}/tracking', [HrdDashboardController::class, 'tracking'])
+        ->whereIn('type', ['staff', 'internship'])
+        ->whereNumber('application')
+        ->name('hrd.application.tracking');
+    Route::post('/hrd/applications/{type}/{application}/interview', [HrdDashboardController::class, 'scheduleInterview'])
+        ->whereIn('type', ['staff', 'internship'])
+        ->whereNumber('application')
+        ->name('hrd.application.interview');
+    Route::get('/hrd/applications/{type}/{application}/documents/{document}', [HrdDashboardController::class, 'downloadApplicationDocument'])
+        ->whereIn('type', ['staff', 'internship'])
+        ->whereNumber('application')
+        ->whereIn('document', ['cv', 'transcript', 'cover_letter', 'portfolio', 'diploma', 'ktp'])
+        ->name('hrd.application.document.download');
+    Route::get('/hrd/applications/{type}/{application}/documents/{document}/preview', [HrdDashboardController::class, 'previewApplicationDocument'])
+        ->whereIn('type', ['staff', 'internship'])
+        ->whereNumber('application')
+        ->whereIn('document', ['cv', 'transcript', 'cover_letter', 'portfolio', 'diploma', 'ktp'])
+        ->name('hrd.application.document.preview');
+    Route::post('/hrd/documents', [HrdDashboardController::class, 'storeIssuedDocument'])
+        ->name('hrd.documents.store');
+    Route::get('/hrd/internships/{application}/documents/{document}', [HrdDashboardController::class, 'downloadIssuedDocument'])
+        ->whereNumber('application')
+        ->whereIn('document', ['certificate', 'loa'])
+        ->name('hrd.issued-document.download');
 });
