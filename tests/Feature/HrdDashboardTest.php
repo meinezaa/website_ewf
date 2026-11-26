@@ -28,12 +28,14 @@ class HrdDashboardTest extends TestCase
         DB::purge('sqlite');
         DB::setDefaultConnection('sqlite');
         Artisan::call('migrate', ['--force' => true]);
-        Schema::create('activity_logs', function (Blueprint $table): void {
-            $table->id();
-            $table->unsignedBigInteger('user_id')->nullable();
-            $table->text('activity');
-            $table->string('ip_address', 45)->nullable();
-        });
+        if (! Schema::hasTable('activity_logs')) {
+            Schema::create('activity_logs', function (Blueprint $table): void {
+                $table->id();
+                $table->unsignedBigInteger('user_id')->nullable();
+                $table->text('activity');
+                $table->string('ip_address', 45)->nullable();
+            });
+        }
         Schema::create('certificates', function (Blueprint $table): void {
             $table->id();
             $table->unsignedBigInteger('internship_registration_id')->unique();
