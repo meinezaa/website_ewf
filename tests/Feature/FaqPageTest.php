@@ -27,4 +27,19 @@ class FaqPageTest extends TestCase
 
         $this->assertSame(26, substr_count($content, '<details class="faq-item"'));
     }
+
+    public function test_primary_pages_opt_into_navigation_transitions_in_the_document_head(): void
+    {
+        foreach (['home', 'tentang.kami', 'kegiatan', 'karir', 'faq'] as $routeName) {
+            $content = $this->get(route($routeName))->assertOk()->getContent();
+            $headEnd = strpos($content, '</head>');
+            $head = substr($content, 0, $headEnd === false ? 0 : $headEnd);
+
+            $this->assertNotFalse($headEnd);
+            $this->assertStringContainsString('@view-transition', $head);
+            $this->assertStringContainsString('::view-transition-old(root)', $head);
+            $this->assertStringContainsString('@keyframes page-fade-out', $head);
+            $this->assertStringContainsString('::view-transition-group(site-header)', $head);
+        }
+    }
 }

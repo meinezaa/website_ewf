@@ -11,22 +11,31 @@
 
 </head>
 <body>
-    @include('partials.header')
+    @include('user.partials.header')
     <main class="account">
         <div class="account-inner">
-            <div class="account-heading">
+            @php
+                $profileInitials = collect(preg_split('/\s+/', trim((string) auth()->user()->name)) ?: [])
+                    ->filter()
+                    ->take(2)
+                    ->map(fn (string $part) => mb_strtoupper(mb_substr($part, 0, 1)))
+                    ->implode('');
+            @endphp
+            <div class="account-heading" data-scroll-reveal>
                 <div class="account-avatar" data-profile-photo-avatar>
                     @if($profilePhotoUrl)
                         <img src="{{ $profilePhotoUrl }}" alt="Foto profil {{ auth()->user()->name }}">
                     @else
-                        <i class="bi bi-person" aria-hidden="true"></i>
+                        <span class="account-avatar-initials" aria-label="Inisial {{ auth()->user()->name }}">{{ $profileInitials }}</span>
                     @endif
-                    <input class="account-photo-input" id="profilePhoto" name="profile_photo" type="file" accept="image/jpeg,image/png,image/webp" aria-describedby="profilePhotoStatus">
+                    <input class="account-photo-input" id="profilePhoto" name="profile_photo" type="file" accept="image/jpeg,image/png,image/webp" aria-describedby="profilePhotoStatus" data-profile-initials="{{ $profileInitials }}">
                     <label class="account-photo-picker" for="profilePhoto" aria-label="Pilih foto profil" title="Pilih foto profil"><i class="bi bi-camera-fill" aria-hidden="true"></i></label>
                 </div>
-                <div>
+                <div class="account-heading-copy">
+                    <span class="account-eyebrow"><i class="bi bi-person-badge" aria-hidden="true"></i> PROFIL PELAMAR</span>
                     <h1>Halo, {{ auth()->user()->name }}</h1>
                     <p>Kelola informasi akun dan pantau perjalanan lamaran Anda.</p>
+                    <span class="account-photo-hint"><i class="bi bi-camera" aria-hidden="true"></i> Pilih ikon kamera untuk mengubah foto profil</span>
                     <span class="account-photo-status" id="profilePhotoStatus" aria-live="polite"></span>
                 </div>
             </div>
@@ -40,7 +49,7 @@
             @endif
 
             <div class="account-grid">
-                <section class="account-card">
+                <section class="account-card" data-scroll-reveal>
                     <h2>Informasi akun</h2>
                     <p>Data ini membantu tim rekrutmen menghubungi Anda. Email akun tidak dapat diubah dari halaman ini.</p>
                     <form class="account-form" id="profileUpdateForm" action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data">
@@ -74,7 +83,7 @@
                     </form>
                 </section>
 
-                <section class="account-card">
+                <section class="account-card account-history-card" data-scroll-reveal>
                     <h2>Riwayat lamaran</h2>
                     <p>Lamaran yang dikirim dari akun ini akan tercatat di sini.</p>
                     @if($applications->isEmpty())
@@ -98,33 +107,70 @@
                     @endif
                 </section>
             </div>
-            <div class="account-security-grid">
-                <section class="account-card account-logout-card" id="logoutAccountCard">
-                    <h2>Keluar akun</h2>
-                    <p>Keluar dari akun Anda di perangkat ini. Anda dapat masuk kembali kapan saja.</p>
-                    <form action="{{ route('logout') }}" method="POST">
-                        @csrf
-                        <button class="account-button secondary" type="submit"><i class="bi bi-box-arrow-right"></i> Keluar akun</button>
-                    </form>
-                </section>
-                <section class="account-card account-delete-card" id="deleteAccountCard">
-                    <h2>Hapus akun permanen</h2>
-                    <p class="account-delete-note">Penghapusan akun juga menghapus lamaran kerja/magang dan dokumen yang terkait. Anda harus mendaftar kembali untuk menggunakan layanan.</p>
-                    <form class="account-delete-form" action="{{ route('profile.destroy') }}" method="POST" onsubmit="return confirm('Hapus akun beserta seluruh lamaran dan dokumen terkait secara permanen?')">
-                        @csrf
-                        @method('DELETE')
-                        <div class="account-field">
-                            <label for="deleteAccountPassword">Konfirmasi dengan kata sandi saat ini</label>
-                            <input id="deleteAccountPassword" name="password" type="password" autocomplete="current-password" required>
+            <section class="account-card account-security-card" data-scroll-reveal>
+                <div class="account-security-heading">
+                    <h2>Keamanan akun</h2>
+                    <p>Kelola sesi dan penghapusan akun Anda.</p>
+                </div>
+                <div class="account-security-actions">
+                    <section class="account-security-action account-logout-action" id="logoutAccountCard">
+                        <div class="account-security-copy">
+                            <span class="account-security-icon"><i class="bi bi-box-arrow-right" aria-hidden="true"></i></span>
+                            <div>
+                                <h3>Keluar akun</h3>
+                                <p>Keluar dari akun di perangkat ini. Anda dapat masuk kembali kapan saja.</p>
+                            </div>
                         </div>
-                        <button class="account-button danger" type="submit"><i class="bi bi-trash"></i> Hapus akun permanen</button>
-                    </form>
-                </section>
-            </div>
+                        <form action="{{ route('logout') }}" method="POST">
+                            @csrf
+                            <button class="account-button secondary" type="submit"><i class="bi bi-box-arrow-right" aria-hidden="true"></i> Keluar akun</button>
+                        </form>
+                    </section>
+                    <section class="account-security-action account-delete-action" id="deleteAccountCard">
+                        <div class="account-security-copy">
+                            <span class="account-security-icon danger"><i class="bi bi-trash" aria-hidden="true"></i></span>
+                            <div>
+                                <h3>Hapus akun permanen</h3>
+                                <p class="account-delete-note">Penghapusan akun juga menghapus lamaran kerja/magang dan dokumen terkait. Anda harus mendaftar kembali untuk menggunakan layanan.</p>
+                            </div>
+                        </div>
+                        <form class="account-delete-form" action="{{ route('profile.destroy') }}" method="POST" onsubmit="return confirm('Hapus akun beserta seluruh lamaran dan dokumen terkait secara permanen?')">
+                            @csrf
+                            @method('DELETE')
+                            <div class="account-field">
+                                <label for="deleteAccountPassword">Konfirmasi dengan kata sandi saat ini</label>
+                                <input id="deleteAccountPassword" name="password" type="password" autocomplete="current-password" required>
+                            </div>
+                            <button class="account-button danger" type="submit"><i class="bi bi-trash" aria-hidden="true"></i> Hapus akun permanen</button>
+                        </form>
+                    </section>
+                </div>
+            </section>
         </div>
     </main>
-    @include('partials.footer')
+    @include('user.partials.footer')
     <script>
+        (function(){
+            var revealItems = Array.from(document.querySelectorAll('[data-scroll-reveal]'));
+            if(!revealItems.length) return;
+
+            if(window.matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)){
+                revealItems.forEach(function(item){ item.classList.add('is-visible'); });
+                return;
+            }
+
+            document.documentElement.classList.add('scroll-reveal-ready');
+            var observer = new IntersectionObserver(function(entries){
+                entries.forEach(function(entry){
+                    if(!entry.isIntersecting) return;
+                    entry.target.classList.add('is-visible');
+                    observer.unobserve(entry.target);
+                });
+            }, {threshold: 0.14, rootMargin: '0px 0px -36px 0px'});
+
+            revealItems.forEach(function(item){ observer.observe(item); });
+        })();
+
         (function(){
             var input = document.getElementById('profilePhoto');
             if(!input) return;
@@ -132,25 +178,38 @@
             var status = document.getElementById('profilePhotoStatus');
             var error = document.getElementById('profilePhotoError');
             var photoName = document.getElementById('profileName').value;
+            var profileInitials = input.dataset.profileInitials || '';
             var avatar = document.querySelector('[data-profile-photo-avatar]');
             var picker = document.querySelector('.account-photo-picker');
             var savedImage = avatar.querySelector('img');
             var savedPhotoUrl = savedImage ? savedImage.getAttribute('src') : null;
             var previewUrl = null;
 
+            function watchProfileAvatar(image){
+                image.addEventListener('error', function(){
+                    if(image.getAttribute('src') === savedPhotoUrl) savedPhotoUrl = null;
+                    renderAvatar(null);
+                }, {once:true});
+                if(image.complete && image.naturalWidth === 0) image.dispatchEvent(new Event('error'));
+            }
+
             function renderAvatar(src){
                 var image = document.createElement('img');
                 var visual = image;
                 if(src){
+                    watchProfileAvatar(image);
                     image.src = src;
                     image.alt = 'Foto profil ' + photoName;
                 }else{
-                    visual = document.createElement('i');
-                    visual.className = 'bi bi-person';
-                    visual.setAttribute('aria-hidden', 'true');
+                    visual = document.createElement('span');
+                    visual.className = 'account-avatar-initials';
+                    visual.textContent = profileInitials;
+                    visual.setAttribute('aria-label', 'Inisial ' + photoName);
                 }
                 avatar.replaceChildren(visual, input, picker);
             }
+
+            if(savedImage) watchProfileAvatar(savedImage);
 
             function updateHeaderAvatar(src){
                 if(!src) return;
@@ -158,9 +217,9 @@
                 if(!link) return;
                 var image = document.createElement('img');
                 image.className = 'account-nav-avatar';
-                image.src = src;
                 image.alt = '';
                 link.replaceChildren(image);
+                image.src = src;
             }
 
             function restoreSavedAvatar(){

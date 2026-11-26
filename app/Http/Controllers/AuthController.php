@@ -23,8 +23,8 @@ class AuthController extends Controller
     public function showLogin(): View|RedirectResponse
     {
         return Auth::check()
-            ? redirect()->route('profile')
-            : view('register.masuk');
+            ? $this->authenticatedUserRedirect()
+            : view('user.register.masuk');
     }
 
     public function login(Request $request): RedirectResponse
@@ -57,14 +57,18 @@ class AuthController extends Controller
             return redirect()->route('admin.dashboard');
         }
 
+        if ($this->isHrdUser($request->user())) {
+            return redirect()->route('hrd.dashboard');
+        }
+
         return redirect()->to($this->safeNext($credentials['next'] ?? null));
     }
 
     public function showPasswordRequest(): View|RedirectResponse
     {
         return Auth::check()
-            ? redirect()->route('profile')
-            : view('register.lupa-password');
+            ? $this->authenticatedUserRedirect()
+            : view('user.register.lupa-password');
     }
 
     public function sendPasswordResetLink(Request $request): RedirectResponse
@@ -94,8 +98,8 @@ class AuthController extends Controller
         $email = $request->query('email', '');
 
         return Auth::check()
-            ? redirect()->route('profile')
-            : view('register.reset-password', [
+            ? $this->authenticatedUserRedirect()
+            : view('user.register.reset-password', [
                 'token' => $token,
                 'email' => is_string($email) ? $email : '',
             ]);
@@ -141,8 +145,8 @@ class AuthController extends Controller
     public function showRegistration(): View|RedirectResponse
     {
         return Auth::check()
-            ? redirect()->route('profile')
-            : view('register.daftar');
+            ? $this->authenticatedUserRedirect()
+            : view('user.register.daftar');
     }
 
     public function register(Request $request): RedirectResponse
@@ -216,11 +220,38 @@ class AuthController extends Controller
             'ip_address' => $request->ip(),
         ]);
 
+        $isHrd = $this->isHrdUser($request->user());
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route('home');
+        return $isHrd
+            ? redirect()->route('login')
+            : redirect()->route('home');
+    }
+
+    private function authenticatedUserRedirect(): RedirectResponse
+    {
+        if ($this->isAdmin()) {
+            return redirect()->route('admin.dashboard');
+        }
+
+        if ($this->isHrdUser(Auth::user())) {
+            return redirect()->route('hrd.dashboard');
+        }
+
+        return redirect()->route('profile');
+    }
+
+    private function isHrdUser(mixed $user): bool
+    {
+        if (! $user instanceof User) {
+            return false;
+        }
+
+        $roleName = $user->role?->role_name;
+
+        return is_string($roleName) && strcasecmp(trim($roleName), 'HRD') === 0;
     }
 
     private function safeNext(?string $next): string

@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Equityworld Futures Indonesia</title>
 @vite(['resources/css/app.css', 'resources/css/home.css', 'resources/js/app.js'])
+@include('user.partials.navigation-transitions')
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@1&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -12,7 +13,7 @@
 </head>
 <body class="font-sans antialiased">
 
-@include('partials.header')
+@include('user.partials.header')
 
 <!-- HERO -->
 <section class="hero" id="beranda">
@@ -33,7 +34,7 @@
         <p class="lead hr" style="--d:540ms">Berkembang di lingkungan kerja yang suportif, belajar langsung dari mentor berpengalaman, dan temukan peluangmu melalui program magang maupun posisi staf di PT Equityworld Futures.</p>
 
         <div class="hero-cta hr" style="--d:680ms">
-          <a href="#karir" class="btn btn-primary">Daftar Sekarang</a>
+          <a href="{{ route('daftar', ['next' => '/#karir']) }}" class="btn btn-primary">Daftar Sekarang</a>
           <a href="#regulator" class="btn btn-outline">Kenali Perusahaan</a>
         </div>
 
@@ -179,8 +180,12 @@
       <h2 class="h2" style="font-size:46px;margin-top:14px">Wadah Eksplorasi Karier</h2>
       <p class="sub" style="max-width:700px">PT Equityworld Futures membuka kesempatan berkembang untuk karyawan, magang bagi mahasiswa aktif dan lulusan baru. Daftar secara online, ikuti bimbingan profesional, dan pantau status kelolosanmu secara transparan.</p>
     </div>
-    <div class="karir-more"><a href="#" class="btn btn-soft">Informasi Detail</a></div>
+    @guest
+    <div class="karir-more"><a href="{{ route('karir') }}#lowongan" class="btn btn-soft">Informasi Detail</a></div>
+    @endguest
+    @if(auth()->guest() || $careerRegistration)
     <div class="karir-grid {{ $careerRegistration ? 'has-registration' : '' }}">
+      @guest
       <div class="card-l">
         <div class="top"><span class="badge">GELOMBANG 2026 DIBUKA</span><span class="batch">Batch #1 Tahun 2026</span></div>
         <h4>Formulir Pendaftaran Karir Online</h4>
@@ -191,8 +196,9 @@
           <div class="perk"><div class="i">🎓</div><div><b>Sertifikat</b><span>Sertifikat sebagai bukti penyelesaian program.</span></div></div>
           <div class="perk"><div class="i">🚀</div><div><b>Jalur Rekrutmen Cepat</b><span>Peluang kerja langsung bagi lulusan terbaik.</span></div></div>
         </div>
-        <div class="cta"><small>✓ Proses 100% Online • tinggal Berkas</small><a href="#" class="btn btn-primary">Daftar Karir Sekarang</a></div>
+        <div class="cta"><small>✓ Proses 100% Online • tinggal Berkas</small><a href="{{ route('daftar', ['next' => '/#karir']) }}" class="btn btn-primary">Daftar Karir Sekarang</a></div>
       </div>
+      @endguest
       @if ($careerRegistration)
       <div class="card-r">
         <div class="top"><span class="a">PORTAL INTERAKTIF</span><span class="b">● Live Sync</span></div>
@@ -220,6 +226,7 @@
       </div>
       @endif
     </div>
+    @endif
   </div>
 </section>
 
@@ -229,7 +236,7 @@
 
 
 
-  @include('partials.footer')
+  @include('user.partials.footer')
 </div>
 
 <script>
@@ -301,7 +308,7 @@ document.querySelectorAll('img[data-img]').forEach(el => {
   const wrap = document.getElementById('rotatorWord');
   if (!wrap) return;
   const label = wrap.querySelector('.grad');
-  const words = ['Pengalaman Berharga', 'Relasi Profesional', 'Skill Industri', 'Peluang Karier'];
+  const words = ['Pengalaman Berharga', 'Relasi Profesional', 'Skill Industri', 'Peluang Karir'];
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   let i = 0;
   setTimeout(() => {

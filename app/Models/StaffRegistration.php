@@ -39,6 +39,11 @@ class StaffRegistration extends Model
         'skills',
         'cv_path',
         'documents',
+        'interview_at',
+        'interview_information',
+        'interview_attendance',
+        'interview_attendance_reason',
+        'interview_confirmed_at',
     ];
 
     protected function casts(): array
@@ -47,6 +52,8 @@ class StaffRegistration extends Model
             'birth_date' => 'date',
             'date_of_birth' => 'date',
             'privacy_consent_at' => 'datetime',
+            'interview_at' => 'datetime',
+            'interview_confirmed_at' => 'datetime',
             'experiences' => 'array',
             'education_details' => 'array',
             'skills' => 'array',

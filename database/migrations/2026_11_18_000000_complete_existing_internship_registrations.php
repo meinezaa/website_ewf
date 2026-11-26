@@ -20,7 +20,9 @@ return new class extends Migration
         }
 
         DB::table('internship_registrations')
-            ->where('status', 'pending')
+            ->where('status', 'accepted')
+            ->whereNotNull('end_date')
+            ->whereDate('end_date', '<', today())
             ->update([
                 'status' => 'completed',
                 'updated_at' => now(),

@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 use RuntimeException;
 
@@ -27,7 +28,7 @@ class ProfileController extends Controller
             ->sortByDesc('created_at')
             ->values();
 
-        return view('profile', [
+        return view('user.profile', [
             'applications' => $applications,
             'profilePhotoUrl' => $user->profilePhotoUrl(),
         ]);
@@ -35,9 +36,12 @@ class ProfileController extends Controller
 
     public function update(Request $request): RedirectResponse
     {
+        $isHrd = strcasecmp(trim((string) $request->user()->role?->role_name), 'HRD') === 0;
         $validated = $request->validate([
             'name' => ['required', 'string', 'min:3', 'max:150'],
+            'email' => ['sometimes', 'required', 'email', 'max:255', Rule::unique('users', 'email')->ignore($request->user()->getKey())],
             'phone' => ['nullable', 'string', 'max:40'],
+            'department' => [$isHrd ? 'nullable' : 'prohibited', 'string', 'max:100'],
             'gender' => ['nullable', 'in:perempuan,laki-laki'],
             'location' => ['nullable', 'string', 'max:150'],
         ]);
@@ -50,7 +54,11 @@ class ProfileController extends Controller
             'ip_address' => $request->ip(),
         ]);
 
-        return back()->with('profile_updated', true);
+        $redirect = $isHrd
+            ? redirect()->route('hrd.dashboard')
+            : back();
+
+        return $redirect->with('profile_updated', true);
     }
 
     public function updatePhoto(Request $request): JsonResponse
@@ -89,6 +97,37 @@ class ProfileController extends Controller
         ]);
     }
 
+    public function updateCoverPhoto(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'cover_photo' => ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+        ], [
+            'cover_photo.required' => 'Pilih foto header terlebih dahulu.',
+            'cover_photo.image' => 'File yang dipilih harus berupa gambar.',
+            'cover_photo.mimes' => 'Pilih foto header dengan format JPG, PNG, atau WebP.',
+            'cover_photo.max' => 'Ukuran foto header terlalu besar.',
+        ]);
+
+        $user = $request->user();
+        $oldCoverPath = $user->profile_cover_path;
+        $newCoverPath = $validated['cover_photo']->store('profile-cover-photos/'.$user->getKey(), 'public');
+        if (! is_string($newCoverPath)) {
+            throw new RuntimeException('Foto header gagal disimpan.');
+        }
+
+        $user->update(['profile_cover_path' => $newCoverPath]);
+        if ($oldCoverPath && $oldCoverPath !== $newCoverPath) {
+            $publicDisk = Storage::disk('public');
+            if ($publicDisk->exists($oldCoverPath) && ! $publicDisk->delete($oldCoverPath)) {
+                throw new RuntimeException('Foto header sebelumnya gagal dihapus.');
+            }
+        }
+
+        return response()->json([
+            'cover_url' => $user->profileCoverUrl(),
+        ]);
+    }
+
     public function destroy(Request $request): RedirectResponse
     {
         $request->validate([
@@ -103,6 +142,7 @@ class ProfileController extends Controller
             'activity' => 'Menghapus akun.',
             'ip_address' => $request->ip(),
         ]);
+        $profileCoverPath = $user->profile_cover_path;
         $applications = StaffRegistration::query()
             ->where('applicant_id', $user->getKey())
             ->orWhere('email', $email)
@@ -148,6 +188,12 @@ class ProfileController extends Controller
             $publicDisk = Storage::disk('public');
             if ($publicDisk->exists($profilePhotoPath) && ! $publicDisk->delete($profilePhotoPath)) {
                 throw new RuntimeException('Foto profil gagal dihapus.');
+            }
+        }
+        if ($profileCoverPath) {
+            $publicDisk = Storage::disk('public');
+            if ($publicDisk->exists($profileCoverPath) && ! $publicDisk->delete($profileCoverPath)) {
+                throw new RuntimeException('Foto header profil gagal dihapus.');
             }
         }
 

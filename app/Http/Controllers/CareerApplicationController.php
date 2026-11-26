@@ -2,17 +2,21 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ApplicationTrackingEvent;
 use App\Models\InternshipRegistration;
 use App\Models\StaffRegistration;
 use App\Models\ActivityLog;
 use Illuminate\Database\QueryException;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 use RuntimeException;
 use Symfony\Component\HttpFoundation\Response;
@@ -21,6 +25,13 @@ use Throwable;
 
 class CareerApplicationController extends Controller
 {
+    private const MAX_TOTAL_UPLOAD_BYTES = 35 * 1024 * 1024;
+    private const DISPLAY_TIMEZONE = 'Asia/Jakarta';
+    private const ATTENDANCE_REASONS = [
+        'Memohon Penjadwalan Ulang Wawancara',
+        'Tidak Melanjutkan ke Tahap Seleksi Berikutnya',
+    ];
+
     private const JOBS = [
         'professional-0' => ['OB', 'PT Equityworld Futures'],
         'professional-1' => ['Resepsionis', 'PT Equityworld Futures'],
@@ -55,7 +66,7 @@ class CareerApplicationController extends Controller
             ],
             'Hubungan Internasional' => [
                 ['label' => 'Hubungan Masyarakat', 'job_id' => 'internship-1'],
-                ['label' => 'Riset Kebijakan', 'job_id' => 'internship-2'],
+                ['label' => 'Riset Kebijakan', 'job_id' => 'internship-0'],
                 ['label' => 'Kerja Sama Lembaga', 'job_id' => 'internship-1'],
             ],
             'Ilmu Komunikasi' => [
@@ -98,8 +109,16 @@ class CareerApplicationController extends Controller
         $downloadableDocuments = $this->downloadableDocumentsFor($applications);
 
         $internshipPrograms = self::internshipPrograms();
+        $applicantCounts = $this->applicationCountsByJob();
+        $trackingEvents = $this->trackingEventsFor($applications);
 
-        return view('karir', compact('applications', 'downloadableDocuments', 'internshipPrograms'));
+        return view('user.karir', compact(
+            'applications',
+            'downloadableDocuments',
+            'internshipPrograms',
+            'applicantCounts',
+            'trackingEvents'
+        ));
     }
 
     public function documents(Request $request): View|RedirectResponse
@@ -112,18 +131,183 @@ class CareerApplicationController extends Controller
         $downloadableDocuments = $this->downloadableDocumentsFor($applications);
 
         $internshipPrograms = self::internshipPrograms();
+        $applicantCounts = $this->applicationCountsByJob();
+        $trackingEvents = $this->trackingEventsFor($applications);
 
-        return view('karir', compact('applications', 'downloadableDocuments', 'internshipPrograms'));
+        return view('user.karir', compact(
+            'applications',
+            'downloadableDocuments',
+            'internshipPrograms',
+            'applicantCounts',
+            'trackingEvents'
+        ));
+    }
+
+    public function applicantCounts(): JsonResponse
+    {
+        return response()
+            ->json(['counts' => $this->applicationCountsByJob()])
+            ->header('Cache-Control', 'no-store, private');
+    }
+
+    public function trackingUpdates(Request $request): JsonResponse
+    {
+        $applications = $this->applicationsForEmail($request->user()->email);
+
+        return response()
+            ->json([
+                'csrf_token' => csrf_token(),
+                'applications' => $applications
+                    ->map(fn ($application): array => $this->trackingPayload($application, $this->applicationType($application)))
+                    ->values(),
+            ])
+            ->header('Cache-Control', 'no-store, private');
+    }
+
+    public function confirmInterviewAttendance(Request $request, string $type, int $application): JsonResponse
+    {
+        abort_unless(in_array($type, ['staff', 'internship'], true), 404);
+        $validated = $request->validate([
+            'attendance' => ['required', 'in:hadir,tidak_hadir'],
+            'attendance_reason' => [
+                'required_if:attendance,tidak_hadir',
+                'nullable',
+                Rule::in(self::ATTENDANCE_REASONS),
+            ],
+        ]);
+        $model = ($type === 'internship' ? InternshipRegistration::query() : StaffRegistration::query())
+            ->where('email', $request->user()->email)
+            ->findOrFail($application);
+
+        abort_unless($model->interview_at !== null, 409, 'Jadwal wawancara belum tersedia.');
+
+        $attendanceReason = $validated['attendance'] === 'tidak_hadir'
+            ? $validated['attendance_reason']
+            : null;
+
+        DB::transaction(function () use ($model, $validated, $attendanceReason, $request, $type): void {
+            $model->interview_attendance = $validated['attendance'];
+            $model->interview_attendance_reason = $attendanceReason;
+            $model->interview_confirmed_at = now();
+            $model->save();
+
+            ApplicationTrackingEvent::query()->create([
+                'application_type' => $type,
+                'application_id' => $model->getKey(),
+                'event_type' => 'attendance_confirmed',
+                'attendance' => $validated['attendance'],
+                'attendance_reason' => $attendanceReason,
+                'actor_id' => $request->user()->getKey(),
+            ]);
+        });
+
+        $model->refresh();
+
+        return response()
+            ->json($this->trackingPayload($model, $type))
+            ->header('Cache-Control', 'no-store, private');
+    }
+
+    private function applicationCountsByJob(): array
+    {
+        $counts = array_fill_keys(array_keys(self::JOBS), 0);
+        $professionalJobIds = array_filter(
+            array_keys(self::JOBS),
+            fn (string $jobId): bool => ! str_starts_with($jobId, 'internship-')
+        );
+        $internshipJobIds = array_filter(
+            array_keys(self::JOBS),
+            fn (string $jobId): bool => str_starts_with($jobId, 'internship-')
+        );
+
+        foreach ([
+            ['staff_registrations', $professionalJobIds],
+            ['internship_registrations', $internshipJobIds],
+        ] as [$table, $jobIds]) {
+            $totals = DB::table($table)
+                ->whereIn('job_id', $jobIds)
+                ->where(function ($query): void {
+                    $query->whereNull('status')
+                        ->orWhereRaw('LOWER(status) NOT IN (?, ?)', ['accepted', 'completed']);
+                })
+                ->select('job_id')
+                ->selectRaw('COUNT(DISTINCT LOWER(email)) AS applicant_count')
+                ->groupBy('job_id')
+                ->get();
+
+            foreach ($totals as $total) {
+                $counts[$total->job_id] = (int) $total->applicant_count;
+            }
+        }
+
+        return $counts;
+    }
+
+    private function trackingEventsFor(Collection $applications): array
+    {
+        $events = [];
+        foreach ($applications as $application) {
+            $type = $this->applicationType($application);
+            $events[$type.':'.$application->getKey()] = ApplicationTrackingEvent::query()
+                ->where('application_type', $type)
+                ->where('application_id', $application->getKey())
+                ->orderBy('created_at')
+                ->orderBy('id')
+                ->get();
+        }
+
+        return $events;
+    }
+
+    private function applicationType(StaffRegistration|InternshipRegistration $application): string
+    {
+        return $application instanceof InternshipRegistration ? 'internship' : 'staff';
+    }
+
+    private function trackingPayload(StaffRegistration|InternshipRegistration $application, string $type): array
+    {
+        $events = ApplicationTrackingEvent::query()
+            ->where('application_type', $type)
+            ->where('application_id', $application->getKey())
+            ->orderBy('created_at')
+            ->orderBy('id')
+            ->get();
+
+        return [
+            'id' => (int) $application->getKey(),
+            'type' => $type,
+            'status' => (string) ($application->status ?: 'pending'),
+            'created_at' => $application->created_at?->toIso8601String(),
+            'updated_at' => $application->updated_at?->toIso8601String(),
+            'interview_at' => $application->interview_at?->toIso8601String(),
+            'interview_at_local' => $application->interview_at?->timezone(self::DISPLAY_TIMEZONE)->format('Y-m-d\TH:i'),
+            'interview_information' => $application->interview_information,
+            'interview_attendance' => $application->interview_attendance,
+            'interview_attendance_reason' => $application->interview_attendance_reason,
+            'interview_confirmed_at' => $application->interview_confirmed_at?->toIso8601String(),
+            'events' => $events->map(fn (ApplicationTrackingEvent $event): array => [
+                'event_type' => $event->event_type,
+                'from_status' => $event->from_status,
+                'to_status' => $event->to_status,
+                'interview_at' => $event->interview_at?->toIso8601String(),
+                'interview_information' => $event->interview_information,
+                'attendance' => $event->attendance,
+                'attendance_reason' => $event->attendance_reason,
+                'created_at' => $event->created_at?->toIso8601String(),
+            ])->all(),
+        ];
     }
 
     public function refreshApplicationSession(Request $request): Response
     {
         $request->session()->put('_career_application_activity', now()->timestamp);
 
-        return response()->noContent()->header('Cache-Control', 'no-store');
+        return response()
+            ->json(['csrf_token' => csrf_token()])
+            ->header('Cache-Control', 'no-store, private');
     }
 
-    public function downloadInternshipDocument(Request $request, int $applicationId, string $document): StreamedResponse
+    public function downloadInternshipDocument(Request $request, int $applicationId, string $document): StreamedResponse|View
     {
         abort_unless(in_array($document, ['certificate', 'loa'], true), 404);
 
@@ -131,9 +315,24 @@ class CareerApplicationController extends Controller
             ->whereKey($applicationId)
             ->where('email', $request->user()->email)
             ->firstOrFail();
-        abort_unless($application->isProgramCompleted(), 404);
 
         $isCertificate = $document === 'certificate';
+        abort_unless(
+            $isCertificate
+                ? $application->isProgramCompleted()
+                : in_array($application->status, ['accepted', 'completed'], true),
+            404
+        );
+        if (
+            $isCertificate
+            && is_array($application->certificate_details)
+            && $application->certificate_details !== []
+        ) {
+            return view('documents.certificate', [
+                'details' => $application->certificate_details,
+                'backUrl' => route('karir.documents'),
+            ]);
+        }
         $path = $isCertificate ? $application->certificate_path : $application->loa_path;
         abort_unless($this->issuedPdfExists($path, $application->reference), 404);
 
@@ -141,6 +340,26 @@ class CareerApplicationController extends Controller
 
         return Storage::disk('private')->download($path, $filename, [
             'Content-Type' => 'application/pdf',
+        ]);
+    }
+
+    public function showInternshipLoa(Request $request, int $applicationId): View
+    {
+        $application = InternshipRegistration::query()
+            ->whereKey($applicationId)
+            ->where('email', $request->user()->email)
+            ->firstOrFail();
+
+        abort_unless(
+            in_array($application->status, ['accepted', 'completed'], true)
+                && is_array($application->loa_details)
+                && $application->loa_details !== [],
+            404
+        );
+
+        return view('documents.loa', [
+            'details' => $application->loa_details,
+            'backUrl' => route('karir'),
         ]);
     }
 
@@ -231,6 +450,20 @@ class CareerApplicationController extends Controller
         $validator->after(function ($validator) use ($request, $isInternship, $jobId): void {
             $start = $request->input('internship_start_period');
             $end = $request->input('internship_end_period');
+
+            $uploads = array_merge(
+                [$request->file('cv')],
+                array_values((array) $request->file('documents', []))
+            );
+            $totalUploadBytes = collect($uploads)
+                ->filter(fn ($file): bool => $file instanceof UploadedFile && $file->isValid())
+                ->sum(fn (UploadedFile $file): int => (int) $file->getSize());
+            if ($totalUploadBytes > self::MAX_TOTAL_UPLOAD_BYTES) {
+                $validator->errors()->add(
+                    'documents',
+                    'Ukuran gabungan CV dan dokumen pendukung tidak boleh melebihi 35 MB.'
+                );
+            }
 
             if ($isInternship && is_string($start) && is_string($end) && $end < $start) {
                 $validator->errors()->add('internship_end_period', 'Periode selesai harus sama atau setelah periode awal.');
@@ -390,6 +623,17 @@ class CareerApplicationController extends Controller
                         'documents' => $documentPaths,
                     ]);
 
+                    $submittedEvent = new ApplicationTrackingEvent([
+                        'application_type' => $isInternship ? 'internship' : 'staff',
+                        'application_id' => $application->getKey(),
+                        'event_type' => 'application_submitted',
+                        'to_status' => 'pending',
+                        'actor_id' => $databaseUserId,
+                    ]);
+                    $submittedEvent->created_at = $application->created_at;
+                    $submittedEvent->updated_at = $application->created_at;
+                    $submittedEvent->save();
+
                     return $application;
                 });
             });
@@ -472,8 +716,12 @@ class CareerApplicationController extends Controller
         foreach ($applications as $application) {
             if ($application instanceof InternshipRegistration) {
                 $downloadableDocuments[$application->getKey()] = [
-                    'certificate' => $this->issuedPdfExists($application->certificate_path, $application->reference),
-                    'loa' => $this->issuedPdfExists($application->loa_path, $application->reference),
+                    'certificate' => $application->isProgramCompleted()
+                        && ((is_array($application->certificate_details) && $application->certificate_details !== [])
+                            || $this->issuedPdfExists($application->certificate_path, $application->reference)),
+                    'loa' => in_array($application->status, ['accepted', 'completed'], true)
+                        && ((is_array($application->loa_details) && $application->loa_details !== [])
+                            || $this->issuedPdfExists($application->loa_path, $application->reference)),
                 ];
             }
         }

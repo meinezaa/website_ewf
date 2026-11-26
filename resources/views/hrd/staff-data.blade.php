@@ -1,0 +1,19 @@
+<section class="hrd-view" id="view-staff-data" data-title="Data Staf" hidden>
+    <div class="hrd-page-heading"><div><span class="hrd-overline">ORGANISASI · KARYAWAN</span><h1>Data Staf</h1><p>Pendaftar staf yang telah diterima, berdasarkan data rekrutmen.</p></div><button class="hrd-button hrd-button--secondary" type="button" data-export data-export-url="{{ route('hrd.export', ['section' => 'staff-data']) }}"><i class="bi bi-download"></i> Unduh direktori</button></div>
+    <div class="hrd-list-summary"><div><strong>{{ number_format($staffSummary['accepted'], 0, ',', '.') }}</strong><span>Staf diterima</span></div><div><strong>{{ number_format($staffSummary['positions'], 0, ',', '.') }}</strong><span>Posisi terisi</span></div><div><strong>{{ number_format($staffSummary['locations'], 0, ',', '.') }}</strong><span>Lokasi terdaftar</span></div><div><strong>{{ number_format($staffSummary['accepted_month'], 0, ',', '.') }}</strong><span>Diterima bulan ini</span></div></div>
+    <section class="hrd-panel hrd-list-panel"><div class="hrd-list-toolbar"><div><h2>Direktori staf</h2><p>Daftar pendaftar dengan status diterima.</p></div><form class="hrd-filters hrd-filter-form" method="GET" action="{{ route('hrd.dashboard') }}"><input type="hidden" name="view" value="staff-data"><label class="hrd-filter-search"><i class="bi bi-search"></i><input class="hrd-local-search" name="staff_data_q" type="search" value="{{ request('staff_data_q') }}" placeholder="Cari nama staf..."></label><button class="hrd-filter-button" type="submit" aria-label="Cari staf"><i class="bi bi-search"></i></button></form></div>
+        <div class="hrd-table-wrap"><table class="hrd-table"><thead><tr><th>NAMA STAF</th><th>JABATAN / POSISI</th><th>PENDIDIKAN</th><th>LOKASI</th><th>STATUS</th><th></th></tr></thead><tbody>
+            @forelse ($staffMembers as $application)
+                <tr data-name="{{ $application['name'] }}" data-position="{{ $application['position'] }}" data-status="{{ $application['status'] }}">
+                    <td><div class="hrd-person-cell"><span class="hrd-avatar hrd-avatar--blue">@if ($application['photo_url'])<img src="{{ $application['photo_url'] }}" alt="" loading="lazy" decoding="async">@else{{ $application['initials'] }}@endif</span><span><strong>{{ $application['name'] }}</strong><small>{{ $application['email'] }}</small></span></div></td>
+                    <td>{{ $application['position'] }}</td><td>{{ $application['education'] }}</td><td>{{ $application['location'] }}</td>
+                    <td><span class="hrd-badge {{ $application['status_class'] }}" data-status-badge><i></i>{{ $application['status_label'] }}</span></td>
+                    <td><button class="hrd-row-action" type="button" data-detail="{{ $application['name'] }}" data-role="{{ $application['type_label'] }} · {{ $application['position'] }}" data-status="{{ $application['status'] }}" data-status-label="{{ $application['status_label'] }}" data-status-url="{{ $application['status_url'] }}" data-tracking-url="{{ $application['tracking_url'] }}" data-interview-url="{{ $application['interview_url'] }}" data-type="{{ $application['type'] }}" data-initials="{{ $application['initials'] }}" data-organization="{{ $application['organization'] }}" data-period="{{ $application['period'] }}" data-date="{{ $application['joined'] }}" data-email="{{ $application['email'] }}" data-documents="{{ json_encode($application['documents'], JSON_HEX_APOS | JSON_HEX_QUOT) }}">Kelola <i class="bi bi-arrow-up-right" aria-hidden="true"></i></button></td>
+                </tr>
+            @empty
+                <tr class="hrd-empty-row"><td colspan="6">Belum ada pendaftar staf yang diterima.</td></tr>
+            @endforelse
+        </tbody></table></div>
+        @include('hrd.pagination', ['paginator' => $staffMembers, 'view' => 'staff-data'])
+    </section>
+</section>

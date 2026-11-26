@@ -1,4 +1,4 @@
-{{-- resources/views/karir.blade.php --}}
+{{-- resources/views/user/karir.blade.php --}}
 
 @php
     // Cari otomatis foto "bg karir" di public/image (jpg/png/webp; nama pakai spasi, - atau _)
@@ -293,12 +293,6 @@
         ],
     ];
 
-    $trackingStages = [
-        ['label' => 'Tahap 1', 'status' => 'Selesai', 'title' => 'Lamaran diterima', 'description' => 'Lamaran dan dokumen Anda berhasil dikirim.', 'state' => 'done'],
-        ['label' => 'Tahap 2', 'status' => 'Menunggu', 'title' => 'Verifikasi berkas', 'description' => 'Tim rekrutmen akan meninjau kelengkapan dokumen.', 'state' => 'active'],
-        ['label' => 'Tahap 3', 'status' => 'Menunggu', 'title' => 'Seleksi dan wawancara', 'description' => 'Jadwal wawancara akan ditampilkan setelah diumumkan oleh tim HR.', 'state' => 'wait'],
-        ['label' => 'Tahap 4', 'status' => 'Menunggu', 'title' => 'Hasil akhir', 'description' => 'Hasil seleksi akan diperbarui setelah proses selesai.', 'state' => 'wait'],
-    ];
 @endphp
 
 <!DOCTYPE html>
@@ -308,6 +302,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Karir | PT Equityworld Futures</title>
 @vite(['resources/css/app.css'])
+@include('user.partials.navigation-transitions')
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -317,7 +312,7 @@
 
  </head>
 <body class="career-page">
-@include('partials.header')
+@include('user.partials.header')
 
 <div class="krr" @if($bgHero) style="--career-hero-image: url('{{ $bgHero }}')" @endif>
 
@@ -333,7 +328,7 @@
 
             <div class="float">
                 <div class="head">
-                    <img class="brand-logo" src="{{ asset('image/logo ewf.png') }}" alt="Logo EWF">
+                    <img class="brand-logo" src="{{ asset('image/ewf-logo.png') }}" alt="Logo EWF">
                     <span class="brand-name">PT Equityworld Futures</span>
                     <span class="tag g">Resmi</span>
                 </div>
@@ -458,10 +453,10 @@
                              data-career-work-system="{{ $j[4][0] }}"
                              data-career-benefit="{{ $j[6] }}"
                              data-career-posted="{{ $j[7] }}"
-                             data-career-applicants="0"
+                             data-career-applicants="{{ $applicantCounts['professional-'.$loop->index] ?? 0 }}"
                              data-career-sample="false">
                             <i class="bi bi-bookmark mark"></i>
-                            <div class="co"><div class="logo"><img src="{{ asset('image/logo ewf.png') }}" alt="Logo EWF"></div><div><b>{{ $j[1] }} @if($loop->index < 3)<i class="bi bi-patch-check-fill" style="color:var(--o)"></i>@endif</b><small>{{ $j[2] }}</small></div></div>
+                            <div class="co"><div class="logo"><img src="{{ asset('image/ewf-logo.png') }}" alt="Logo EWF"></div><div><b>{{ $j[1] }} @if($loop->index < 3)<i class="bi bi-patch-check-fill" style="color:var(--o)"></i>@endif</b><small>{{ $j[2] }}</small></div></div>
                             <h4>{{ $j[3] }}</h4>
                             <div class="meta">@foreach($j[4] as $m)<span>{{ $m }}</span>@endforeach</div>
                             <div class="pay"><small>{{ $j[5] }}</small><b>{{ $j[6] }}</b></div>
@@ -478,7 +473,7 @@
                     @foreach($internshipPrograms as $major => $fields)
                         <article class="card internship-major-card" @if($loop->index >= 6) hidden @endif>
                             <div class="co">
-                                <div class="logo"><img src="{{ asset('image/logo ewf.png') }}" alt="Logo EWF"></div>
+                                <div class="logo"><img src="{{ asset('image/ewf-logo.png') }}" alt="Logo EWF"></div>
                                 <div><b>PT Equityworld Futures <i class="bi bi-patch-check-fill internship-company-badge" aria-label="Perusahaan terverifikasi"></i></b><small>Program Magang &amp; PKL · Work From Office</small></div>
                             </div>
                             <h4>{{ $major }}</h4>
@@ -513,10 +508,10 @@
                              data-career-education="{{ implode(',', $internshipEducationLevels) }}"
                              data-career-benefit="{{ $j[7] }}"
                              data-career-posted="{{ $j[8] }}"
-                             data-career-applicants="0"
+                             data-career-applicants="{{ $applicantCounts['internship-'.$loop->index] ?? 0 }}"
                              data-career-sample="false">
                             <i class="bi bi-bookmark mark"></i>
-                            <div class="co"><div class="logo">@if($j[1] === 'PT Equityworld Futures')<img src="{{ asset('image/logo ewf.png') }}" alt="Logo EWF">@else{{ $j[0] }}@endif</div><div><b>{{ $j[1] }} @if($loop->index < 3)<i class="bi bi-patch-check-fill" style="color:var(--o)"></i>@endif</b><small>{{ $j[2] }}</small></div></div>
+                            <div class="co"><div class="logo">@if($j[1] === 'PT Equityworld Futures')<img src="{{ asset('image/ewf-logo.png') }}" alt="Logo EWF">@else{{ $j[0] }}@endif</div><div><b>{{ $j[1] }} @if($loop->index < 3)<i class="bi bi-patch-check-fill" style="color:var(--o)"></i>@endif</b><small>{{ $j[2] }}</small></div></div>
                             <h4>{{ preg_replace('/^Magang\s+/u', '', $j[3]) }}</h4>
                             <div class="meta">@foreach($j[4] as $m)<span>{{ $m }}</span>@endforeach</div>
                             <div class="pay"><small>{{ $j[6] }}</small><b>{{ $j[7] }}</b></div>
@@ -613,7 +608,7 @@
                         <button class="btn sm ghost" type="button" id="detailShare"><i class="bi bi-share"></i> Bagikan</button>
                     </div>
                     <div class="detail-posted"><i class="bi bi-clock"></i> <span id="detailPosted"></span></div>
-                    <div class="applicant-summary"><i class="bi bi-people"></i><div><b id="detailApplicants"></b><small>Jumlah pelamar masih data contoh; sistem lamaran belum terhubung.</small></div></div>
+                    <div class="applicant-summary"><i class="bi bi-people"></i><div><b id="detailApplicants" aria-live="polite"></b><small>Jumlah pelamar aktif; pelamar yang diterima atau selesai tidak dihitung.</small></div></div>
                     <div class="apply-notice" id="applyNotice" role="status">Pengajuan lamaran online belum tersedia untuk posisi ini. Silakan hubungi perusahaan melalui kanal resminya.</div>
                 </div>
             </div>
@@ -660,6 +655,7 @@
                     <ul>@foreach($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul>
                 </div>
             @endif
+            <div class="apply-errors" id="applicationValidationWarning" role="alert" hidden></div>
 
             <div class="apply-progress" aria-live="polite">
                 <div class="apply-progress-value" id="applicationProgressValue">0%</div>
@@ -790,7 +786,7 @@
                             </section>
 
                             <section class="apply-card">
-                                <div class="apply-card-heading"><div><h2><i class="bi bi-cloud-arrow-up"></i> Dokumen</h2><p>CV wajib diunggah; dokumen pendukung opsional atau sesuai persyaratan.</p></div></div>
+                                <div class="apply-card-heading"><div><h2><i class="bi bi-cloud-arrow-up"></i> Dokumen</h2><p>CV wajib; dokumen pendukung opsional. Total ukuran semua berkas maksimal 35 MB.</p></div></div>
                                 <div class="apply-form-grid">
                                     <div class="apply-field full">
                                         <span>Dokumen CV / Curriculum Vitae</span>
@@ -839,8 +835,9 @@
                                 <div class="apply-actions">
                                     <button class="btn ghost" type="button" id="saveApplicationDraft"><i class="bi bi-cloud-check"></i> Simpan sebagai Draft</button>
                                     <button class="btn ghost" type="button" id="applicationPreview"><i class="bi bi-eye"></i> Pratinjau sebelum kirim</button>
-                                    <button class="btn" type="submit" id="applicationSubmit"><i class="bi bi-send-check"></i> Submit berkas</button>
+                                    <button class="btn" type="button" id="applicationSubmit"><i class="bi bi-send-check"></i> Submit berkas</button>
                                     <span class="apply-draft-status" id="applicationDraftStatus" role="status"></span>
+                                    <div class="apply-errors" id="applicationUploadLimitWarning" role="alert" hidden></div>
                                     <div class="apply-errors" id="applicationSessionWarning" role="alert" hidden>Sesi login perlu diperbarui. Draft formulir tetap tersimpan di browser. Muat ulang halaman, masuk kembali, lalu buka lowongan ini untuk melanjutkan.</div>
                                 </div>
                             </section>
@@ -940,99 +937,199 @@
                     </div>
                 @endif
 
-                @php
-                    $completedTrackingStages = collect($trackingStages)->where('state', 'done')->count();
-                    $trackingProgress = (int) round($completedTrackingStages / count($trackingStages) * 100);
-                @endphp
-
                 @foreach($applications as $application)
                     @php
                         $applicationDisplayTitle = preg_replace('/^Magang\s+/i', '', $application->job_title);
+                        $internshipApplication = $application instanceof \App\Models\InternshipRegistration;
+                        $trackingKey = ($internshipApplication ? 'internship' : 'staff').':'.$application->getKey();
+                        $applicationEvents = collect($trackingEvents[$trackingKey] ?? []);
+                        $statusEvents = $applicationEvents->where('event_type', 'status_changed')->values();
+                        $submittedEvent = $applicationEvents->firstWhere('event_type', 'application_submitted');
+                        $verificationEvent = $statusEvents->first(
+                            fn ($event) => in_array($event->to_status, ['in_review', 'accepted', 'rejected', 'completed'], true)
+                        ) ?? $submittedEvent;
+                        $interviewEvent = $applicationEvents->where('event_type', 'interview_scheduled')->last();
+                        $interviewReviewEvent = $statusEvents->last(
+                            fn ($event) => in_array($event->to_status, ['in_review', 'accepted', 'rejected', 'completed'], true)
+                        );
+                        $outcomeEvent = $statusEvents->last(
+                            fn ($event) => in_array($event->to_status, ['accepted', 'rejected', 'completed'], true)
+                        );
+                        $programCompleted = $internshipApplication && $application->isProgramCompleted();
+                        $applicationStatus = $programCompleted ? 'completed' : ($application->status ?: 'pending');
+                        $trackerStatusLabel = [
+                            'pending' => 'Menunggu verifikasi',
+                            'in_review' => 'Sedang ditinjau HRD',
+                            'accepted' => 'Disetujui HRD',
+                            'rejected' => 'Tidak lolos seleksi',
+                            'completed' => 'Program selesai',
+                        ][$applicationStatus] ?? 'Status diperbarui HRD';
+                        $stageStates = [
+                            'pending' => ['done', 'active', 'wait', 'wait'],
+                            'in_review' => ['done', 'done', 'active', 'wait'],
+                            'accepted' => ['done', 'done', 'done', 'done'],
+                            'rejected' => ['done', 'done', 'done', 'done'],
+                            'completed' => ['done', 'done', 'done', 'done'],
+                        ][$applicationStatus] ?? ['done', 'active', 'wait', 'wait'];
+                        $stageTwo = $applicationStatus === 'pending'
+                            ? ['title' => 'Verifikasi berkas', 'description' => 'Lamaran Anda menunggu pemeriksaan dokumen oleh HRD.']
+                            : ['title' => 'Verifikasi berkas', 'description' => 'Tahap pemeriksaan berkas telah diperbarui oleh HRD.'];
+                        $stageThree = match ($applicationStatus) {
+                            'in_review' => ['title' => 'Seleksi Wawancara', 'description' => $application->interview_at ? 'HRD telah menentukan jadwal wawancara. Silakan konfirmasi kehadiran Anda.' : 'HRD sedang meninjau lamaran dan akan menginformasikan jadwal wawancara bila diperlukan.'],
+                            'accepted' => ['title' => 'Seleksi Wawancara', 'description' => 'Tahap seleksi wawancara telah selesai ditinjau HRD.'],
+                            'rejected' => ['title' => 'Seleksi Wawancara', 'description' => 'Tahap seleksi telah diperbarui oleh HRD.'],
+                            'completed' => ['title' => 'Pelaksanaan program', 'description' => 'Program magang atau PKL telah selesai.'],
+                            default => ['title' => 'Seleksi Wawancara', 'description' => 'Informasi seleksi wawancara akan diperbarui HRD pada halaman ini.'],
+                        };
+                        $stageFour = match ($applicationStatus) {
+                            'accepted' => ['title' => 'Lamaran disetujui HRD', 'description' => 'HRD menyetujui lamaran Anda dan akan memberikan arahan tindak lanjut.'],
+                            'rejected' => ['title' => 'Hasil seleksi', 'description' => 'HRD telah memperbarui hasil seleksi lamaran Anda.'],
+                            'completed' => ['title' => 'Program selesai', 'description' => 'Status penyelesaian program telah diperbarui oleh HRD.'],
+                            default => ['title' => 'Hasil akhir', 'description' => 'Hasil seleksi akan diperbarui HRD setelah proses selesai.'],
+                        };
+                        $trackingStages = [
+                            ['label' => 'Tahap 1', 'title' => 'Lamaran dikirim', 'description' => 'Lamaran dan dokumen Anda berhasil dikirim.'],
+                            ['label' => 'Tahap 2', ...$stageTwo],
+                            ['label' => 'Tahap 3', ...$stageThree],
+                            ['label' => 'Tahap 4', ...$stageFour],
+                        ];
+                        $stageTimes = [
+                            $application->created_at,
+                            $verificationEvent?->created_at,
+                            $interviewEvent?->created_at ?? $interviewReviewEvent?->created_at,
+                            $outcomeEvent?->created_at,
+                        ];
+                        foreach ($trackingStages as $index => &$stage) {
+                            $stage['state'] = $stageStates[$index];
+                            $stage['status'] = $stage['state'] === 'done'
+                                ? 'Selesai'
+                                : ($stage['state'] === 'active' ? 'Berlangsung' : 'Menunggu');
+                        }
+                        unset($stage);
+                        if ($applicationStatus === 'rejected') {
+                            $trackingStages[3]['status'] = 'Tidak lolos';
+                        }
+                        $completedTrackingStages = collect($trackingStages)->where('state', 'done')->count();
+                        $trackingProgress = (int) round($completedTrackingStages / count($trackingStages) * 100);
                     @endphp
-                    @if($application instanceof \App\Models\InternshipRegistration && $application->isProgramCompleted())
+                    @if($internshipApplication && in_array($applicationStatus, ['accepted', 'completed'], true))
                         @php
                             $issuedDocuments = $downloadableDocuments[$application->getKey()] ?? [];
                             $completionDocuments = [
-                                ['key' => 'certificate', 'title' => 'Sertifikat Magang / PKL', 'detail' => 'Bukti resmi penyelesaian program Anda.', 'icon' => 'bi-award'],
-                                ['key' => 'loa', 'title' => 'Letter of Acceptance (LOA)', 'detail' => 'Surat penerimaan resmi dari perusahaan.', 'icon' => 'bi-envelope-paper'],
+                                [
+                                    'key' => 'certificate',
+                                    'title' => 'Sertifikat Magang / PKL',
+                                    'detail' => $programCompleted
+                                        ? 'Bukti resmi penyelesaian program Anda.'
+                                        : 'Sertifikat tersedia setelah program magang atau PKL selesai.',
+                                    'icon' => 'bi-award',
+                                    'eligible' => $programCompleted,
+                                ],
+                                [
+                                    'key' => 'loa',
+                                    'title' => 'Letter of Acceptance (LOA)',
+                                    'detail' => 'Surat penerimaan resmi yang diterbitkan HRD.',
+                                    'icon' => 'bi-envelope-paper',
+                                    'eligible' => true,
+                                ],
                             ];
                         @endphp
                         <section class="completion-card" aria-label="Dokumen penyelesaian {{ $applicationDisplayTitle }}">
                             <div class="completion-heading">
                                 <span class="completion-icon" aria-hidden="true"><i class="bi bi-mortarboard"></i></span>
                                 <div>
-                                    <span class="completion-status"><i class="bi bi-check-circle-fill"></i> Program selesai</span>
-                                    <h2>Selamat menyelesaikan program!</h2>
-                                    <p>{{ $applicationDisplayTitle }} · {{ $application->full_name }}<br>Dokumen resmi program magang atau PKL Anda tersedia di bawah ini.</p>
+                                    <span class="completion-status"><i class="bi bi-check-circle-fill"></i> {{ $programCompleted ? 'Program selesai' : 'Lamaran disetujui HRD' }}</span>
+                                    <h2>{{ $programCompleted ? 'Dokumen penyelesaian program' : 'Dokumen penerimaan program' }}</h2>
+                                    <p>{{ $applicationDisplayTitle }} · {{ $application->full_name }}<br>LOA dapat diunduh setelah diterbitkan HRD. Sertifikat tersedia setelah program selesai.</p>
                                 </div>
                             </div>
                             <div class="completion-documents">
                                 @foreach($completionDocuments as $document)
-                                    @if($issuedDocuments[$document['key']] ?? false)
-                                        <a class="completion-document" href="{{ route('karir.application.document.download', ['applicationId' => $application->getKey(), 'document' => $document['key']]) }}">
-                                            <span class="completion-document-icon" aria-hidden="true"><i class="bi {{ $document['icon'] }}"></i></span>
+                                    @php
+                                        $isGeneratedCertificate = $document['key'] === 'certificate'
+                                            && is_array($application->certificate_details)
+                                            && $application->certificate_details !== [];
+                                        $isGeneratedLoa = $document['key'] === 'loa'
+                                            && is_array($application->loa_details)
+                                            && $application->loa_details !== [];
+                                        $isGeneratedDocument = $isGeneratedCertificate || $isGeneratedLoa;
+                                    @endphp
+                                    @if($document['eligible'] && ($issuedDocuments[$document['key']] ?? false))
+                                        <a class="completion-document" href="{{ $isGeneratedLoa ? route('karir.application.loa', ['applicationId' => $application->getKey()]) : route('karir.application.document.download', ['applicationId' => $application->getKey(), 'document' => $document['key']]) }}">
+                                            <span class="completion-document-icon" aria-hidden="true"><i class="bi {{ $isGeneratedDocument ? 'bi-eye' : $document['icon'] }}"></i></span>
                                             <span class="completion-document-copy"><b>{{ $document['title'] }}</b><small>{{ $document['detail'] }}</small></span>
-                                            <span class="completion-document-action"><i class="bi bi-download"></i> Unduh</span>
+                                            <span class="completion-document-action"><i class="bi {{ $isGeneratedDocument ? 'bi-eye' : 'bi-download' }}"></i> {{ $isGeneratedDocument ? 'Lihat & unduh' : 'Unduh' }}</span>
                                         </a>
                                     @else
                                         <div class="completion-document unavailable" aria-disabled="true">
                                             <span class="completion-document-icon" aria-hidden="true"><i class="bi {{ $document['icon'] }}"></i></span>
                                             <span class="completion-document-copy"><b>{{ $document['title'] }}</b><small>{{ $document['detail'] }}</small></span>
-                                            <span class="completion-document-action"><i class="bi bi-download"></i> Unduh</span>
+                                            <span class="completion-document-action">{{ $document['eligible'] ? 'Belum tersedia' : 'Belum memenuhi tahap' }}</span>
                                         </div>
                                     @endif
                                 @endforeach
                             </div>
-                            @if(!($issuedDocuments['certificate'] ?? false) || !($issuedDocuments['loa'] ?? false))
-                                <p class="completion-note"><i class="bi bi-info-circle"></i> Tampilan unduh sudah disiapkan. Tombol akan aktif setelah PDF sertifikat dan LOA tersedia.</p>
+                            @if(!$programCompleted || !($issuedDocuments['certificate'] ?? false) || !($issuedDocuments['loa'] ?? false))
+                                <p class="completion-note"><i class="bi bi-info-circle"></i> Dokumen yang belum diterbitkan HRD akan muncul di sini setelah tersedia.</p>
                             @endif
                         </section>
-                    @else
-                    <section class="tracker" aria-label="Pelacakan {{ $applicationDisplayTitle }}">
+                    @endif
+                    @if(!$programCompleted)
+                    <section class="tracker" aria-label="Pelacakan {{ $applicationDisplayTitle }}"
+                             data-tracking-type="{{ $internshipApplication ? 'internship' : 'staff' }}"
+                             data-tracking-id="{{ $application->getKey() }}"
+                             data-tracking-url="{{ route('karir.tracking.updates') }}"
+                             data-attendance-url="{{ route('karir.interview.confirm', ['type' => $internshipApplication ? 'internship' : 'staff', 'application' => $application->getKey()]) }}">
                         <div class="tr-head">
                             <div class="tracker-person">
                                 <span class="ico"><i class="bi bi-person-vcard"></i></span>
                                 <div>
-                                <h3>{{ $applicationDisplayTitle }} <span class="tag" style="font-size:12px">Menunggu verifikasi</span></h3>
+                                <h3>{{ $applicationDisplayTitle }} <span class="tag" style="font-size:12px">{{ $trackerStatusLabel }}</span></h3>
                                 <p class="tracker-applicant"><i class="bi bi-person"></i> Pelamar: <b>{{ $application->full_name }}</b></p>
-                                <p>Dikirim {{ $application->created_at->format('d-m-Y H:i') }}</p>
+                                <p data-application-created-at>Dikirim {{ $application->created_at->timezone('Asia/Jakarta')->format('d-m-Y H:i') }} WIB</p>
                                 </div>
                             </div>
                             <div class="card" style="padding:12px 16px;min-width:260px">
                                 <div class="row" style="display:flex;justify-content:space-between;font-size:13px;font-weight:700">
                                     <span>Kemajuan seleksi</span>
-                                    <span style="color:var(--o)">{{ $completedTrackingStages }} dari {{ count($trackingStages) }} tahap ({{ $trackingProgress }}%)</span>
+                                    <span style="color:var(--o)" data-tracking-progress-text>{{ $completedTrackingStages }} dari {{ count($trackingStages) }} tahap ({{ $trackingProgress }}%)</span>
                                 </div>
-                                <div class="bar"><i style="width:{{ $trackingProgress }}%"></i></div>
+                                <div class="bar"><i data-tracking-progress style="width:{{ $trackingProgress }}%"></i></div>
                             </div>
                         </div>
                         <div class="steps">
                             @foreach($trackingStages as $stage)
-                                <div class="step {{ $stage['state'] }}" @if($loop->first) data-date="{{ $application->created_at->format('Y-m-d\TH:i') }}" @endif>
+                                <div class="step {{ $stage['state'] }}" data-tracking-stage="{{ $loop->index }}" @if($loop->first) data-date="{{ $application->created_at->format('Y-m-d\TH:i') }}" @endif>
                                     <span class="st">{{ $stage['label'] }}</span>
-                                    <span class="stat">{{ $stage['status'] }}</span>
-                                    <b>{{ $stage['title'] }}</b>
-                                    <span class="desc">{{ $stage['description'] }}</span>
+                                    <span class="stat" data-stage-status>{{ $stage['status'] }}</span>
+                                    <b data-stage-title>{{ $stage['title'] }}</b>
+                                    <span class="desc" data-stage-description>{{ $stage['description'] }}</span>
                                     <div class="sched">
-                                        @if($loop->first)
-                                            <small>Tanggal pengiriman</small>
-                                            <span class="when">{{ $application->created_at->format('d/m/Y, H:i') }} WIB</span>
-                                        @elseif($loop->index === 1)
-                                            <small>Waktu verifikasi</small>
-                                            <span class="when">Menunggu pembaruan HR</span>
-                                        @elseif($loop->index === 2)
-                                            <small>Jadwal wawancara</small>
-                                            <span class="when">Belum diumumkan</span>
-                                            <div class="rsvp-pending" aria-label="Konfirmasi kehadiran belum tersedia">
-                                                <div class="rsvp-opts">
-                                                    <button class="rsvp-opt yes" type="button" disabled><i class="bi bi-check-lg"></i> Hadir</button>
-                                                    <button class="rsvp-opt no" type="button" disabled><i class="bi bi-x-lg"></i> Tidak hadir</button>
+                                        <small data-stage-time-label>{{ ['Tanggal pengiriman', 'Pembaruan verifikasi berkas', 'Pembaruan seleksi wawancara', 'Pembaruan hasil akhir'][$loop->index] }}</small>
+                                        <span class="when" data-stage-time>
+                                            {{ $stageTimes[$loop->index] ? $stageTimes[$loop->index]->timezone('Asia/Jakarta')->format('d/m/Y, H:i').' WIB' : 'Menunggu pembaruan HRD' }}
+                                        </span>
+                                        @if($loop->index === 2)
+                                            <div class="interview-schedule" data-interview-schedule @if(!$application->interview_at) hidden @endif>
+                                                <small>Jadwal wawancara</small>
+                                                <span class="when" data-interview-time>{{ $application->interview_at?->timezone('Asia/Jakarta')->format('d/m/Y, H:i').' WIB' }}</span>
+                                                <em data-interview-information>{{ $application->interview_information }}</em>
+                                                <div class="rsvp" data-interview-rsvp @if(!$application->interview_at) hidden @endif>
+                                                    <small data-interview-attendance-state>{{ $application->interview_attendance ? 'Konfirmasi Anda: '.($application->interview_attendance === 'hadir' ? 'Hadir' : 'Tidak Hadir') : 'Konfirmasi kehadiran Anda' }}</small>
+                                                    <div class="rsvp-opts">
+                                                        <button type="button" class="rsvp-opt yes {{ $application->interview_attendance === 'hadir' ? 'is-confirmed' : '' }}" data-confirm-attendance="hadir" aria-pressed="{{ $application->interview_attendance === 'hadir' ? 'true' : 'false' }}"><i class="bi bi-check-circle"></i> Hadir</button>
+                                                        <button type="button" class="rsvp-opt no {{ $application->interview_attendance === 'tidak_hadir' ? 'is-confirmed' : '' }}" data-confirm-attendance="tidak_hadir" aria-pressed="{{ $application->interview_attendance === 'tidak_hadir' ? 'true' : 'false' }}"><i class="bi bi-x-circle"></i> Tidak Hadir</button>
+                                                    </div>
+                                                    <fieldset class="rsvp-reasons" data-interview-attendance-reasons hidden>
+                                                        <legend>Alasan tidak hadir (wajib dipilih)</legend>
+                                                        <label><input type="radio" name="attendance_reason_{{ $internshipApplication ? 'internship' : 'staff' }}_{{ $application->getKey() }}" value="Memohon Penjadwalan Ulang Wawancara" data-interview-attendance-reason @checked($application->interview_attendance_reason === 'Memohon Penjadwalan Ulang Wawancara')> Memohon Penjadwalan Ulang Wawancara</label>
+                                                        <label><input type="radio" name="attendance_reason_{{ $internshipApplication ? 'internship' : 'staff' }}_{{ $application->getKey() }}" value="Tidak Melanjutkan ke Tahap Seleksi Berikutnya" data-interview-attendance-reason @checked($application->interview_attendance_reason === 'Tidak Melanjutkan ke Tahap Seleksi Berikutnya')> Tidak Melanjutkan ke Tahap Seleksi Berikutnya</label>
+                                                        <button type="button" class="rsvp-opt no rsvp-submit-absence" data-submit-absence disabled>Konfirmasi Tidak Hadir</button>
+                                                    </fieldset>
+                                                    <small data-interview-confirmed-at>{{ $application->interview_confirmed_at?->timezone('Asia/Jakarta')->format('d/m/Y, H:i').' WIB' }}</small>
+                                                    <small class="attendance-error" data-interview-confirmation-error role="alert" hidden></small>
                                                 </div>
-                                                <small>Konfirmasi aktif setelah jadwal wawancara diumumkan.</small>
                                             </div>
-                                        @else
-                                            <small>Waktu pengumuman hasil</small>
-                                            <span class="when">Belum tersedia</span>
                                         @endif
                                     </div>
                                 </div>
@@ -1044,7 +1141,7 @@
                              data-position="{{ $applicationDisplayTitle }}"
                              data-company="{{ $application->company }}"
                              data-wa="623160003788"
-                             data-logo="{{ asset('image/logo ewf.png') }}">
+                             data-logo="{{ asset('image/ewf-logo.png') }}">
                             <button type="button" class="act" data-act="pdf">
                                 <span class="ai"><i class="bi bi-download"></i></span>
                                 <span class="at"><b>Unduh Berkas PDF</b><small>Ringkasan status seleksi</small></span>
@@ -1066,7 +1163,7 @@
     @endif
 </div>
 
-@include('partials.footer')
+@include('user.partials.footer')
 
 <script>
     (function(){
@@ -1103,17 +1200,27 @@
         Array.from(document.getElementById('filterCategory').options).forEach(function(option){
             if(option.value) categoryNames[option.value] = option.textContent.trim();
         });
-        var allCareerCategories = @json($allCareerCategories);
-        var professionalCategoryOptions = @json($professionalCategories);
-        var internshipCategoryOptions = @json($internshipFields);
         var internshipProgramData = @json($internshipPrograms);
         var homeCareerType = root.querySelector('.search [name="tipe"]');
         var homeCareerCategory = root.querySelector('.search [name="bidang"]');
 
+        function availableCareerCategories(type){
+            var categories = new Map();
+            jobs.filter(function(job){ return job.type === type; }).forEach(function(job){
+                if(!categories.has(job.category)){
+                    categories.set(job.category, {
+                        value: job.category,
+                        label: categoryNames[job.category] || displayJobTitle(job)
+                    });
+                }
+            });
+            return Array.from(categories.values());
+        }
+
         function configureHomeCareerCategories(){
             if(!homeCareerType || !homeCareerCategory) return;
             var selected = homeCareerCategory.value;
-            var options = homeCareerType.value === 'magang' ? internshipCategoryOptions : professionalCategoryOptions;
+            var options = availableCareerCategories(homeCareerType.value);
             homeCareerCategory.replaceChildren();
             var placeholder = makeElement('option', '', 'Pilih bidang');
             placeholder.value = '';
@@ -1130,7 +1237,6 @@
         }
         if(homeCareerType && homeCareerCategory){
             homeCareerType.addEventListener('change', configureHomeCareerCategories);
-            configureHomeCareerCategories();
         }
 
         var copyByCategory = {
@@ -1157,7 +1263,7 @@
         };
         var professionalDetails = @json($professionalDetails);
         var internshipDetails = @json($internshipDetails);
-        var ewfLogoUrl = @json(asset('image/logo ewf.png'));
+        var ewfLogoUrl = @json(asset('image/ewf-logo.png'));
         var defaultCopy = copyByCategory.administrasi;
         var jobs = [];
 
@@ -1178,13 +1284,14 @@
             var options = [];
             var seenCategories = new Set();
             if(typeSelect.value !== 'magang'){
-                availableJobs.filter(function(job){ return job.type === 'profesional'; }).forEach(function(job){
-                    if(seenCategories.has(job.category)) return;
-                    seenCategories.add(job.category);
-                    options.push({value: job.category, label: job.categoryLabel});
+                availableCareerCategories('profesional').forEach(function(category){
+                    if(seenCategories.has(category.value)) return;
+                    seenCategories.add(category.value);
+                    options.push(category);
                 });
             }
             if(typeSelect.value !== 'profesional'){
+                availableCareerCategories('magang').forEach(function(category){ options.push(category); });
                 internshipProgramFilters.forEach(function(program){ options.push(program); });
             }
             var categoryLabel = document.getElementById('filterCategoryLabel');
@@ -1283,8 +1390,19 @@
             return card;
         }
 
+        function matchesInternshipCategory(field, category){
+            return jobs.some(function(job){
+                return job.id === field.job_id && job.type === 'magang' && job.category === category;
+            });
+        }
+
         function buildInternshipProgramCard(major, selectedProgram){
             var fields = internshipProgramData[major] || [];
+            if(selectedProgram && selectedProgram.fieldCategory){
+                fields = fields.filter(function(field){
+                    return matchesInternshipCategory(field, selectedProgram.fieldCategory);
+                });
+            }
             var card = makeElement('article', 'card internship-major-card explorer-program-card');
             var info = makeElement('div', 'explorer-program-info');
             var company = makeElement('div', 'co');
@@ -1390,6 +1508,7 @@
                 tags: tags
             });
         });
+        configureHomeCareerCategories();
 
         var internshipProgramFilters = [];
         Object.keys(internshipProgramData).forEach(function(major){
@@ -1407,6 +1526,42 @@
                 });
             });
         });
+
+        var applicantCountsUrl = @json(route('karir.applicant-counts'));
+        function refreshApplicantCounts(){
+            return fetch(applicantCountsUrl, {
+                credentials: 'same-origin',
+                cache: 'no-store',
+                headers: {'Accept': 'application/json'}
+            }).then(function(response){
+                if(!response.ok) throw new Error('Server gagal memuat jumlah pelamar.');
+                return response.json();
+            }).then(function(payload){
+                if(!payload || !payload.counts || typeof payload.counts !== 'object'){
+                    throw new TypeError('Format jumlah pelamar dari server tidak valid.');
+                }
+                var updatedCounts = jobs.map(function(job){
+                    var count = payload.counts[job.id];
+                    if(!Number.isSafeInteger(count) || count < 0){
+                        throw new TypeError('Jumlah pelamar tidak valid untuk lowongan ' + job.id + '.');
+                    }
+                    return {job: job, count: count};
+                });
+                updatedCounts.forEach(function(entry){
+                    entry.job.applicants = entry.count;
+                    entry.job.source.dataset.careerApplicants = String(entry.count);
+                });
+                var activeJob = jobs.find(function(job){ return job.id === detail.dataset.jobId; });
+                if(activeJob) document.getElementById('detailApplicants').textContent = activeJob.applicants + ' pelamar';
+            }).catch(function(error){
+                console.error('Jumlah pelamar tidak dapat diperbarui:', error);
+            });
+        }
+        refreshApplicantCounts();
+        window.setInterval(function(){
+            if(document.visibilityState === 'visible') refreshApplicantCounts();
+        }, 30000);
+        window.addEventListener('focus', refreshApplicantCounts);
 
         function internshipProgramDestination(major, selectedOption){
             var hasSelectedField = selectedOption && selectedOption.value;
@@ -1508,32 +1663,35 @@
             var selectedProgram = internshipProgramFilters.find(function(program){
                 return program.value === category;
             });
-            if(type === 'magang' || selectedProgram){
-                var matchingMajors = Object.keys(internshipProgramData).filter(function(major){
-                    if(selectedProgram){
-                        return major === selectedProgram.major && (!term ||
-                            major.toLocaleLowerCase('id').indexOf(term) !== -1 ||
-                            selectedProgram.field.toLocaleLowerCase('id').indexOf(term) !== -1);
-                    }
-                    var fields = internshipProgramData[major].filter(function(field){
-                        return jobs.some(function(job){ return job.id === field.job_id && job.type === 'magang'; });
+            var selectedFieldCategory = availableCareerCategories('magang').find(function(option){
+                return option.value === category;
+            });
+            if(type === 'magang' || selectedProgram || selectedFieldCategory){
+                var matchingFieldsByMajor = {};
+                Object.keys(internshipProgramData).forEach(function(major){
+                    if(selectedProgram && selectedProgram.major !== major) return;
+                    var matchingFields = internshipProgramData[major].filter(function(field){
+                        var job = jobs.find(function(item){ return item.id === field.job_id && item.type === 'magang'; });
+                        if(!job || (selectedProgram && (selectedProgram.field !== field.label || selectedProgram.jobId !== field.job_id))) return false;
+                        if(selectedFieldCategory && !matchesInternshipCategory(field, selectedFieldCategory.value)) return false;
+                        if(!term) return true;
+                        var searchableText = [major, field.label, job.title, job.company, job.categoryLabel, job.tags.join(' ')]
+                            .join(' ').toLocaleLowerCase('id');
+                        return term.split(/\s+/).every(function(word){ return searchableText.indexOf(word) !== -1; });
                     });
-                    return !term || major.toLocaleLowerCase('id').indexOf(term) !== -1 ||
-                        fields.some(function(field){ return field.label.toLocaleLowerCase('id').indexOf(term) !== -1; });
+                    if(matchingFields.length) matchingFieldsByMajor[major] = matchingFields;
                 });
-                var matchingFieldCount = selectedProgram ? matchingMajors.length : matchingMajors.reduce(function(count, major){
-                    var fields = internshipProgramData[major].filter(function(field){
-                        return jobs.some(function(job){ return job.id === field.job_id && job.type === 'magang'; });
-                    });
-                    return count + fields.filter(function(field){
-                        return !term || major.toLocaleLowerCase('id').indexOf(term) !== -1 ||
-                            field.label.toLocaleLowerCase('id').indexOf(term) !== -1;
-                    }).length;
+                var matchingMajors = Object.keys(matchingFieldsByMajor);
+                var matchingFieldCount = Object.keys(matchingFieldsByMajor).reduce(function(count, major){
+                    return count + matchingFieldsByMajor[major].length;
                 }, 0);
+                var selectedProgramForCard = selectedProgram || (selectedFieldCategory
+                    ? {fieldCategory: selectedFieldCategory.value}
+                    : null);
                 list.classList.add('program-list');
                 list.replaceChildren();
                 matchingMajors.forEach(function(major){
-                    list.appendChild(buildInternshipProgramCard(major, selectedProgram));
+                    list.appendChild(buildInternshipProgramCard(major, selectedProgramForCard));
                 });
                 countLabel.textContent = selectedProgram
                     ? '1 bidang ditemukan'
@@ -1805,14 +1963,6 @@
             applicationSection.querySelectorAll('[data-internship-required]').forEach(function(field){
                 field.required = isInternship && !field.closest('[data-professional-only]');
             });
-            applicationSection.querySelectorAll('[data-internship-only] input, [data-internship-only] textarea, [data-internship-only] select').forEach(function(field){
-                var repeatItem = field.closest('[data-repeat-item]');
-                if(field.name.indexOf('end_period') !== -1 && repeatItem){
-                    var currentlyWorking = repeatItem.querySelector('[name$="[currently_working]"]');
-                    field.required = isInternship && !field.closest('[data-professional-only]') &&
-                        !(currentlyWorking && currentlyWorking.checked);
-                }
-            });
             document.getElementById('applicationCv').accept = isInternship ? '.pdf' : '.pdf,.doc,.docx';
             var targetPosition = document.getElementById('applicationTargetPosition');
             var internshipMajor = document.getElementById('applicationInternshipMajor');
@@ -1881,8 +2031,6 @@
                 element.hidden = applicationSection.dataset.isInternship === 'true';
             });
             listElement.appendChild(clone);
-            var currentWork = clone.querySelector('[name$="[currently_working]"]');
-            if(currentWork) syncEndPeriodRequirement(currentWork);
             return clone;
         }
         function restoreApplicationDraft(jobId){
@@ -1922,7 +2070,6 @@
                     if(field.type === 'checkbox') field.checked = Boolean(entry.checked);
                     else field.value = entry.value;
                 });
-                applicationForm.querySelectorAll('[name$="[currently_working]"]').forEach(syncEndPeriodRequirement);
                 document.getElementById('applicationDraftStatus').textContent = 'Data formulir dipulihkan. Memeriksa dokumen draft...';
                 updateApplicationProgress();
                 restoreApplicationDraftFiles(jobId, true);
@@ -2007,8 +2154,8 @@
                     restoreFile(input, savedFiles.supporting && savedFiles.supporting[input.name], input.closest('.apply-field').querySelector('.apply-file-list'));
                 });
                 document.getElementById('applicationDraftStatus').textContent = restoredCount
-                    ? 'Draft formulir dan ' + restoredCount + ' dokumen berhasil dipulihkan dari browser ini.'
-                    : 'Draft formulir dipulihkan. Belum ada berkas yang tersimpan di draft ini.';
+                    ? 'Draft formulir dan ' + restoredCount + ' dokumen berhasil dipulihkan dari browser ini. Belum dikirim ke HRD.'
+                    : 'Draft formulir dipulihkan dari browser ini. Belum dikirim ke HRD.';
             }).catch(function(error){
                 console.error('Dokumen draft tidak dapat dipulihkan:', error);
                 document.getElementById('applicationDraftStatus').textContent = 'Data formulir dipulihkan, tetapi dokumen draft tidak dapat dibaca dari browser.';
@@ -2030,7 +2177,7 @@
             }
             saveApplicationDraftFiles(key).then(function(){
                 if(attempt === applicationDraftSaveAttempt){
-                    document.getElementById('applicationDraftStatus').textContent = 'Draft formulir dan dokumen tersimpan di browser ini.';
+                    document.getElementById('applicationDraftStatus').textContent = 'Draft formulir dan dokumen tersimpan di browser ini. Belum dikirim ke HRD.';
                 }
             }).catch(function(error){
                 console.error('Dokumen draft tidak dapat disimpan:', error);
@@ -2040,11 +2187,6 @@
                         : 'Data formulir tersimpan, tetapi dokumen gagal disimpan di browser.';
                 }
             });
-        }
-        function syncEndPeriodRequirement(field){
-            var row = field.closest('[data-repeat-item]');
-            var endPeriod = row.querySelector('[name$="[end_period]"]');
-            if(endPeriod) endPeriod.required = applicationSection.dataset.isInternship === 'true' && !field.checked;
         }
         function updateApplicationProgress(){
             var isInternship = applicationSection.dataset.isInternship === 'true';
@@ -2110,7 +2252,7 @@
                 ? educationRows.length > 0 && educationRows.every(allRequiredFilled)
                 : optionalRowsComplete(educationRows, ['institution','major']);
             var profileComplete = profileFields.every(isFilled);
-            var planComplete = registrationFields.length === 4 && registrationFields.every(isFilled);
+            var planComplete = registrationFields.length === 5 && registrationFields.every(isFilled);
             var skillsField = document.getElementById('applicationSkills');
             var consentField = document.getElementById('applicationConsent');
             var registrationComplete = !isInternship || planComplete;
@@ -2395,6 +2537,25 @@
             }
         });
         var applicationForm = document.getElementById('careerApplicationForm');
+        var applicationValidationWarning = document.getElementById('applicationValidationWarning');
+        applicationForm.addEventListener('invalid', function(event){
+            sessionReadyForSubmit = false;
+            if(!applicationValidationWarning.hidden) return;
+            var field = event.target;
+            var fieldLabel = field.labels && field.labels.length
+                ? field.labels[0].textContent.replace(/\s+/g, ' ').trim()
+                : field.name;
+            applicationValidationWarning.textContent = fieldLabel
+                ? 'Periksa isian "' + fieldLabel + '". Form belum dapat dikirim.'
+                : 'Periksa kembali isian wajib sebelum mengirim formulir.';
+            applicationValidationWarning.hidden = false;
+            if(!field.closest('[hidden]')){
+                window.requestAnimationFrame(function(){
+                    field.scrollIntoView({behavior:'smooth',block:'center'});
+                    field.focus({preventScroll:true});
+                });
+            }
+        }, true);
         applicationForm.addEventListener('formdata', function(event){
             var selectedJobId = applicationSection.dataset.jobId;
             if(selectedJobId) event.formData.set('job_id', selectedJobId);
@@ -2416,9 +2577,16 @@
                     applicationSessionWarning.hidden = false;
                     return false;
                 }
-                lastSessionRefresh = Date.now();
-                applicationSessionWarning.hidden = true;
-                return true;
+                return response.json().then(function(payload){
+                    var tokenInput = applicationForm.querySelector('input[name="_token"]');
+                    if(!payload || typeof payload.csrf_token !== 'string' || !tokenInput){
+                        throw new Error('Token formulir tidak dapat diperbarui.');
+                    }
+                    tokenInput.value = payload.csrf_token;
+                    lastSessionRefresh = Date.now();
+                    applicationSessionWarning.hidden = true;
+                    return true;
+                });
             }).catch(function(error){
                 console.warn('Sesi formulir lamaran tidak dapat diperbarui:', error);
                 applicationSessionWarning.hidden = false;
@@ -2437,6 +2605,25 @@
         ['pointerdown','keydown'].forEach(function(eventName){
             applicationForm.addEventListener(eventName, recordApplicationActivity, {passive:true});
         });
+        var applicationUploadLimitBytes = 35 * 1024 * 1024;
+        var applicationUploadLimitWarning = document.getElementById('applicationUploadLimitWarning');
+        function validateApplicationUploadSize(){
+            var totalBytes = Array.from(applicationForm.querySelectorAll('input[type="file"]'))
+                .reduce(function(total, input){
+                    return total + Array.from(input.files).reduce(function(fileTotal, file){
+                        return fileTotal + file.size;
+                    }, 0);
+                }, 0);
+            if(totalBytes > applicationUploadLimitBytes){
+                applicationUploadLimitWarning.textContent = 'Ukuran total CV dan dokumen pendukung melebihi 35 MB. Kompres atau hapus sebagian berkas sebelum mengirim.';
+                applicationUploadLimitWarning.hidden = false;
+                applicationUploadLimitWarning.scrollIntoView({behavior:'smooth',block:'center'});
+                return false;
+            }
+            applicationUploadLimitWarning.hidden = true;
+            applicationUploadLimitWarning.textContent = '';
+            return true;
+        }
         window.setInterval(function(){
             var recentlyActive = Date.now() - lastApplicationActivity < 10 * 60 * 1000;
             if(!applicationSection.hidden && document.visibilityState === 'visible' &&
@@ -2447,21 +2634,32 @@
         applicationForm.addEventListener('input', updateApplicationProgress);
         var draftSaveTimer;
         applicationForm.addEventListener('input', function(){
+            applicationValidationWarning.hidden = true;
             recordApplicationActivity();
             clearTimeout(draftSaveTimer);
             draftSaveTimer = setTimeout(saveApplicationDraft, 700);
         });
         applicationForm.addEventListener('change', function(event){
+            applicationValidationWarning.hidden = true;
             recordApplicationActivity();
-            if(event.target.matches('[name$="[currently_working]"]')) syncEndPeriodRequirement(event.target);
             if(event.target.id === 'applicationRegistrationType') updateInternshipPeriodLabels();
             if(event.target.id === 'applicationInternshipStart') syncInternshipEndMinimum();
+            validateApplicationUploadSize();
             updateApplicationProgress();
             clearTimeout(draftSaveTimer);
             draftSaveTimer = setTimeout(saveApplicationDraft, 700);
         });
         var submitConfirmed = false;
+        var sessionReadyForSubmit = false;
+        document.getElementById('applicationSubmit').addEventListener('click', function(){
+            if(!validateApplicationUploadSize() || !applicationForm.reportValidity()) return;
+            openApplicationPreview();
+        });
         applicationForm.addEventListener('submit', function(event){
+            if(!validateApplicationUploadSize()){
+                event.preventDefault();
+                return;
+            }
             var selectedJobId = applicationSection.dataset.jobId;
             if(selectedJobId) document.getElementById('applicationJobId').value = selectedJobId;
             if(!submitConfirmed){
@@ -2469,13 +2667,17 @@
                 openApplicationPreview();
                 return;
             }
-            if(Date.now() - lastSessionRefresh > 5 * 60 * 1000){
+            if(!sessionReadyForSubmit){
                 event.preventDefault();
                 refreshApplicationSession().then(function(sessionIsActive){
-                    if(sessionIsActive) applicationForm.requestSubmit();
+                    if(sessionIsActive){
+                        sessionReadyForSubmit = true;
+                        applicationForm.requestSubmit();
+                    }
                 });
                 return;
             }
+            sessionReadyForSubmit = false;
             saveApplicationDraft();
             var submitButton = document.getElementById('applicationSubmit');
             submitButton.disabled = true;
@@ -2483,7 +2685,11 @@
         });
         document.getElementById('saveApplicationDraft').addEventListener('click', saveApplicationDraft);
         document.getElementById('confirmApplicationSubmit').addEventListener('click', function(){
-            if(!applicationForm.reportValidity()) return;
+            if(!applicationForm.checkValidity()){
+                document.getElementById('applicationPreviewDialog').close();
+                applicationForm.reportValidity();
+                return;
+            }
             submitConfirmed = true;
             document.getElementById('applicationPreviewDialog').close();
             applicationForm.requestSubmit();
@@ -3299,6 +3505,240 @@
             el.classList.add('rv');
             io.observe(el);
         });
+    })();
+
+    (function(){
+        var trackers = Array.from(document.querySelectorAll('.tracker[data-tracking-url]'));
+        if(!trackers.length) return;
+
+        var statusStates = {
+            pending: ['done', 'active', 'wait', 'wait'],
+            in_review: ['done', 'done', 'active', 'wait'],
+            accepted: ['done', 'done', 'done', 'done'],
+            rejected: ['done', 'done', 'done', 'done'],
+            completed: ['done', 'done', 'done', 'done']
+        };
+        var formatDate = function(value){
+            if(!value) return 'Menunggu pembaruan HRD';
+            return new Intl.DateTimeFormat('id-ID', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false,
+                timeZone: 'Asia/Jakarta'
+            }).format(new Date(value)).replace(/\./g, ':') + ' WIB';
+        };
+        var eventAt = function(events, predicate, direction){
+            var matches = (events || []).filter(predicate);
+            return matches.length ? matches[direction === 'last' ? matches.length - 1 : 0] : null;
+        };
+        var renderTracking = function(tracker, payload){
+            var status = payload.status || 'pending';
+            var states = statusStates[status] || statusStates.pending;
+            var statusLabel = {
+                pending: 'Menunggu verifikasi',
+                in_review: 'Sedang ditinjau HRD',
+                accepted: 'Disetujui HRD',
+                rejected: 'Tidak lolos seleksi',
+                completed: 'Program selesai'
+            }[status] || 'Status diperbarui HRD';
+            var title = {
+                pending: ['Lamaran dikirim', 'Verifikasi berkas', 'Seleksi Wawancara', 'Hasil akhir'],
+                in_review: ['Lamaran dikirim', 'Verifikasi berkas', 'Seleksi Wawancara', 'Hasil akhir'],
+                accepted: ['Lamaran dikirim', 'Verifikasi berkas', 'Seleksi Wawancara', 'Lamaran disetujui HRD'],
+                rejected: ['Lamaran dikirim', 'Verifikasi berkas', 'Seleksi Wawancara', 'Hasil seleksi'],
+                completed: ['Lamaran dikirim', 'Verifikasi berkas', 'Pelaksanaan program', 'Program selesai']
+            }[status] || ['Lamaran dikirim', 'Verifikasi berkas', 'Seleksi Wawancara', 'Hasil akhir'];
+            var descriptions = [
+                'Lamaran dan dokumen Anda berhasil dikirim.',
+                status === 'pending'
+                    ? 'Lamaran Anda menunggu pemeriksaan dokumen oleh HRD.'
+                    : 'Tahap verifikasi berkas telah diperbarui oleh HRD.',
+                status === 'pending'
+                    ? 'Informasi seleksi wawancara akan diperbarui HRD pada halaman ini.'
+                    : (payload.interview_at
+                        ? 'HRD telah menentukan jadwal wawancara. Silakan konfirmasi kehadiran Anda.'
+                        : (['accepted', 'rejected', 'completed'].includes(status)
+                            ? 'Tahap seleksi wawancara telah selesai ditinjau HRD.'
+                            : 'HRD sedang meninjau lamaran dan akan menginformasikan jadwal wawancara bila diperlukan.')),
+                status === 'accepted' ? 'HRD menyetujui lamaran Anda.' :
+                    status === 'rejected' ? 'HRD telah memperbarui hasil seleksi lamaran Anda.' :
+                    status === 'completed' ? 'Status penyelesaian program telah diperbarui HRD.' :
+                    'Hasil seleksi akan diperbarui HRD setelah proses selesai.'
+            ];
+            var events = payload.events || [];
+            var submitted = eventAt(events, item => item.event_type === 'application_submitted', 'first');
+            var verification = eventAt(events, item => item.event_type === 'status_changed' && ['in_review', 'accepted', 'rejected', 'completed'].includes(item.to_status), 'first') || submitted;
+            var interviewEvent = eventAt(events, item => item.event_type === 'interview_scheduled', 'last');
+            var interviewReview = eventAt(events, item => item.event_type === 'status_changed' && ['in_review', 'accepted', 'rejected', 'completed'].includes(item.to_status), 'last');
+            var outcome = eventAt(events, item => item.event_type === 'status_changed' && ['accepted', 'rejected', 'completed'].includes(item.to_status), 'last');
+            var stageTimes = [
+                payload.created_at,
+                verification && verification.created_at,
+                interviewEvent && interviewEvent.created_at || interviewReview && interviewReview.created_at,
+                outcome && outcome.created_at
+            ];
+            tracker.querySelectorAll('[data-tracking-stage]').forEach(function(stage){
+                var index = Number(stage.dataset.trackingStage);
+                stage.classList.remove('done', 'active', 'wait');
+                stage.classList.add(states[index]);
+                stage.querySelector('[data-stage-status]').textContent = status === 'rejected' && index === 3
+                    ? 'Tidak lolos'
+                    : (states[index] === 'done' ? 'Selesai' : states[index] === 'active' ? 'Berlangsung' : 'Menunggu');
+                stage.querySelector('[data-stage-title]').textContent = title[index];
+                stage.querySelector('[data-stage-description]').textContent = descriptions[index];
+                stage.querySelector('[data-stage-time]').textContent = formatDate(stageTimes[index]);
+            });
+            tracker.querySelector('[data-application-created-at]').textContent = 'Dikirim ' + formatDate(payload.created_at);
+            var completed = states.filter(state => state === 'done').length;
+            var progress = Math.round(completed / states.length * 100);
+            tracker.querySelector('[data-tracking-progress-text]').textContent = completed + ' dari ' + states.length + ' tahap (' + progress + '%)';
+            tracker.querySelector('[data-tracking-progress]').style.width = progress + '%';
+            tracker.querySelector('.tracker-person .tag').textContent = statusLabel;
+
+            var schedule = tracker.querySelector('[data-interview-schedule]');
+            var rsvp = tracker.querySelector('[data-interview-rsvp]');
+            if(schedule && rsvp){
+                schedule.hidden = !payload.interview_at;
+                rsvp.hidden = !payload.interview_at;
+                if(payload.interview_at){
+                    schedule.querySelector('[data-interview-time]').textContent = formatDate(payload.interview_at);
+                    schedule.querySelector('[data-interview-information]').textContent = payload.interview_information || '';
+                    rsvp.querySelector('[data-interview-attendance-state]').textContent = payload.interview_attendance
+                        ? 'Konfirmasi Anda: ' + (payload.interview_attendance === 'hadir' ? 'Hadir' : 'Tidak Hadir')
+                        : 'Konfirmasi kehadiran Anda';
+                    rsvp.querySelector('[data-interview-confirmed-at]').textContent = payload.interview_confirmed_at
+                        ? 'Dikonfirmasi ' + formatDate(payload.interview_confirmed_at)
+                        : '';
+                    rsvp.querySelectorAll('[data-confirm-attendance]').forEach(function(button){
+                        var selected = button.dataset.confirmAttendance === payload.interview_attendance;
+                        button.classList.toggle('is-confirmed', selected);
+                        button.setAttribute('aria-pressed', String(selected));
+                    });
+                    var reasonSection = rsvp.querySelector('[data-interview-attendance-reasons]');
+                    if(!reasonSection.dataset.opened){
+                        reasonSection.querySelectorAll('[data-interview-attendance-reason]').forEach(function(input){
+                            input.checked = input.value === payload.interview_attendance_reason;
+                        });
+                    }
+                    var absenceReason = reasonSection.querySelector('[data-interview-attendance-reason]:checked');
+                    rsvp.querySelector('[data-submit-absence]').disabled = !absenceReason;
+                    var confirmationError = rsvp.querySelector('[data-interview-confirmation-error]');
+                    confirmationError.textContent = '';
+                    confirmationError.hidden = true;
+                }
+            }
+        };
+        var refreshTracking = function(){
+            var url = trackers[0].dataset.trackingUrl;
+            return fetch(url, {
+                credentials: 'same-origin',
+                cache: 'no-store',
+                headers: {'Accept': 'application/json'}
+            }).then(function(response){
+                if(!response.ok) throw new Error('Status pelacakan tidak dapat diperbarui.');
+                return response.json();
+            }).then(function(payload){
+                trackers.forEach(function(tracker){
+                    var application = (payload.applications || []).find(function(item){
+                        return item.type === tracker.dataset.trackingType && String(item.id) === tracker.dataset.trackingId;
+                    });
+                    if(application) renderTracking(tracker, application);
+                });
+                document.querySelectorAll('.tracker [data-confirm-attendance], .tracker [data-submit-absence]').forEach(function(button){
+                    button.dataset.csrfToken = payload.csrf_token || '';
+                });
+            }).catch(function(error){
+                console.error('Pembaruan status pelacakan gagal:', error);
+            });
+        };
+        var submitAttendance = async function(button, attendance, attendanceReason){
+            var tracker = button.closest('.tracker');
+            var buttons = tracker.querySelectorAll('[data-confirm-attendance], [data-submit-absence]');
+            var confirmationError = tracker.querySelector('[data-interview-confirmation-error]');
+            buttons.forEach(item => { item.disabled = true; });
+            confirmationError.textContent = '';
+            confirmationError.hidden = true;
+            try{
+                if(!button.dataset.csrfToken) await refreshTracking();
+                if(!button.dataset.csrfToken) throw new Error('Sesi tidak dapat diverifikasi. Muat ulang halaman lalu coba kembali.');
+                var response = await fetch(tracker.dataset.attendanceUrl, {
+                    method: 'POST',
+                    credentials: 'same-origin',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': button.dataset.csrfToken,
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: JSON.stringify({
+                        attendance: attendance,
+                        attendance_reason: attendanceReason
+                    })
+                });
+                var payload = {};
+                try{ payload = await response.json(); }catch{
+                    if(response.status === 419) throw new Error('Sesi Anda berakhir. Muat ulang halaman sebelum mengonfirmasi kembali.');
+                    throw new Error('Respons konfirmasi tidak dapat dibaca. Coba lagi.');
+                }
+                if(!response.ok){
+                    var validationMessage = payload.errors && (
+                        payload.errors.attendance_reason && payload.errors.attendance_reason[0]
+                        || payload.errors.attendance && payload.errors.attendance[0]
+                    );
+                    if(response.status === 401) throw new Error('Silakan masuk kembali sebelum mengonfirmasi kehadiran.');
+                    throw new Error(validationMessage || payload.message || 'Konfirmasi kehadiran gagal disimpan.');
+                }
+                var reasonSection = tracker.querySelector('[data-interview-attendance-reasons]');
+                reasonSection.dataset.opened = '';
+                reasonSection.hidden = true;
+                renderTracking(tracker, payload);
+                button.dataset.csrfToken = document.querySelector('meta[name="csrf-token"]')?.content || button.dataset.csrfToken;
+            }catch(error){
+                console.error('Konfirmasi wawancara gagal:', error);
+                confirmationError.textContent = error instanceof Error ? error.message : 'Konfirmasi kehadiran gagal disimpan.';
+                confirmationError.hidden = false;
+            }finally{
+                buttons.forEach(item => { item.disabled = false; });
+                var reasonSection = tracker.querySelector('[data-interview-attendance-reasons]');
+                tracker.querySelector('[data-submit-absence]').disabled = !reasonSection.querySelector('[data-interview-attendance-reason]:checked');
+            }
+        };
+        document.querySelectorAll('.tracker [data-confirm-attendance]').forEach(function(button){
+            button.addEventListener('click', function(){
+                var tracker = button.closest('.tracker');
+                if(button.dataset.confirmAttendance === 'tidak_hadir'){
+                    var reasonSection = tracker.querySelector('[data-interview-attendance-reasons]');
+                    reasonSection.hidden = false;
+                    reasonSection.dataset.opened = 'true';
+                    tracker.querySelector('[data-submit-absence]').disabled = !reasonSection.querySelector('[data-interview-attendance-reason]:checked');
+                    return;
+                }
+                submitAttendance(button, 'hadir', null);
+            });
+        });
+        document.querySelectorAll('.tracker [data-interview-attendance-reason]').forEach(function(input){
+            input.addEventListener('change', function(){
+                input.closest('[data-interview-attendance-reasons]').querySelector('[data-submit-absence]').disabled = false;
+                var confirmationError = input.closest('.tracker').querySelector('[data-interview-confirmation-error]');
+                confirmationError.textContent = '';
+                confirmationError.hidden = true;
+            });
+        });
+        document.querySelectorAll('.tracker [data-submit-absence]').forEach(function(button){
+            button.addEventListener('click', function(){
+                var reason = button.closest('[data-interview-attendance-reasons]').querySelector('[data-interview-attendance-reason]:checked');
+                if(!reason) return;
+                submitAttendance(button, 'tidak_hadir', reason.value);
+            });
+        });
+        refreshTracking();
+        window.setInterval(function(){
+            if(document.visibilityState === 'visible') refreshTracking();
+        }, 15000);
+        window.addEventListener('focus', refreshTracking);
     })();
 </script>
 </body>

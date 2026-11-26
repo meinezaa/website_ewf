@@ -1,4 +1,4 @@
-{{-- resources/views/partials/footer.blade.php --}}
+{{-- resources/views/user/partials/footer.blade.php --}}
 @php
   $footerAboutUrl = Route::has('tentang.kami') ? route('tentang.kami') : route('home').'#tentang-perusahaan';
   $footerActivitiesUrl = Route::has('kegiatan') ? route('kegiatan') : (Route::has('tentang.kami') ? route('tentang.kami').'#fasilitas' : route('home').'#galeri-magang');
@@ -89,7 +89,7 @@
   }
 </style>
 
-<footer class="site-footer" @if(request()->routeIs('tentang.kami')) data-page="about" @endif>
+<footer class="site-footer" @if(request()->routeIs('home')) data-page="home" @elseif(request()->routeIs('kegiatan')) data-page="activities" @elseif(request()->routeIs('tentang.kami')) data-page="about" @endif>
   <div class="container">
     <div class="foot-logo">
       <img src="{{ asset('image/' . rawurlencode('logo galeri magang.png')) }}" alt="Logo Galeri Magang">

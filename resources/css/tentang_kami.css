@@ -181,8 +181,8 @@ body.about-page .fas .fs{font-size:16px;color:var(--mut);margin:8px auto 16px;ma
 body.about-page .fas .tags{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-bottom:26px}
 body.about-page .fas .tags span{font-size:12.5px;border:1px solid #f9cfb0;color:#4c4c52;background:#fff;padding:6px 15px;border-radius:999px;display:inline-flex;gap:6px;align-items:center}
 body.about-page .fas .tags svg{color:var(--or)}
-body.about-page .car{position:relative;height:540px}
-body.about-page .ring{position:absolute;inset:0}
+body.about-page .car{position:relative;height:540px;border:0;outline:0}
+body.about-page .fas .ring{position:absolute;inset:0;box-shadow:none}
 body.about-page .slide{position:absolute;left:calc(50% - 170px);top:24px;width:340px;height:500px;display:flex;flex-direction:column;background:#fff;border:1px solid #f0e5dc;border-radius:18px;box-shadow:0 12px 30px rgba(0,0,0,.1);overflow:hidden;text-align:left;cursor:pointer;opacity:.64;
   transition:transform .9s var(--ease),opacity .8s ease,box-shadow .8s ease}
 body.about-page .slide.s-3{transform:translateX(-1140px);opacity:0;pointer-events:none;z-index:0}

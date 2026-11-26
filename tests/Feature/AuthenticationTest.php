@@ -142,6 +142,27 @@ class AuthenticationTest extends TestCase
         $this->assertAuthenticatedAs($admin);
     }
 
+    public function test_hrd_accounts_login_directly_to_the_hrd_dashboard(): void
+    {
+        $role = Role::query()->create(['role_name' => 'HRD']);
+        $user = $this->createUser([
+            'name' => 'Nadia Aulia',
+            'email' => 'nadia.hrd@example.test',
+            'password' => 'Password123',
+        ]);
+        $user->role()->associate($role);
+        $user->save();
+
+        $this->post(route('login.store'), [
+            'email' => $user->email,
+            'password' => 'Password123',
+            'next' => '/karir',
+        ])->assertRedirect(route('hrd.dashboard'));
+        $this->assertAuthenticatedAs($user);
+        $this->get(route('hrd.dashboard'))->assertOk()->assertSeeText('Akses HRD');
+        $this->get(route('profile'))->assertRedirect(route('hrd.dashboard'));
+    }
+
     public function test_password_reset_sends_a_token_link_and_allows_login_with_the_new_password(): void
     {
         Notification::fake();
@@ -325,6 +346,26 @@ class AuthenticationTest extends TestCase
             'password_confirmation' => 'Password123',
             'next' => '/tentang-kami#profil',
         ])->assertRedirect(route('tentang.kami').'#profil');
+
+        $this->post(route('logout'));
+        $this->post(route('daftar.store'), [
+            'name' => 'Hendra Wijaya',
+            'email' => 'hendra@example.test',
+            'phone' => '+628123456789',
+            'password' => 'Password123',
+            'password_confirmation' => 'Password123',
+            'next' => '/karir#lowongan',
+        ])->assertRedirect(route('karir').'#lowongan');
+
+        $this->post(route('logout'));
+        $this->post(route('daftar.store'), [
+            'name' => 'Tia Wulandari',
+            'email' => 'tia@example.test',
+            'phone' => '+628123456789',
+            'password' => 'Password123',
+            'password_confirmation' => 'Password123',
+            'next' => '/#karir',
+        ])->assertRedirect(url('/#karir'));
     }
 
     public function test_registration_preserves_selected_internship_program_when_returning_to_apply_page(): void
@@ -354,8 +395,10 @@ class AuthenticationTest extends TestCase
         $this->actingAs($user)->get(route('profile'))
             ->assertOk()
             ->assertSeeText('Halo, Indira Prastika')
+            ->assertSeeText('PROFIL PELAMAR')
             ->assertSeeText('Informasi akun')
             ->assertSeeText('Riwayat lamaran')
+            ->assertSee('<span class="account-avatar-initials" aria-label="Inisial Indira Prastika">IP</span>', false)
             ->assertSee('aria-label="Pilih foto profil"', false)
             ->assertSee('id="profilePhoto" name="profile_photo" type="file"', false)
             ->assertDontSee('data-profile-photo-preview', false)
@@ -371,7 +414,6 @@ class AuthenticationTest extends TestCase
             ->assertSee('id="deleteAccountCard"', false)
             ->assertDontSeeText('Headline profesional')
             ->assertSeeText('Keluar akun')
-            ->assertDontSeeText('Profil Pelamar')
             ->assertDontSeeText('Sign out');
 
         $this->postJson(route('profile.photo.update'), [
@@ -662,7 +704,12 @@ class AuthenticationTest extends TestCase
         ]);
         $profilePhotoPath = 'profile-photos/'.$user->getKey().'/avatar.png';
         Storage::disk('public')->put($profilePhotoPath, 'profile photo');
-        $user->update(['profile_photo_path' => $profilePhotoPath]);
+        $profileCoverPath = 'profile-cover-photos/'.$user->getKey().'/cover.png';
+        Storage::disk('public')->put($profileCoverPath, 'profile cover');
+        $user->update([
+            'profile_photo_path' => $profilePhotoPath,
+            'profile_cover_path' => $profileCoverPath,
+        ]);
         $cvPath = 'career-applications/EWF-APP-TEST/cv/cv.pdf';
         $ktpPath = 'career-applications/EWF-APP-TEST/documents/ktp.pdf';
         Storage::disk('private')->put($cvPath, 'cv');
@@ -694,6 +741,7 @@ class AuthenticationTest extends TestCase
         Storage::disk('private')->assertMissing($cvPath);
         Storage::disk('private')->assertMissing($ktpPath);
         Storage::disk('public')->assertMissing($profilePhotoPath);
+        Storage::disk('public')->assertMissing($profileCoverPath);
 
         $this->post(route('login.store'), [
             'email' => $user->email,
@@ -706,6 +754,27 @@ class AuthenticationTest extends TestCase
             'password' => 'Password123',
             'password_confirmation' => 'Password123',
         ])->assertRedirect(route('profile'));
+    }
+
+    public function test_account_deletion_removes_the_profile_cover_photo(): void
+    {
+        Storage::fake('private');
+        Storage::fake('public');
+        $user = $this->createUser([
+            'name' => 'Indira Prastika',
+            'email' => 'indira@example.test',
+            'phone' => '+628123456789',
+            'password' => 'Password123',
+        ]);
+        $profileCoverPath = 'profile-cover-photos/'.$user->getKey().'/cover.png';
+        Storage::disk('public')->put($profileCoverPath, 'profile cover');
+        $user->update(['profile_cover_path' => $profileCoverPath]);
+
+        $this->actingAs($user)->delete(route('profile.destroy'), [
+            'password' => 'Password123',
+        ])->assertRedirect(route('home'));
+
+        Storage::disk('public')->assertMissing($profileCoverPath);
     }
 
     private function createUser(array $attributes): User

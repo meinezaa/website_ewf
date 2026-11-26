@@ -20,9 +20,11 @@ class User extends Authenticatable
         'name',
         'email',
         'phone',
+        'department',
         'gender',
         'location',
         'profile_photo_path',
+        'profile_cover_path',
         'headline',
         'password',
         'status',
@@ -75,6 +77,17 @@ class User extends Authenticatable
     public function getRoleClassAttribute(): string
     {
         return Str::slug($this->role_label);
+    }
+
+    public function profileCoverUrl(): ?string
+    {
+        if (! $this->profile_cover_path) {
+            return null;
+        }
+
+        $encodedPath = array_map('rawurlencode', explode('/', $this->profile_cover_path));
+
+        return '/storage/'.implode('/', $encodedPath);
     }
 
     public function role(): BelongsTo

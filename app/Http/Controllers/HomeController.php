@@ -32,6 +32,6 @@ class HomeController extends Controller
             }
         }
 
-        return view('home', compact('careerRegistration'));
+        return view('user.home', compact('careerRegistration'));
     }
 }

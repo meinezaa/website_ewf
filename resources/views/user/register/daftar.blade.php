@@ -1,7 +1,7 @@
 {{-- resources/views/daftar.blade.php --}}
 @php
     $foto = asset('image/bg%20tentang%20kami.png');
-    $logo = asset('image/logo%20ewf.png');
+    $logo = asset('image/ewf-logo.png');
     $urlLogin = route('login', request()->only('next'));
     $urlKarir = \Illuminate\Support\Facades\Route::has('karir') ? route('karir') : url('/karir');
 @endphp
