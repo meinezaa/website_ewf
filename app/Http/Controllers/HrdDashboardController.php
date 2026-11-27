@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\ActivityLog;
 use App\Models\ApplicationTrackingEvent;
 use App\Models\Certificate;
+use App\Models\CareerOpening;
 use App\Models\InternshipRegistration;
 use App\Models\StaffRegistration;
 use Illuminate\Database\Eloquent\Builder;
@@ -66,6 +67,7 @@ class HrdDashboardController extends Controller
         $statusStats = $dashboardStatusData['stats'];
 
         $trendData = $this->trendData($now);
+        $careerOpenings = CareerOpening::query()->orderByDesc('created_at')->get();
         $staffApplicants = $this->mapPaginator(
             $this->applyApplicationFilters(StaffRegistration::query(), $request, 'staff', 'staff')
                 ->latest('created_at')
@@ -264,6 +266,7 @@ class HrdDashboardController extends Controller
             'statusStats' => $statusStats,
             'categoryStatusRows' => $dashboardStatusData['category_status_rows'],
             'trendData' => $trendData,
+            'careerOpenings' => $careerOpenings,
             'staffApplicants' => $staffApplicants,
             'internshipApplicants' => $internshipApplicants,
             'staffMembers' => $staffMembers,

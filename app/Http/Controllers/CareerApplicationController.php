@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\ApplicationTrackingEvent;
+use App\Models\CareerOpening;
 use App\Models\InternshipRegistration;
 use App\Models\StaffRegistration;
 use App\Models\ActivityLog;
@@ -108,17 +109,77 @@ class CareerApplicationController extends Controller
 
         $downloadableDocuments = $this->downloadableDocumentsFor($applications);
 
-        $internshipPrograms = self::internshipPrograms();
+        $careerOpenings = CareerOpening::query()->orderBy('title')->get();
         $applicantCounts = $this->applicationCountsByJob();
+        $professionalOpenings = $careerOpenings
+            ->where('type', 'professional')
+            ->map(fn (CareerOpening $opening): array => $this->publicOpeningData($opening, $applicantCounts))
+            ->values()
+            ->all();
+        $internshipOpenings = $careerOpenings
+            ->where('type', 'internship')
+            ->map(fn (CareerOpening $opening): array => $this->publicOpeningData($opening, $applicantCounts))
+            ->values()
+            ->all();
+        $internshipPrograms = collect($internshipOpenings)
+            ->groupBy('major')
+            ->map(fn (Collection $fields): array => $fields->map(fn (array $field): array => [
+                'label' => $field['title'],
+                'job_id' => $field['job_id'],
+                'status' => $field['status'],
+            ])->values()->all())
+            ->all();
+        $professionalCategories = collect($professionalOpenings)
+            ->unique('category')
+            ->map(fn (array $opening): array => ['value' => $opening['category'], 'label' => $opening['title']])
+            ->values()
+            ->all();
+        $internshipFields = collect($internshipOpenings)
+            ->unique('category')
+            ->map(fn (array $opening): array => ['value' => $opening['category'], 'label' => $opening['title']])
+            ->values()
+            ->all();
+        $allCareerCategories = collect($professionalCategories)->merge($internshipFields)
+            ->unique('value')->values()->all();
+        $professionalCount = count($professionalOpenings);
+        $internshipCount = count($internshipOpenings);
         $trackingEvents = $this->trackingEventsFor($applications);
 
         return view('user.karir', compact(
             'applications',
             'downloadableDocuments',
             'internshipPrograms',
+            'professionalOpenings',
+            'internshipOpenings',
+            'professionalCategories',
+            'internshipFields',
+            'allCareerCategories',
+            'professionalCount',
+            'internshipCount',
             'applicantCounts',
             'trackingEvents'
         ));
+    }
+
+    private function publicOpeningData(CareerOpening $opening, array $applicantCounts): array
+    {
+        return [
+            'job_id' => $opening->opening_key,
+            'type' => $opening->type,
+            'title' => $opening->title,
+            'category' => $opening->category ?: Str::slug($opening->title),
+            'major' => $opening->major,
+            'company' => 'PT Equityworld Futures',
+            'location' => $opening->location,
+            'work_system' => $opening->work_system,
+            'education' => $opening->education,
+            'qualifications' => $opening->qualifications,
+            'description' => $opening->description,
+            'benefits' => $opening->benefits,
+            'duration' => $opening->duration,
+            'status' => $opening->status,
+            'applicants' => (int) ($applicantCounts[$opening->opening_key] ?? 0),
+        ];
     }
 
     public function documents(Request $request): View|RedirectResponse
@@ -130,14 +191,53 @@ class CareerApplicationController extends Controller
 
         $downloadableDocuments = $this->downloadableDocumentsFor($applications);
 
-        $internshipPrograms = self::internshipPrograms();
+        $careerOpenings = CareerOpening::query()->orderBy('title')->get();
         $applicantCounts = $this->applicationCountsByJob();
+        $professionalOpenings = $careerOpenings
+            ->where('type', 'professional')
+            ->map(fn (CareerOpening $opening): array => $this->publicOpeningData($opening, $applicantCounts))
+            ->values()
+            ->all();
+        $internshipOpenings = $careerOpenings
+            ->where('type', 'internship')
+            ->map(fn (CareerOpening $opening): array => $this->publicOpeningData($opening, $applicantCounts))
+            ->values()
+            ->all();
+        $internshipPrograms = collect($internshipOpenings)
+            ->groupBy('major')
+            ->map(fn (Collection $fields): array => $fields->map(fn (array $field): array => [
+                'label' => $field['title'],
+                'job_id' => $field['job_id'],
+                'status' => $field['status'],
+            ])->values()->all())
+            ->all();
+        $professionalCategories = collect($professionalOpenings)
+            ->unique('category')
+            ->map(fn (array $opening): array => ['value' => $opening['category'], 'label' => $opening['title']])
+            ->values()
+            ->all();
+        $internshipFields = collect($internshipOpenings)
+            ->unique('category')
+            ->map(fn (array $opening): array => ['value' => $opening['category'], 'label' => $opening['title']])
+            ->values()
+            ->all();
+        $allCareerCategories = collect($professionalCategories)->merge($internshipFields)
+            ->unique('value')->values()->all();
+        $professionalCount = count($professionalOpenings);
+        $internshipCount = count($internshipOpenings);
         $trackingEvents = $this->trackingEventsFor($applications);
 
         return view('user.karir', compact(
             'applications',
             'downloadableDocuments',
             'internshipPrograms',
+            'professionalOpenings',
+            'internshipOpenings',
+            'professionalCategories',
+            'internshipFields',
+            'allCareerCategories',
+            'professionalCount',
+            'internshipCount',
             'applicantCounts',
             'trackingEvents'
         ));
@@ -210,15 +310,13 @@ class CareerApplicationController extends Controller
 
     private function applicationCountsByJob(): array
     {
-        $counts = array_fill_keys(array_keys(self::JOBS), 0);
-        $professionalJobIds = array_filter(
+        $jobIds = array_unique(array_merge(
             array_keys(self::JOBS),
-            fn (string $jobId): bool => ! str_starts_with($jobId, 'internship-')
-        );
-        $internshipJobIds = array_filter(
-            array_keys(self::JOBS),
-            fn (string $jobId): bool => str_starts_with($jobId, 'internship-')
-        );
+            CareerOpening::query()->pluck('opening_key')->all()
+        ));
+        $counts = array_fill_keys($jobIds, 0);
+        $professionalJobIds = array_filter($jobIds, fn (string $jobId): bool => ! str_starts_with($jobId, 'internship-'));
+        $internshipJobIds = array_filter($jobIds, fn (string $jobId): bool => str_starts_with($jobId, 'internship-'));
 
         foreach ([
             ['staff_registrations', $professionalJobIds],
@@ -388,16 +486,31 @@ class CareerApplicationController extends Controller
         }
 
         $jobId = $request->input('job_id');
-        if (! in_array($jobId, array_keys(self::JOBS), true)) {
+        if ((! is_string($jobId) || ! array_key_exists($jobId, self::JOBS))
+            && ! CareerOpening::query()->where('opening_key', $jobId)->exists()) {
             $fallbackJobId = $selectedJobId ?? $request->query('selected_job_id');
-            if (is_string($fallbackJobId) && array_key_exists($fallbackJobId, self::JOBS)) {
+            if (is_string($fallbackJobId) && (
+                array_key_exists($fallbackJobId, self::JOBS)
+                || CareerOpening::query()->where('opening_key', $fallbackJobId)->exists()
+            )) {
                 $request->merge(['job_id' => $fallbackJobId]);
                 $jobId = $fallbackJobId;
             }
         }
-        $isInternship = is_string($jobId) && str_starts_with($jobId, 'internship-');
+        $opening = is_string($jobId)
+            ? CareerOpening::query()->where('opening_key', $jobId)->first()
+            : null;
+        $isInternship = $opening
+            ? $opening->type === 'internship'
+            : (is_string($jobId) && str_starts_with($jobId, 'internship-'));
         $validator = Validator::make($request->all(), [
-            'job_id' => ['required', 'string', 'in:'.implode(',', array_keys(self::JOBS))],
+            'job_id' => ['required', 'string', 'max:100', function (string $attribute, mixed $value, \Closure $fail) use ($opening): void {
+                if ($opening && $opening->status !== 'open') {
+                    $fail('Lowongan ini sudah ditutup dan tidak menerima pendaftaran.');
+                } elseif (! $opening && (! is_string($value) || ! array_key_exists($value, self::JOBS))) {
+                    $fail('Pilih lowongan yang tersedia.');
+                }
+            }],
             'full_name' => ['required', 'string', 'max:150'],
             'email' => ['required', 'email:rfc', 'max:255'],
             'phone' => ['required', 'string', 'max:40'],
@@ -447,7 +560,7 @@ class CareerApplicationController extends Controller
             'documents.*' => ['file', 'mimes:pdf,doc,docx,jpg,jpeg,png', 'max:10240'],
             'privacy_consent' => ['accepted'],
         ]);
-        $validator->after(function ($validator) use ($request, $isInternship, $jobId): void {
+        $validator->after(function ($validator) use ($request, $isInternship, $jobId, $opening): void {
             $start = $request->input('internship_start_period');
             $end = $request->input('internship_end_period');
 
@@ -472,14 +585,18 @@ class CareerApplicationController extends Controller
             if ($isInternship) {
                 $selectedMajor = $request->input('internship_major');
                 $selectedField = $request->input('target_position');
-                $selectedProgram = is_string($selectedMajor)
-                    ? (self::internshipPrograms()[$selectedMajor] ?? [])
-                    : [];
-                $validField = collect($selectedProgram)->first(
-                    fn (array $field): bool => is_string($selectedField)
-                        && $field['label'] === $selectedField
-                        && $field['job_id'] === $jobId
-                );
+                $validField = $opening
+                    ? (
+                        $opening->type === 'internship'
+                        && $opening->major === $selectedMajor
+                        && $opening->title === $selectedField
+                        ? $opening
+                        : null
+                    )
+                    : collect(is_string($selectedMajor) ? (self::internshipPrograms()[$selectedMajor] ?? []) : [])
+                        ->first(fn (array $field): bool => is_string($selectedField)
+                            && $field['label'] === $selectedField
+                            && $field['job_id'] === $jobId);
 
                 if ($validField === null) {
                     $validator->errors()->add('target_position', 'Pilih jurusan dan bidang magang yang tersedia.');
@@ -487,9 +604,11 @@ class CareerApplicationController extends Controller
             }
         });
         if ($validator->fails()) {
-            $jobId = in_array($request->input('job_id'), array_keys(self::JOBS), true)
-                ? $request->input('job_id')
-                : 'professional-0';
+            $candidateJobId = $request->input('job_id');
+            $jobId = is_string($candidateJobId) && (
+                array_key_exists($candidateJobId, self::JOBS)
+                || CareerOpening::query()->where('opening_key', $candidateJobId)->exists()
+            ) ? $candidateJobId : 'professional-0';
             $applicationFragment = '#apply/'.$jobId;
             if ($isInternship && filled($request->input('internship_major')) && filled($request->input('target_position'))) {
                 $applicationFragment .= '?'.http_build_query([
@@ -506,7 +625,8 @@ class CareerApplicationController extends Controller
         $validated = $validator->validated();
 
         $validated['email'] = $user->email;
-        [$jobTitle, $company] = self::JOBS[$validated['job_id']];
+        $jobTitle = $opening?->title ?? self::JOBS[$validated['job_id']][0];
+        $company = 'PT Equityworld Futures';
         if ($isInternship) {
             $jobTitle = $validated['target_position'];
         }

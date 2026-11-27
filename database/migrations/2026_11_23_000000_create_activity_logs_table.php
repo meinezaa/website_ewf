@@ -1,3 +1,4 @@
+
 <?php
 
 use Illuminate\Database\Migrations\Migration;
@@ -8,6 +9,11 @@ return new class extends Migration
 {
     public function up(): void
     {
+        // Lewati pembuatan jika tabel sudah tersedia.
+        if (Schema::hasTable('activity_logs')) {
+            return;
+        }
+
         Schema::create('activity_logs', function (Blueprint $table): void {
             $table->id();
             $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete();
@@ -19,6 +25,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('activity_logs');
+        // Tidak menghapus tabel agar data aktivitas tetap aman.
     }
 };

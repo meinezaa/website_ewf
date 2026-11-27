@@ -8,6 +8,7 @@ use App\Http\Controllers\CareerApplicationController;
 use App\Http\Controllers\DashboardAdminController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\HrdDashboardController;
+use App\Http\Controllers\HrdCareerOpeningController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Middleware\EnsureAdmin;
 use Illuminate\Support\Facades\Route;
@@ -96,12 +97,15 @@ Route::middleware('auth')->group(function (): void {
         ->whereNumber('applicationId')
         ->name('karir.application.loa');
     Route::post('/karir/lamar/{selectedJobId?}', [CareerApplicationController::class, 'store'])
-        ->where('selectedJobId', '[a-z]+-\d+')
+        ->where('selectedJobId', '[a-z0-9-]+')
         ->middleware('throttle:5,1')
         ->name('karir.apply.store');
 });
 
 Route::middleware(['auth', 'hrd'])->group(function (): void {
+    Route::post('/hrd/lowongan/{type}', [HrdCareerOpeningController::class, 'store'])->whereIn('type', ['professional', 'internship'])->name('hrd.openings.store');
+    Route::put('/hrd/lowongan/{opening}', [HrdCareerOpeningController::class, 'update'])->whereNumber('opening')->name('hrd.openings.update');
+    Route::delete('/hrd/lowongan/{opening}', [HrdCareerOpeningController::class, 'destroy'])->whereNumber('opening')->name('hrd.openings.destroy');
     Route::get('/hrd', [HrdDashboardController::class, 'index'])->name('hrd.dashboard');
     Route::get('/hrd/dashboard/snapshot', [HrdDashboardController::class, 'dashboardSnapshot'])
         ->middleware('throttle:60,1')

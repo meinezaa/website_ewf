@@ -17,15 +17,22 @@
         ['bi-person-vcard', 'Satu Akun Terpadu', 'Gunakan satu profil dan CV terverifikasi untuk mengajukan lamaran ke berbagai posisi yang tersedia.'],
     ];
 
-    $lowongan = [
-        ['EWF', 'PT Equityworld Futures', 'Kantor · Work From Office', 'OB', ['Work From Office (WFO)', 'Pendidikan min. SMA/SMK'], 'Benefit', 'Aman, nyaman, untung', 'Lowongan dibuka', 'Lihat Karir', true, 'ob'],
-        ['EWF', 'PT Equityworld Futures', 'Kantor · Work From Office', 'Resepsionis', ['Work From Office (WFO)', 'Pendidikan min. SMA/SMK'], 'Benefit', 'Aman, nyaman, untung', 'Lowongan dibuka', 'Lihat Karir', true, 'resepsionis'],
-        ['EWF', 'PT Equityworld Futures', 'Kantor · Work From Office', 'Asisten WPB', ['Work From Office (WFO)', 'Pendidikan min. SMA/SMK'], 'Benefit', 'Aman, nyaman, untung', 'Lowongan dibuka', 'Lihat Karir', true, 'asisten-wpb'],
-        ['EWF', 'PT Equityworld Futures', 'Kantor · Work From Office', 'Driver', ['Work From Office (WFO)', 'Pendidikan min. SMA/SMK'], 'Benefit', 'Aman, nyaman, untung', 'Lowongan dibuka', 'Lihat Karir', true, 'driver'],
-        ['EWF', 'PT Equityworld Futures', 'Kantor · Work From Office', 'Staf', ['Work From Office (WFO)', 'Pendidikan min. SMA/SMK'], 'Benefit', 'Aman, nyaman, untung', 'Lowongan dibuka', 'Lihat Karir', true, 'staf'],
-    ];
-    $lowongan = array_slice($lowongan, 0, 6);
-    $professionalCount = count($lowongan);
+    $lowongan = collect($professionalOpenings)->map(fn (array $opening): array => [
+        'EWF',
+        $opening['company'],
+        $opening['location'].' · '.$opening['work_system'],
+        $opening['title'],
+        [$opening['work_system'], 'Pendidikan '.$opening['education']],
+        'Benefit',
+        $opening['benefits'],
+        $opening['status'] === 'open' ? 'Lowongan dibuka' : 'Lowongan ditutup',
+        'Lihat Karir',
+        $opening['status'] === 'open',
+        $opening['category'],
+        $opening['job_id'],
+        $opening['description'],
+        $opening['qualifications'],
+    ])->all();
 
     $professionalDetails = [
         'professional-0' => [
@@ -130,21 +137,23 @@
         ],
     ];
 
-    $magang = [
-        ['EWF', 'PT Equityworld Futures', 'Program Magang & PKL · Work From Office', 'Magang Administrasi', ['Work From Office (WFO)', 'SMA/SMK/D3/D4/S1/S2', 'Durasi sesuai ketentuan program'], '', 'Sertifikat & Mentorship', 'Aman, nyaman, untung', 'Pendaftaran dibuka', 'Lihat Karir', true],
-        ['EWF', 'PT Equityworld Futures', 'Program Magang & PKL · Work From Office', 'Magang Marketing', ['Work From Office (WFO)', 'SMA/SMK/D3/D4/S1/S2', 'Durasi sesuai ketentuan program'], '', 'Sertifikat & Mentorship', 'Aman, nyaman, untung', 'Pendaftaran dibuka', 'Lihat Karir', true],
-        ['EWF', 'PT Equityworld Futures', 'Program Magang & PKL · Work From Office', 'Magang IT (Teknologi Informasi)', ['Work From Office (WFO)', 'SMA/SMK/D3/D4/S1/S2', 'Durasi sesuai ketentuan program'], '', 'Sertifikat & Mentorship', 'Aman, nyaman, untung', 'Pendaftaran dibuka', 'Lihat Karir', true],
-        ['EWF', 'PT Equityworld Futures', 'Program Magang & PKL · Work From Office', 'Magang Desain Grafis & Kreatif', ['Work From Office (WFO)', 'SMA/SMK/D3/D4/S1/S2', 'Durasi sesuai ketentuan program'], '', 'Sertifikat & Mentorship', 'Aman, nyaman, untung', 'Pendaftaran dibuka', 'Lihat Karir', true],
-        ['EWF', 'PT Equityworld Futures', 'Program Magang & PKL · Work From Office', 'Magang Operasional', ['Work From Office (WFO)', 'SMA/SMK/D3/D4/S1/S2', 'Durasi sesuai ketentuan program'], '', 'Sertifikat & Mentorship', 'Aman, nyaman, untung', 'Pendaftaran dibuka', 'Lihat Karir', true],
-    ];
-    $internshipCount = collect($internshipPrograms)->sum(fn ($fields) => count($fields));
-    $internshipFields = [
-        ['value' => 'administrasi', 'label' => 'Administrasi'],
-        ['value' => 'marketing', 'label' => 'Marketing'],
-        ['value' => 'teknologi', 'label' => 'IT'],
-        ['value' => 'desain', 'label' => 'Desain'],
-        ['value' => 'operasional', 'label' => 'Operasional'],
-    ];
+    $magang = collect($internshipOpenings)->map(fn (array $opening): array => [
+        'EWF',
+        $opening['company'],
+        $opening['location'].' · '.$opening['work_system'],
+        $opening['title'],
+        [$opening['work_system'], $opening['education'], $opening['duration'] ?: 'Durasi sesuai program'],
+        '',
+        'Benefit',
+        $opening['benefits'],
+        $opening['status'] === 'open' ? 'Pendaftaran dibuka' : 'Pendaftaran ditutup',
+        'Lihat Karir',
+        $opening['status'] === 'open',
+        $opening['category'],
+        $opening['job_id'],
+        $opening['description'],
+        $opening['qualifications'],
+    ])->all();
     $internshipCategories = array_column($internshipFields, 'value');
     $internshipEducationLevels = ['SMA', 'SMK', 'D3', 'D4', 'S1', 'S2'];
     $professionalCategories = [
@@ -444,7 +453,7 @@
                 <div class="jobs">
                     @foreach($lowongan as $j)
                         <div class="card job"
-                             data-job-id="professional-{{ $loop->index }}"
+                             data-job-id="{{ $j[11] }}"
                              data-career-category="{{ $j[10] }}"
                              data-career-type="profesional"
                              data-career-title="{{ $j[3] }}"
@@ -453,14 +462,17 @@
                              data-career-work-system="{{ $j[4][0] }}"
                              data-career-benefit="{{ $j[6] }}"
                              data-career-posted="{{ $j[7] }}"
-                             data-career-applicants="{{ $applicantCounts['professional-'.$loop->index] ?? 0 }}"
+                             data-career-description="{{ $j[12] }}"
+                             data-career-qualifications="{{ $j[13] }}"
+                             data-career-applicants="{{ $applicantCounts[$j[11]] ?? 0 }}"
+                             data-career-status="{{ $j[9] ? 'open' : 'closed' }}"
                              data-career-sample="false">
                             <i class="bi bi-bookmark mark"></i>
                             <div class="co"><div class="logo"><img src="{{ asset('image/ewf-logo.png') }}" alt="Logo EWF"></div><div><b>{{ $j[1] }} @if($loop->index < 3)<i class="bi bi-patch-check-fill" style="color:var(--o)"></i>@endif</b><small>{{ $j[2] }}</small></div></div>
                             <h4>{{ $j[3] }}</h4>
                             <div class="meta">@foreach($j[4] as $m)<span>{{ $m }}</span>@endforeach</div>
                             <div class="pay"><small>{{ $j[5] }}</small><b>{{ $j[6] }}</b></div>
-                            <div class="bot"><span class="{{ $j[9] ? 'live' : '' }}"><i class="bi bi-{{ $j[9] ? 'broadcast' : 'clock' }}"></i> {{ $j[7] }}</span><a href="#job/professional-{{ $loop->index }}" class="btn sm {{ $j[9] ? '' : 'ghost' }}">{{ $j[8] }}</a></div>
+                            <div class="bot"><span class="{{ $j[9] ? 'live' : '' }}"><i class="bi bi-{{ $j[9] ? 'broadcast' : 'clock' }}"></i> {{ $j[7] }}</span><a href="#job/{{ $j[11] }}" class="btn sm {{ $j[9] ? '' : 'ghost' }}">{{ $j[8] }}</a></div>
                         </div>
                     @endforeach
                 </div>
@@ -471,7 +483,7 @@
                 <p class="sec-sub internship-intro">Pilih jurusan yang paling sesuai, lalu tentukan bidang yang ingin dipelajari. Pilihan ini akan tercantum di formulir pendaftaran.</p>
                 <div class="internship-majors">
                     @foreach($internshipPrograms as $major => $fields)
-                        <article class="card internship-major-card" @if($loop->index >= 6) hidden @endif>
+                        <article class="card internship-major-card">
                             <div class="co">
                                 <div class="logo"><img src="{{ asset('image/ewf-logo.png') }}" alt="Logo EWF"></div>
                                 <div><b>PT Equityworld Futures <i class="bi bi-patch-check-fill internship-company-badge" aria-label="Perusahaan terverifikasi"></i></b><small>Program Magang &amp; PKL · Work From Office</small></div>
@@ -483,13 +495,13 @@
                                 <select id="internshipField{{ $loop->index }}" data-internship-field required>
                                     <option value="" selected disabled hidden>Pilih bidang</option>
                                     @foreach($fields as $field)
-                                        <option value="{{ $field['label'] }}" data-job-id="{{ $field['job_id'] }}">{{ $field['label'] }}</option>
+                                        <option value="{{ $field['label'] }}" data-job-id="{{ $field['job_id'] }}" data-status="{{ $field['status'] }}" @disabled($field['status'] !== 'open')>{{ $field['label'] }}{{ $field['status'] !== 'open' ? ' · Ditutup' : '' }}</option>
                                     @endforeach
                                 </select>
                             </div>
                             <div class="pay"><small>Benefit</small><b>Aman, nyaman, untung</b></div>
                             <div class="bot">
-                                <span class="live"><i class="bi bi-broadcast"></i> Pendaftaran dibuka</span>
+                                <span class="live"><i class="bi bi-broadcast"></i> Tersedia untuk dipilih</span>
                                 <button class="btn sm" type="button" data-internship-apply data-major="{{ $major }}">Lihat Karir</button>
                             </div>
                         </article>
@@ -498,8 +510,8 @@
                 <div class="jobs" hidden aria-hidden="true">
                     @foreach($magang as $j)
                         <div class="card job"
-                             data-job-id="internship-{{ $loop->index }}"
-                             data-career-category="{{ $internshipCategories[$loop->index] }}"
+                             data-job-id="{{ $j[12] }}"
+                             data-career-category="{{ $j[11] }}"
                              data-career-type="magang"
                              data-career-title="{{ $j[3] }}"
                              data-career-company="{{ $j[1] }}"
@@ -508,14 +520,17 @@
                              data-career-education="{{ implode(',', $internshipEducationLevels) }}"
                              data-career-benefit="{{ $j[7] }}"
                              data-career-posted="{{ $j[8] }}"
-                             data-career-applicants="{{ $applicantCounts['internship-'.$loop->index] ?? 0 }}"
+                             data-career-description="{{ $j[13] }}"
+                             data-career-qualifications="{{ $j[14] }}"
+                             data-career-applicants="{{ $applicantCounts[$j[12]] ?? 0 }}"
+                             data-career-status="{{ $j[10] ? 'open' : 'closed' }}"
                              data-career-sample="false">
                             <i class="bi bi-bookmark mark"></i>
                             <div class="co"><div class="logo">@if($j[1] === 'PT Equityworld Futures')<img src="{{ asset('image/ewf-logo.png') }}" alt="Logo EWF">@else{{ $j[0] }}@endif</div><div><b>{{ $j[1] }} @if($loop->index < 3)<i class="bi bi-patch-check-fill" style="color:var(--o)"></i>@endif</b><small>{{ $j[2] }}</small></div></div>
                             <h4>{{ preg_replace('/^Magang\s+/u', '', $j[3]) }}</h4>
                             <div class="meta">@foreach($j[4] as $m)<span>{{ $m }}</span>@endforeach</div>
                             <div class="pay"><small>{{ $j[6] }}</small><b>{{ $j[7] }}</b></div>
-                            <div class="bot"><span><i class="bi bi-people"></i> {{ $j[8] }}</span><a href="#job/internship-{{ $loop->index }}" class="btn sm {{ $j[10] ? '' : 'ghost' }}">{{ $j[9] }}</a></div>
+                            <div class="bot"><span><i class="bi bi-people"></i> {{ $j[8] }}</span><a href="#job/{{ $j[12] }}" class="btn sm {{ $j[10] ? '' : 'ghost' }}">{{ $j[9] }}</a></div>
                         </div>
                     @endforeach
                 </div>
@@ -1323,6 +1338,7 @@
             element.replaceChildren(image);
         }
         function roleDescription(job){
+            if(job.description) return job.description;
             var details = professionalDetails[job.id] || internshipDetails[job.id];
             if(details) return details.about;
             var copy = copyByCategory[job.category] || defaultCopy;
@@ -1452,6 +1468,9 @@
                 var option = makeElement('option', '', field.label);
                 option.value = field.label;
                 option.dataset.jobId = field.job_id;
+                option.dataset.status = field.status || 'open';
+                option.disabled = option.dataset.status !== 'open';
+                if(option.disabled) option.textContent += ' · Ditutup';
                 select.appendChild(option);
             });
             if(selectedProgram && selectedProgram.major === major){
@@ -1501,6 +1520,9 @@
                 benefit: source.dataset.careerBenefit,
                 posted: source.dataset.careerPosted,
                 applicants: Number(source.dataset.careerApplicants),
+                status: source.dataset.careerStatus || 'open',
+                description: source.dataset.careerDescription || '',
+                qualifications: source.dataset.careerQualifications || '',
                 isSample: source.dataset.careerSample === 'true',
                 logo: companyName === 'PT Equityworld Futures' ? 'EWF' :
                     companyLogo ? companyLogo.textContent.trim() : companyName.slice(0, 2).toUpperCase(),
@@ -1522,7 +1544,8 @@
                     label: field.label + ' · ' + major,
                     major: major,
                     field: field.label,
-                    jobId: field.job_id
+                    jobId: field.job_id,
+                    status: field.status
                 });
             });
         });
@@ -1565,11 +1588,12 @@
 
         function internshipProgramDestination(major, selectedOption){
             var hasSelectedField = selectedOption && selectedOption.value;
+            if(hasSelectedField && selectedOption.dataset.status !== 'open') return null;
             var program = hasSelectedField
                 ? {label: selectedOption.value, job_id: selectedOption.dataset.jobId}
                 : (internshipProgramData[major] || []).find(function(field){
                     return jobs.some(function(job){
-                        return job.id === field.job_id && job.type === 'magang';
+                        return job.id === field.job_id && job.type === 'magang' && job.status === 'open';
                     });
                 });
             if(!program){
@@ -1585,6 +1609,10 @@
             var card = select.closest('.internship-major-card');
             var applyButton = card.querySelector('[data-internship-apply]');
 
+            applyButton.disabled = true;
+            select.addEventListener('change', function(){
+                applyButton.disabled = !select.value || select.selectedOptions[0].dataset.status !== 'open';
+            });
             applyButton.addEventListener('click', function(){
                 var selectedMajor = applyButton.dataset.major;
                 var target = internshipProgramDestination(selectedMajor, select.selectedOptions[0]);
@@ -1760,6 +1788,9 @@
                 var option = makeElement('option', '', field.label);
                 option.value = field.label;
                 option.dataset.jobId = field.job_id;
+                option.dataset.status = field.status || 'open';
+                option.disabled = option.dataset.status !== 'open';
+                if(option.disabled) option.textContent += ' · Ditutup';
                 detailFieldSelect.appendChild(option);
             });
             detailFieldSelect.disabled = fields.length === 0;
@@ -1781,13 +1812,24 @@
             document.getElementById('detailCompany').textContent = isInternship && major
                 ? job.company + ' · Program Magang'
                 : job.company + ' · ' + job.categoryLabel;
-            applyButton.disabled = isInternship && (!major || !field);
+            var selectedFieldOpen = !isInternship
+                || (detailFieldSelect.selectedOptions[0] && detailFieldSelect.selectedOptions[0].dataset.status === 'open');
+            applyButton.disabled = job.status !== 'open' || (isInternship && (!major || !field || !selectedFieldOpen));
+            applyButton.innerHTML = job.status === 'open'
+                ? '<i class="bi bi-send"></i> Lamar sekarang'
+                : '<i class="bi bi-lock"></i> Pendaftaran ditutup';
+            if(job.status !== 'open'){
+                document.getElementById('detailInternshipStatus').textContent = 'Lowongan ini sedang ditutup dan tidak menerima pendaftaran.';
+                return;
+            }
             if(!isInternship) return;
             document.getElementById('detailInternshipStatus').textContent = !major
                 ? 'Pilih jurusan terlebih dahulu untuk melihat bidang yang tersedia.'
                 : !field
                     ? 'Pilih bidang magang. Setelah itu, tombol Lamar sekarang akan aktif.'
-                    : 'Pilihan siap. Klik Lamar sekarang untuk melanjutkan ke formulir pendaftaran.';
+                    : !selectedFieldOpen
+                        ? 'Pendaftaran untuk bidang ini sedang ditutup.'
+                        : 'Pilihan siap. Klik Lamar sekarang untuk melanjutkan ke formulir pendaftaran.';
         }
         function configureDetailProgramPicker(job, selectedProgram){
             var picker = document.getElementById('detailInternshipPicker');
@@ -1860,8 +1902,12 @@
             }
         }
         function renderDetail(job, selectedProgram){
-            var copy = professionalDetails[job.id] || internshipDetails[job.id] ||
-                copyByCategory[job.category] || defaultCopy;
+            var copy = Object.assign(
+                {},
+                professionalDetails[job.id] || internshipDetails[job.id] || copyByCategory[job.category] || defaultCopy
+            );
+            if(job.description) copy.about = job.description;
+            if(job.qualifications) copy.qualifications = job.qualifications.split(/\r?\n/).filter(Boolean);
             detail.dataset.jobId = job.id;
             var title = selectedProgram.major
                 ? selectedProgram.major + (selectedProgram.field ? ' · ' + selectedProgram.field : '')
@@ -1885,8 +1931,10 @@
             document.getElementById('detailApplicants').textContent = job.applicants + ' pelamar';
             var applyButton = document.getElementById('detailApply');
             applyButton.title = '';
-            applyButton.disabled = false;
-            applyButton.innerHTML = '<i class="bi bi-send"></i> Lamar sekarang';
+            applyButton.disabled = job.status !== 'open';
+            applyButton.innerHTML = job.status === 'open'
+                ? '<i class="bi bi-send"></i> Lamar sekarang'
+                : '<i class="bi bi-lock"></i> Pendaftaran ditutup';
             configureDetailProgramPicker(job, selectedProgram || {});
             document.getElementById('detailDescription').textContent = roleDescription(job);
             document.getElementById('applyNotice').classList.remove('show');

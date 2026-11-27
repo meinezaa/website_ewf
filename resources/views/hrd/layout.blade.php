@@ -35,6 +35,8 @@
                 <div class="hrd-nav-caption">REKRUTMEN</div>
                 <button class="hrd-nav-link" data-view="staff-applicants" data-label="Pendaftaran Staf" data-section="Rekrutmen" type="button" aria-label="Pendaftaran Staf" title="Pendaftaran Staf"><i class="bi bi-person-workspace" aria-hidden="true"></i><span>Pendaftaran Staf</span><em data-dashboard-stat="staff_pending">{{ $statusStats['staff_pending'] }}</em></button>
                 <button class="hrd-nav-link" data-view="intern-applicants" data-label="Pendaftaran Magang/PKL" data-section="Rekrutmen" type="button" aria-label="Pendaftaran Magang/PKL" title="Pendaftaran Magang/PKL"><i class="bi bi-mortarboard" aria-hidden="true"></i><span>Pendaftaran Magang/PKL</span><em data-dashboard-stat="internship_pending">{{ $statusStats['internship_pending'] }}</em></button>
+                <button class="hrd-nav-link" data-view="career-openings" data-label="Manajemen Lowongan Kerja" data-section="Rekrutmen" type="button"><i class="bi bi-briefcase" aria-hidden="true"></i><span>Manajemen Lowongan Kerja</span></button>
+                <button class="hrd-nav-link" data-view="internship-openings" data-label="Manajemen Lowongan Magang/PKL" data-section="Rekrutmen" type="button"><i class="bi bi-mortarboard-fill" aria-hidden="true"></i><span>Manajemen Lowongan Magang/PKL</span></button>
                 <div class="hrd-nav-caption">ORGANISASI</div>
                 <button class="hrd-nav-link" data-view="staff-data" data-label="Data Staf" data-section="Organisasi" type="button" aria-label="Data Staf" title="Data Staf"><i class="bi bi-people" aria-hidden="true"></i><span>Data Staf</span></button>
                 <button class="hrd-nav-link" data-view="intern-data" data-label="Data Peserta Magang/PKL" data-section="Organisasi" type="button" aria-label="Data Peserta Magang/PKL" title="Data Peserta Magang/PKL"><i class="bi bi-person-vcard" aria-hidden="true"></i><span>Data Peserta Magang/PKL</span></button>
@@ -75,6 +77,8 @@
                 @include('hrd.dashboard')
                 @include('hrd.staff-applicants')
                 @include('hrd.intern-applicants')
+                @include('hrd.career-openings', ['openingType' => 'professional', 'viewId' => 'career-openings', 'heading' => 'Manajemen Lowongan Kerja'])
+                @include('hrd.career-openings', ['openingType' => 'internship', 'viewId' => 'internship-openings', 'heading' => 'Manajemen Lowongan Magang/PKL'])
                 @include('hrd.staff-data')
                 @include('hrd.intern-data')
                 @include('hrd.documents')

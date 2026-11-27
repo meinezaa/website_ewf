@@ -4398,7 +4398,164 @@ html.hrd-motion-ready .hrd-view [data-hrd-reveal].is-visible {
     -webkit-backdrop-filter: blur(14px) saturate(155%);
 }
 
+/* Career opening management */
+.hrd-openings { min-width: 0; }
+.hrd-openings .hrd-openings-heading { margin: 0 0 20px; }
+.hrd-openings .hrd-openings-heading .hrd-overline { margin-bottom: 0; }
+.hrd-openings .hrd-openings-heading h1 {
+    margin: 4px 0 0;
+    color: #2d3e53;
+    font-size: clamp(22px, 2vw, 28px);
+    font-weight: 800;
+    letter-spacing: -.7px;
+    line-height: 1.25;
+}
+.hrd-openings .hrd-opening-form-card { padding: 24px; margin-bottom: 22px; }
+.hrd-openings .hrd-opening-card-heading { margin-bottom: 18px; }
+.hrd-openings .hrd-opening-card-heading h2,
+.hrd-openings .hrd-opening-card-top h2 {
+    margin: 0;
+    color: #35475d;
+    font-size: 17px;
+    font-weight: 750;
+    line-height: 1.4;
+}
+.hrd-openings .hrd-opening-card-heading p {
+    margin: 5px 0 0;
+    color: #8290a1;
+    font-size: 12px;
+}
+.hrd-openings .hrd-opening-fields {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px 18px;
+}
+.hrd-openings .hrd-opening-field {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 7px;
+    color: #53647a;
+    font-size: 12px;
+    font-weight: 700;
+}
+.hrd-openings .hrd-opening-field--wide { grid-column: 1 / -1; }
+.hrd-openings .hrd-opening-field input,
+.hrd-openings .hrd-opening-field select,
+.hrd-openings .hrd-opening-field textarea {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    min-height: 42px;
+    padding: 10px 12px;
+    border: 1px solid #dce4ed;
+    border-radius: 9px;
+    outline: none;
+    background: #ffffffd9;
+    color: #34465d;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 450;
+    line-height: 1.5;
+    box-sizing: border-box;
+    transition: border-color .18s ease, box-shadow .18s ease, background .18s ease;
+}
+.hrd-openings .hrd-opening-field textarea { min-height: 92px; resize: vertical; }
+.hrd-openings .hrd-opening-field textarea[name="description"] { min-height: 112px; }
+.hrd-openings .hrd-opening-field input:focus,
+.hrd-openings .hrd-opening-field select:focus,
+.hrd-openings .hrd-opening-field textarea:focus {
+    border-color: #7899bc;
+    background: #fff;
+    box-shadow: 0 0 0 3px #5c80a51a;
+}
+.hrd-openings .hrd-opening-form-actions { display: flex; justify-content: flex-end; margin-top: 18px; }
+.hrd-openings .hrd-button { min-height: 40px; padding: 0 17px; font-size: 12px; }
+.hrd-openings .hrd-opening-list { display: grid; gap: 14px; }
+.hrd-openings .hrd-opening-card { padding: 21px 23px; }
+.hrd-openings .hrd-opening-card:hover { transform: none; box-shadow: 0 3px 12px #344c6607; }
+.hrd-openings .hrd-opening-card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+.hrd-openings .hrd-opening-major { margin: 4px 0 0; color: #73849a; font-size: 12px; }
+.hrd-openings .hrd-opening-status { flex: 0 0 auto; padding: 6px 10px; border-radius: 999px; font-size: 11px; font-weight: 750; }
+.hrd-openings .hrd-opening-status.is-open { background: #e8f4ed; color: #397957; }
+.hrd-openings .hrd-opening-status.is-closed { background: #f6eaea; color: #a05252; }
+.hrd-openings .hrd-opening-meta { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+.hrd-openings .hrd-opening-meta span { padding: 6px 9px; border: 1px solid #e5ebf2; border-radius: 7px; background: #ffffff9c; color: #66778c; font-size: 11px; }
+.hrd-openings .hrd-opening-edit { margin-top: 16px; border-top: 1px solid #e7edf3; }
+.hrd-openings .hrd-opening-edit summary { display: inline-flex; margin-top: 13px; padding: 8px 12px; border: 1px solid #dce5ee; border-radius: 8px; background: #fff; color: #456b99; cursor: pointer; font-size: 12px; font-weight: 750; list-style: none; }
+.hrd-openings .hrd-opening-edit summary::-webkit-details-marker { display: none; }
+.hrd-openings .hrd-opening-edit summary:hover { background: #f4f7fb; }
+.hrd-openings .hrd-opening-edit-form { padding-top: 17px; }
+.hrd-openings .hrd-opening-delete-form { display: flex; justify-content: flex-end; margin-top: 10px; }
+.hrd-openings .hrd-opening-delete-form .hrd-button { font-weight: 850; }
+.hrd-openings .hrd-opening-empty { padding: 22px; color: #718197; text-align: center; font-size: 13px; }
+.hrd-openings .hrd-openings-error { margin: 0 0 16px; padding: 12px 15px; border: 1px solid #efcece; border-radius: 9px; background: #fff6f6; color: #9b3434; font-size: 13px; }
+.hrd-openings .hrd-opening-tools { display: flex; align-items: end; gap: 12px; margin: 0 0 16px; }
+.hrd-openings .hrd-opening-new-major { margin: 0 0 14px; padding: 0 19px; }
+.hrd-openings .hrd-opening-new-major > summary { padding: 15px 0; color: #456b99; cursor: pointer; font-size: 13px; font-weight: 800; list-style: none; }
+.hrd-openings .hrd-opening-new-major > summary::-webkit-details-marker { display: none; }
+.hrd-openings .hrd-opening-new-major-content { padding: 0 0 18px; }
+.hrd-openings .hrd-opening-new-major-content > p { margin: 0 0 14px; color: #8290a1; font-size: 12px; }
+.hrd-openings .hrd-opening-search { position: relative; display: flex; min-width: 220px; flex: 1; align-items: center; }
+.hrd-openings .hrd-opening-search-icon { position: absolute; left: 12px; color: #8291a3; font-size: 21px; line-height: 1; transform: rotate(-20deg); }
+.hrd-openings .hrd-opening-search input,
+.hrd-openings .hrd-opening-filter select { width: 100%; height: 42px; padding: 0 12px; border: 1px solid #dce4ed; border-radius: 9px; outline: none; background: #ffffffd9; color: #465a72; font: inherit; font-size: 12px; box-sizing: border-box; }
+.hrd-openings .hrd-opening-search input { padding-left: 40px; }
+.hrd-openings .hrd-opening-filter { display: grid; min-width: 160px; gap: 5px; color: #64758a; font-size: 11px; font-weight: 700; }
+.hrd-openings .hrd-opening-search input:focus,
+.hrd-openings .hrd-opening-filter select:focus { border-color: #7899bc; box-shadow: 0 0 0 3px #5c80a51a; }
+.hrd-openings .hrd-opening-majors { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; align-items: start; }
+.hrd-openings .hrd-opening-major-card { padding: 19px 20px; }
+.hrd-openings .hrd-opening-major-card:hover { transform: none; box-shadow: 0 3px 12px #344c6607; }
+.hrd-openings .hrd-opening-major-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.hrd-openings .hrd-opening-major-heading h2 { margin: 0; color: #35475d; font-size: 15px; font-weight: 800; }
+.hrd-openings .hrd-opening-major-heading p { margin: 4px 0 0; color: #8491a1; font-size: 11px; }
+.hrd-openings .hrd-opening-major-count { display: grid; width: 32px; height: 32px; flex: 0 0 auto; place-items: center; border-radius: 10px; background: #edf3fa; color: #4c7099; font-size: 12px; font-weight: 800; }
+.hrd-openings .hrd-opening-major-manage { margin-top: 14px; border-top: 1px solid #e7edf3; }
+.hrd-openings .hrd-opening-major-manage > summary,
+.hrd-openings .hrd-opening-add > summary { display: inline-flex; margin-top: 12px; padding: 8px 11px; border: 1px solid #dce5ee; border-radius: 8px; background: #fff; color: #456b99; cursor: pointer; font-size: 11px; font-weight: 750; list-style: none; }
+.hrd-openings .hrd-opening-major-manage > summary::-webkit-details-marker,
+.hrd-openings .hrd-opening-add > summary::-webkit-details-marker { display: none; }
+.hrd-openings .hrd-opening-major-manage > summary:hover,
+.hrd-openings .hrd-opening-add > summary:hover { background: #f4f7fb; }
+.hrd-openings .hrd-opening-major-content { padding-top: 3px; }
+.hrd-openings .hrd-opening-add { margin-bottom: 12px; }
+.hrd-openings .hrd-opening-add-form { margin-top: 12px; padding: 16px; border: 1px solid #e4eaf1; border-radius: 10px; background: #f8fafd; }
+.hrd-openings .hrd-opening-add-form .hrd-opening-fields { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.hrd-openings .hrd-opening-fields-list { display: grid; gap: 10px; }
+.hrd-openings .hrd-opening-field-card { min-width: 0; padding: 13px 14px; border: 1px solid #e5ebf2; border-radius: 10px; background: #ffffffa8; }
+.hrd-openings .hrd-opening-field-heading { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.hrd-openings .hrd-opening-field-heading h3 { margin: 0; color: #43566d; font-size: 13px; font-weight: 750; }
+.hrd-openings .hrd-opening-detail { margin-top: 8px; }
+.hrd-openings .hrd-opening-detail > summary { color: #59799c; cursor: pointer; font-size: 11px; font-weight: 700; }
+.hrd-openings .hrd-opening-detail-content { padding-top: 8px; color: #65758a; font-size: 12px; }
+.hrd-openings .hrd-opening-detail-content section { margin-top: 12px; }
+.hrd-openings .hrd-opening-detail-content h4 { margin: 0 0 4px; color: #485c74; font-size: 11px; font-weight: 800; }
+.hrd-openings .hrd-opening-detail-content p { margin: 0; line-height: 1.6; }
+.hrd-openings .hrd-opening-preline { white-space: pre-line; }
+.hrd-openings [data-opening-item][hidden],
+.hrd-openings [data-opening-major][hidden] { display: none !important; }
+.hrd-openings [data-opening-no-results]:not([hidden]) { display: flex; min-height: 82px; align-items: center; justify-content: center; text-align: center; }
+.hrd-openings .hrd-opening-majors [data-opening-no-results]:not([hidden]) { grid-column: 1 / -1; }
+
+@media (max-width: 900px) {
+    .hrd-openings .hrd-opening-fields { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
 @media (max-width: 720px) {
+    .hrd-openings .hrd-opening-tools { align-items: stretch; flex-direction: column; }
+    .hrd-openings .hrd-opening-search { min-width: 0; }
+    .hrd-openings .hrd-opening-filter { min-width: 0; }
+    .hrd-openings .hrd-opening-majors { grid-template-columns: minmax(0, 1fr); }
+    .hrd-openings .hrd-opening-form-card { padding: 18px; }
+    .hrd-openings .hrd-opening-card { padding: 18px; }
+    .hrd-openings .hrd-opening-fields { grid-template-columns: minmax(0, 1fr); gap: 13px; }
+    .hrd-openings .hrd-opening-field--wide { grid-column: auto; }
+    .hrd-openings .hrd-opening-form-actions { justify-content: stretch; }
+    .hrd-openings .hrd-opening-form-actions .hrd-button { width: 100%; }
+    .hrd-openings .hrd-opening-card-top { gap: 10px; }
+    .hrd-openings .hrd-opening-meta { gap: 6px; }
+    .hrd-openings .hrd-opening-add-form .hrd-opening-fields { grid-template-columns: minmax(0, 1fr); }
     .hrd-document-form-dialog {
         width: calc(100vw - 24px);
         max-height: calc(100vh - 24px);
@@ -4408,4 +4565,46 @@ html.hrd-motion-ready .hrd-view [data-hrd-reveal].is-visible {
     .hrd-loa-grid {
         grid-template-columns: minmax(0, 1fr);
     }
+}
+
+/* Keep dropdown indicators on the right, with a wider inset from the edge. */
+.hrd-body .hrd-select-wrap select { padding-right: 40px; padding-left: 10px; }
+.hrd-body .hrd-select-wrap > i { top: calc(50% - 1px); right: 25px; left: auto; transform: translateY(-50%); }
+.hrd-openings .hrd-opening-filter { position: relative; }
+.hrd-openings .hrd-opening-filter select {
+    appearance: none;
+    -webkit-appearance: none;
+    padding-right: 42px;
+    padding-left: 12px;
+}
+.hrd-openings .hrd-opening-filter::after {
+    position: absolute;
+    right: 25px;
+    bottom: 18px;
+    width: 7px;
+    height: 7px;
+    border-right: 1.5px solid #536a84;
+    border-bottom: 1.5px solid #536a84;
+    color: #536a84;
+    content: '';
+    transform: rotate(45deg);
+    pointer-events: none;
+}
+.hrd-openings .hrd-opening-field:has(select) { position: relative; }
+.hrd-openings .hrd-opening-field select {
+    appearance: none;
+    -webkit-appearance: none;
+    padding-right: 42px;
+}
+.hrd-openings .hrd-opening-field:has(select)::after {
+    position: absolute;
+    right: 25px;
+    bottom: 18px;
+    width: 7px;
+    height: 7px;
+    border-right: 1.5px solid #71839a;
+    border-bottom: 1.5px solid #71839a;
+    content: '';
+    transform: rotate(45deg);
+    pointer-events: none;
 }
