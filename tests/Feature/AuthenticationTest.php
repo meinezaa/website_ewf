@@ -37,6 +37,8 @@ class AuthenticationTest extends TestCase
             ->assertSee('rel="stylesheet"', false)
             ->assertSee('auth-transitions', false)
             ->assertDontSee('<style', false)
+            ->assertSee('name="remember"', false)
+            ->assertSeeText('Ingat saya')
             ->assertSee('name="password"', false);
     }
 
@@ -111,8 +113,10 @@ class AuthenticationTest extends TestCase
         $this->post(route('login.store'), [
             'email' => $user->email,
             'password' => 'Password123',
-        ])->assertRedirect(route('profile'));
+        ])->assertRedirect(route('profile'))
+            ->assertCookieMissing(Auth::guard()->getRecallerName());
         $this->assertAuthenticatedAs($user);
+        $this->assertSame('', $user->fresh()->getRememberToken());
 
         $this->post(route('logout'));
         $this->post(route('login.store'), [
@@ -120,6 +124,35 @@ class AuthenticationTest extends TestCase
             'password' => 'Password123',
             'next' => '/karir#apply/internship-4',
         ])->assertRedirect(route('karir').'#apply/internship-4');
+    }
+
+    public function test_login_can_remember_the_user_when_requested(): void
+    {
+        config(['auth.remember_lifetime' => 60]);
+        $user = $this->createUser([
+            'name' => 'Indira Prastika',
+            'email' => 'indira.remember@example.test',
+            'phone' => '+628123456789',
+            'password' => 'Password123',
+        ]);
+
+        $response = $this->post(route('login.store'), [
+            'email' => $user->email,
+            'password' => 'Password123',
+            'remember' => '1',
+        ]);
+        $response->assertRedirect(route('profile'))
+            ->assertCookie(Auth::guard()->getRecallerName());
+
+        $this->assertAuthenticatedAs($user);
+        $this->assertNotEmpty($user->fresh()->getRememberToken());
+        $rememberCookie = $response->getCookie(Auth::guard()->getRecallerName(), false);
+        $this->assertNotNull($rememberCookie);
+        $this->assertEqualsWithDelta(now()->addMinutes(60)->timestamp, $rememberCookie->getExpiresTime(), 2);
+
+        $rememberToken = $user->fresh()->getRememberToken();
+        $this->post(route('logout'))->assertRedirect(route('home'));
+        $this->assertNotSame($rememberToken, $user->fresh()->getRememberToken());
     }
 
     public function test_admin_login_redirects_to_the_admin_dashboard(): void
@@ -140,6 +173,7 @@ class AuthenticationTest extends TestCase
         ])->assertRedirect(route('admin.dashboard'));
 
         $this->assertAuthenticatedAs($admin);
+        $this->get(route('home'))->assertRedirect(route('admin.dashboard'));
     }
 
     public function test_hrd_accounts_login_directly_to_the_hrd_dashboard(): void
@@ -161,6 +195,7 @@ class AuthenticationTest extends TestCase
         $this->assertAuthenticatedAs($user);
         $this->get(route('hrd.dashboard'))->assertOk()->assertSeeText('Akses HRD');
         $this->get(route('profile'))->assertRedirect(route('hrd.dashboard'));
+        $this->get(route('home'))->assertRedirect(route('hrd.dashboard'));
     }
 
     public function test_password_reset_sends_a_token_link_and_allows_login_with_the_new_password(): void

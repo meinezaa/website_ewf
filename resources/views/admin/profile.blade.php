@@ -11,7 +11,7 @@
 </div>
 
 <div class="admin-profile-layout">
-  <section class="card admin-profile-card">
+  <section class="card admin-profile-card admin-profile-card--identity">
     <div class="admin-profile-heading">
       <div class="admin-profile-avatar" data-admin-avatar>
         @if($profilePhotoUrl)
@@ -29,19 +29,30 @@
       </div>
     </div>
     <div id="adminPhotoError" class="alert err" role="alert" hidden></div>
+    <div class="admin-profile-meta" aria-label="Ringkasan akun admin">
+      <div class="admin-profile-meta-item">
+        <span>Peran</span>
+        <strong>{{ auth()->user()->role_label }}</strong>
+      </div>
+      <div class="admin-profile-meta-item">
+        <span>Bergabung sejak</span>
+        <strong>{{ auth()->user()->created_at?->locale('id')->translatedFormat('d F Y') ?? '—' }}</strong>
+      </div>
+    </div>
+    <p class="admin-profile-tip">Foto profil ditampilkan pada navigasi panel admin.</p>
   </section>
 
   <section class="card admin-profile-card">
     <h2>Informasi akun</h2>
     <p class="muted admin-profile-description">Perubahan nama dan nomor kontak hanya berlaku untuk akun admin Anda.</p>
-    <form action="{{ route('admin.profile.update') }}" method="POST">
+    <form id="adminProfileUpdateForm" class="admin-profile-form" action="{{ route('admin.profile.update') }}" method="POST">
       @csrf
       @method('PUT')
       <div class="f">
         <label for="adminName">Nama admin</label>
         <input id="adminName" name="name" value="{{ old('name', auth()->user()->name) }}" autocomplete="name" maxlength="150" required>
       </div>
-      <div class="f">
+      <div class="f full-field">
         <label for="adminEmail">Email akun</label>
         <input id="adminEmail" type="email" value="{{ auth()->user()->email }}" readonly>
         <small>Email digunakan untuk masuk dan tidak dapat diubah dari halaman ini.</small>
@@ -50,36 +61,17 @@
         <label for="adminPhone">Nomor WhatsApp</label>
         <input id="adminPhone" name="phone" value="{{ old('phone', auth()->user()->phone) }}" autocomplete="tel" maxlength="40" placeholder="Contoh: +62 812...">
       </div>
-      <div class="row"><span>Peran</span><b>{{ auth()->user()->role_label }}</b></div>
-      <div class="row"><span>Bergabung</span><b>{{ auth()->user()->created_at?->locale('id')->translatedFormat('d F Y') ?? '—' }}</b></div>
-      <div class="admin-profile-actions">
-        <button class="btn" type="submit">Simpan perubahan</button>
-        <form action="{{ route('logout') }}" method="POST">
-          @csrf
-          <button class="btn ghost" type="submit">Keluar dari akun</button>
-        </form>
-      </div>
     </form>
+    <div class="admin-profile-actions">
+      <button class="btn" type="submit" form="adminProfileUpdateForm">Simpan perubahan</button>
+      <form id="adminProfileLogoutForm" action="{{ route('logout') }}" method="POST">
+        @csrf
+        <button class="btn ghost" type="submit">Keluar dari akun</button>
+      </form>
+    </div>
   </section>
 </div>
 
-<style>
-  .admin-profile-layout{display:grid;grid-template-columns:minmax(260px,.8fr) minmax(320px,1.2fr);gap:16px;align-items:start}
-  .admin-profile-card{padding:22px}
-  .admin-profile-card h2{margin-bottom:8px}
-  .admin-profile-heading{display:flex;align-items:center;gap:16px}
-  .admin-profile-avatar{width:84px;height:84px;border-radius:18px;overflow:hidden;display:grid;place-items:center;flex:none;background:var(--accent-soft);color:var(--accent);font-size:25px;font-weight:700}
-  .admin-profile-avatar img{width:100%;height:100%;object-fit:cover}
-  .admin-profile-heading h2{font-size:18px;margin:0 0 3px}
-  .admin-photo-button{margin-top:10px}
-  .admin-photo-input{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
-  .admin-photo-input:focus-visible + .muted{outline:2px solid var(--accent)}
-  .admin-profile-description{margin:-4px 0 18px}
-  .admin-profile-actions{display:flex;justify-content:flex-end;align-items:center;gap:10px;margin-top:18px}
-  .admin-profile-actions .foot{margin:0}
-  .admin-profile-actions form{margin:0}
-  @media(max-width:760px){.admin-profile-layout{grid-template-columns:1fr}}
-</style>
 <script>
 (() => {
   const input = document.getElementById('adminProfilePhoto');

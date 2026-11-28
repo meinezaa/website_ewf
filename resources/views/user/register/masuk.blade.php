@@ -63,7 +63,13 @@
                 <label class="lbl" for="pass">KATA SANDI</label>
                 <div class="fld" id="fPass"><i class="bi bi-key"></i><input id="pass" name="password" type="password" autocomplete="current-password" placeholder="Masukkan sandi" required>
                     <button type="button" class="eye" id="eye" aria-label="Tampilkan sandi"><i class="bi bi-eye"></i></button></div>
-                <a class="forgot-link" href="{{ route('password.request', request()->only('next')) }}">Lupa kata sandi?</a>
+                <div class="login-options">
+                    <label class="remember-option" for="remember">
+                        <input id="remember" name="remember" type="checkbox" value="1" @checked(old('remember'))>
+                        <span>Ingat saya</span>
+                    </label>
+                    <a class="forgot-link" href="{{ route('password.request', request()->only('next')) }}">Lupa kata sandi?</a>
+                </div>
 
                 <button class="btn" type="submit" id="submitBtn"><span>Masuk</span></button>
             </form>

@@ -5,13 +5,24 @@
 <div class="hello">
   <div>
     <h1>Kelola Pengguna</h1>
-    <p class="sub">Kelola akun HRD dan status akun pelamar. Akun admin dikelola melalui halaman profil.</p>
+    <p class="sub">Kelola akun Applicant dan HRD. Akun admin dikelola melalui halaman profil.</p>
   </div>
   <a class="btn" href="{{ route('admin.users.create') }}">Tambah akun HRD</a>
 </div>
 
 <div class="card">
-  <div class="card-head"><h2>Pengguna</h2></div>
+  <div class="card-head admin-users-card-head">
+    <h2>Pengguna</h2>
+    <form class="admin-user-filter" method="GET" action="{{ route('admin.users.index') }}">
+      <label for="user-role-filter">Role</label>
+      <select id="user-role-filter" name="role">
+        <option value="all" @selected($roleFilter === 'all')>Semua pengguna</option>
+        <option value="applicant" @selected($roleFilter === 'applicant')>Applicant</option>
+        <option value="hrd" @selected($roleFilter === 'hrd')>HRD</option>
+      </select>
+      <button class="btn sm" type="submit">Filter</button>
+    </form>
+  </div>
   <div style="overflow-x:auto">
     <table>
       <thead><tr><th>Nama</th><th>Email</th><th>Role</th><th>Status</th><th>Aksi</th></tr></thead>
@@ -44,7 +55,7 @@
           </td>
         </tr>
       @empty
-        <tr><td colspan="5" class="empty">Belum ada akun HRD atau Applicant.</td></tr>
+        <tr><td colspan="5" class="empty">Tidak ada pengguna untuk filter ini.</td></tr>
       @endforelse
       </tbody>
     </table>

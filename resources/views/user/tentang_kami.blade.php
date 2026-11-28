@@ -53,7 +53,7 @@
         ['Transparansi Informasi Pendaftaran', 'Memberikan kemudahan bagi calon staff dan peserta magang dalam memantau perkembangan pengajuan melalui informasi status pendaftaran yang tersedia di website.', 'adv3', 'Transparansi Pendaftaran'],
     ];
     $mentors = [
-        ['Fechy Everpongoh', 'Head of Division'],
+        ['Fechy Everpongoh', 'Head of Division', 'image/mentor 1.jpeg'],
         ['Lila', 'Mentor'],
         ['Firsa', 'Mentor'],
     ];
@@ -349,8 +349,12 @@
     <div class="mentor-grid">
       @foreach($mentors as $index => $mentor)
       <article class="mentor-card rv" style="--d:.{{ $index * 15 }}s">
-        <div class="mentor-photo" role="img" aria-label="Foto {{ $mentor[0] }} akan ditambahkan menyusul">
-          <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0116 0"/></svg>
+        <div class="mentor-photo">
+          @if(!empty($mentor[2]))
+            <img src="{{ asset($mentor[2]) }}" alt="Foto {{ $mentor[0] }}">
+          @else
+            <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0116 0"/></svg>
+          @endif
         </div>
         <h4>{{ $mentor[0] }}</h4>
         <span class="mentor-role">{{ $mentor[1] }}</span>

@@ -13,6 +13,10 @@ use Illuminate\Support\Str;
 
 class DashboardAdminController extends Controller
 {
+    private const MAGANG_REGISTRATION_TYPES = ['magang / internship', 'magang', 'internship'];
+
+    private const PKL_REGISTRATION_TYPES = ['praktik kerja lapangan (pkl)', 'praktik kerja lapangan', 'pkl'];
+
     public function __invoke()
     {
         /* ---- Akun ---- */
@@ -38,14 +42,16 @@ class DashboardAdminController extends Controller
         $byRole = fn ($name) => $roles->firstWhere('class', $name)?->total ?? 0;
 
         $staff = StaffRegistration::count();
-        $magang = InternshipRegistration::count();
+        $magang = $this->countInternshipRegistrations(self::MAGANG_REGISTRATION_TYPES);
+        $pkl = $this->countInternshipRegistrations(self::PKL_REGISTRATION_TYPES);
 
         $stats = [
-            ['label' => 'Total User',           'value' => $totalApplicants, 'note' => "+$newApplicantsThisMonth bulan ini", 'icon' => 'users'],
-            ['label' => 'Total Admin',          'value' => $byRole('admin'), 'note' => 'Pengelola sistem',        'icon' => 'shield'],
-            ['label' => 'Total HRD',            'value' => $byRole('hrd'),   'note' => 'Pengelola seleksi',       'icon' => 'briefcase'],
-            ['label' => 'Pendaftar Staff',      'value' => $staff,           'note' => 'Jalur karyawan',          'icon' => 'card'],
-            ['label' => 'Pendaftar Magang/PKL', 'value' => $magang,          'note' => 'Jalur magang',            'icon' => 'cap'],
+            ['label' => 'Total User',       'value' => $totalApplicants, 'note' => "+$newApplicantsThisMonth bulan ini", 'icon' => 'users'],
+            ['label' => 'Total Admin',      'value' => $byRole('admin'), 'note' => 'Pengelola sistem',        'icon' => 'shield'],
+            ['label' => 'Total HRD',        'value' => $byRole('hrd'),   'note' => 'Pengelola seleksi',       'icon' => 'briefcase'],
+            ['label' => 'Pendaftar Staff',  'value' => $staff,           'note' => 'Jalur karyawan',          'icon' => 'card'],
+            ['label' => 'Pendaftar Magang', 'value' => $magang,          'note' => 'Jalur magang',            'icon' => 'cap'],
+            ['label' => 'Pendaftar PKL',    'value' => $pkl,             'note' => 'Jalur PKL',               'icon' => 'cap'],
         ];
 
         /* ---- Aktivitas 7 hari terakhir (sumber data sama dengan Activity Log) ---- */
@@ -85,5 +91,17 @@ class DashboardAdminController extends Controller
             'roles', 'week', 'weekMax', 'weekTotal', 'recent', 'newUsers',
             'sapa', 'nama', 'tanggal'
         ));
+    }
+
+    private function countInternshipRegistrations(array $registrationTypes): int
+    {
+        $placeholders = implode(',', array_fill(0, count($registrationTypes), '?'));
+
+        return InternshipRegistration::query()
+            ->whereRaw(
+                "LOWER(TRIM(COALESCE(registration_type, ''))) IN ({$placeholders})",
+                $registrationTypes
+            )
+            ->count();
     }
 }

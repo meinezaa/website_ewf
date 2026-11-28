@@ -248,8 +248,11 @@ ul{list-style:none}
 
 /* ===== KANTOR ===== */
 .office-section{position:relative;isolation:isolate;padding:70px 0 34px!important;background:radial-gradient(ellipse 42% 72% at 0% 40%,rgba(255,207,168,.62),transparent 74%),radial-gradient(ellipse 36% 64% at 100% 100%,rgba(220,227,255,.62),transparent 78%),linear-gradient(112deg,#fff8ef 0%,#fffdfa 48%,#fff8f4 100%)}
-.office-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:30px;text-align:left}
+.office-featured-wrap{display:flex;justify-content:center;margin-top:30px}
+.office--featured{width:calc(66.6667% + 10.67px)}
+.office-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:16px;text-align:left}
 .office{position:relative;isolation:isolate;border-radius:18px;overflow:hidden;aspect-ratio:1.58/1;min-height:180px;color:var(--ink);background:#dce1e8;box-shadow:0 12px 26px -20px rgba(17,24,39,.4);transition:transform .28s ease,box-shadow .28s ease}
+.office.office--featured{aspect-ratio:2.15/1;min-height:280px}
 .office:hover{transform:translateY(-4px);box-shadow:0 22px 34px -22px rgba(17,24,39,.36)}
 .office>img{position:absolute;z-index:-2;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .55s cubic-bezier(.2,.7,.2,1)}
 .office--semarang>img{transform:scale(1.2);object-position:center 25%}
@@ -260,6 +263,15 @@ ul{list-style:none}
 .office .pin{position:absolute;z-index:2;left:calc(6% + 10px);top:calc(14% + 10px);width:34px;height:34px;border-radius:11px;background:rgba(255,255,255,.94);border:1px solid rgba(226,219,236,.9);color:#e85d32;display:grid;place-items:center;box-shadow:0 3px 10px rgba(17,24,39,.08)}
 .office .pin svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .office .c{position:absolute;z-index:1;top:50%;left:50%;width:88%;height:72%;transform:translate(-50%,-50%);display:flex;flex-direction:column;padding:12px 12px 10px 54px;border:1px solid rgba(255,255,255,.86);border-radius:15px;background:rgba(255,255,255,.68);box-shadow:0 8px 20px -14px rgba(17,24,39,.3);backdrop-filter:blur(6px)}
+.office.office--featured .c{width:80%;height:78%;padding:22px 26px;text-align:left}
+.office.office--featured b{font-size:clamp(20px,1.8vw,26px);line-height:1.3}
+.office.office--featured .c>b{text-align:center}
+.office-featured-address{display:flex;align-items:flex-start;gap:12px;margin-top:12px}
+.office.office--featured .pin{position:static;flex:0 0 38px;width:38px;height:38px;margin-top:2px}
+.office.office--featured .pin svg{width:21px;height:21px}
+.office.office--featured .office-featured-address p{display:block;overflow:visible;font-size:clamp(15px,1.25vw,17px);line-height:1.6;margin:0}
+.office.office--featured .office-featured-note{font-size:clamp(14px,1.1vw,16px);line-height:1.55;margin:10px 0 0;color:#58657a}
+.office.office--featured .acts a{font-size:14px;padding:7px 13px}
 .office b{font-size:clamp(13px,1.15vw,16px);line-height:1.3;color:#20283a;display:block}
 .office p{font-size:clamp(11px,1vw,13px);color:#667085;line-height:1.45;margin:4px 0 7px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
 .office .acts{display:flex;gap:8px;align-items:center;justify-content:space-between;margin-top:auto;padding-top:7px;border-top:1px solid rgba(152,162,179,.4)}
@@ -286,12 +298,20 @@ html.motion-ready .office.is-visible:hover{transform:translateY(-4px)}
   .company-intro-grid{gap:28px}
   .karir-grid{grid-template-columns:1fr}
   .reg-grid,.office-grid{grid-template-columns:1fr 1fr}
+  .office--featured{width:80%}
+  .office.office--featured .c{height:84%;padding:18px 20px}
   .mem-grid{grid-template-columns:1fr 1fr}
   .foot-grid{grid-template-columns:1fr 1fr}
 }
 @media (max-width:680px){
   .container{padding:0 18px}
   .reg-grid,.office-grid,.mem-grid{grid-template-columns:1fr}
+  .office--featured{width:100%}
+  .office.office--featured{aspect-ratio:1.58/1;min-height:180px}
+  .office.office--featured{aspect-ratio:auto;min-height:360px}
+  .office.office--featured .c{width:88%;height:90%;padding:14px}
+  .office.office--featured .office-featured-address{gap:9px}
+  .office.office--featured .pin{flex-basis:34px;width:34px;height:34px}
   .h2{font-size:30px}
   .company-intro{padding:48px 0}
   .company-intro-grid{grid-template-columns:1fr;gap:24px}

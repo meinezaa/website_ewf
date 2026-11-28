@@ -6,6 +6,7 @@ use App\Models\Role;
 use App\Models\ActivityLog;
 use App\Models\User;
 use Illuminate\Auth\Events\PasswordReset;
+use Illuminate\Auth\SessionGuard;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -33,17 +34,23 @@ class AuthController extends Controller
         $credentials = $request->validate([
             'email' => ['required', 'email:rfc', 'max:255'],
             'password' => ['required', 'string'],
+            'remember' => ['sometimes', 'boolean'],
             'next' => ['nullable', 'string', 'max:255'],
         ]);
+
+        $guard = Auth::guard();
+        if ($guard instanceof SessionGuard) {
+            $guard->setRememberDuration((int) config('auth.remember_lifetime'));
+        }
 
         if (! Auth::attempt([
             'email' => $credentials['email'],
             'password' => $credentials['password'],
             'status' => 'active',
-        ])) {
+        ], $request->boolean('remember'))) {
             return back()
                 ->withErrors(['email' => 'Email atau kata sandi tidak sesuai.'])
-                ->withInput($request->only('email', 'next'));
+                ->withInput($request->only('email', 'next', 'remember'));
         }
 
         $request->session()->regenerate();

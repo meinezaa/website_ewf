@@ -123,6 +123,7 @@ class CareerApplicationTest extends TestCase
         $this->get(route('karir.application.loa', $application->getKey()))
             ->assertOk()
             ->assertSeeText('SURAT KETERANGAN MAGANG')
+            ->assertDontSeeText('Nomor:')
             ->assertSeeText('Universitas Contoh')
             ->assertSeeText('Unduh PDF')
             ->assertSeeText('Unduh PNG')

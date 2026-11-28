@@ -68,6 +68,8 @@ return [
         ],
     ],
 
+    'remember_lifetime' => (int) env('AUTH_REMEMBER_LIFETIME', 576000),
+
     'legacy_users_file' => env('AUTH_USERS_FILE', storage_path('app/private/auth-users.json')),
 
     /*

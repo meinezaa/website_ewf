@@ -58,7 +58,11 @@ body.auth-login{--o:#e8651a;--o2:#f08a3c;--od:#c24e0a;--cream:#fff6ec;--peach:#f
         body.auth-login .fld.bad{border-color:#e5776b;background:#fff6f4}
         body.auth-login .eye{border:0;background:none;cursor:pointer;color:#8b7f76;font-size:18px;padding:4px;transition:color .2s,transform .2s}
         body.auth-login .eye:hover{color:var(--o);transform:scale(1.15)}
+        body.auth-login .login-options{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:12px}
+        body.auth-login .remember-option{display:inline-flex;align-items:center;gap:8px;color:var(--mut);font-size:13px;font-weight:600;cursor:pointer}
+        body.auth-login .remember-option input{width:16px;height:16px;margin:0;accent-color:var(--o)}
         body.auth-login .forgot-link{display:block;margin-top:10px;text-align:right;font-size:13px;font-weight:700;color:var(--od)}
+        body.auth-login .login-options .forgot-link{margin-top:0}
         body.auth-login .forgot-link:hover{text-decoration:underline}
 
         body.auth-login .btn{@apply relative w-full overflow-hidden cursor-pointer rounded-[15px] text-white;margin-top:24px;height:54px;border:0;font:800 17px 'Plus Jakarta Sans',sans-serif;

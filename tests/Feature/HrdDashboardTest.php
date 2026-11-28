@@ -59,6 +59,8 @@ class HrdDashboardTest extends TestCase
             ->assertSee('Pendaftaran Staf')
             ->assertSee('Pendaftaran Magang')
             ->assertSee('Data Staf')
+            ->assertSee('Unduh data')
+            ->assertDontSee('Unduh direktori')
             ->assertSee('Data Peserta Magang/PKL')
             ->assertSee('Sertifikat & LoA')
             ->assertSee('Total pendaftar staf')
@@ -722,12 +724,12 @@ class HrdDashboardTest extends TestCase
         $this->get(route('hrd.dashboard'))->assertForbidden();
     }
 
-    public function test_hrd_can_visit_the_public_homepage_without_being_redirected(): void
+    public function test_hrd_visiting_the_root_url_is_redirected_to_the_dashboard(): void
     {
         $this->actingAs($this->createUser('HRD'));
 
         $this->get(route('home'))
-            ->assertOk();
+            ->assertRedirect(route('hrd.dashboard'));
     }
 
     public function test_hrd_profile_link_stays_on_the_regular_account_profile(): void

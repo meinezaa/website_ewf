@@ -129,7 +129,7 @@
       </div>
       <div>
         <h6>Kontak Kami</h6>
-        <p>📞 +62 21 6310 3788</p>
+        <p>📞 089673014646</p>
         <p>✉ corporate@equityworld-futures.co.id</p>
         <p>📍 Kantor Surabaya<br>Trillium Office &amp; Residence, Jl. Pemuda No.118–136, Embong Kaliasin, Kec. Genteng, Surabaya 60271, Indonesia</p>
         <div class="social-links" aria-label="Media sosial Galeri Magang">

@@ -4,14 +4,27 @@ namespace App\Http\Controllers;
 
 use App\Models\InternshipRegistration;
 use App\Models\StaffRegistration;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\View\View;
 
 class HomeController extends Controller
 {
-    public function index(): View
+    public function index(): View|RedirectResponse
     {
+        if (Auth::check()) {
+            $roleName = mb_strtolower(trim((string) Auth::user()?->role?->role_name));
+
+            if ($roleName === 'admin') {
+                return redirect()->route('admin.dashboard');
+            }
+
+            if ($roleName === 'hrd') {
+                return redirect()->route('hrd.dashboard');
+            }
+        }
+
         $careerRegistration = null;
 
         if (Auth::check()) {

@@ -5,7 +5,7 @@
 
   <a class="admin-brand" href="{{ route('admin.dashboard') }}" aria-label="Galeri Magang, dashboard admin">
     <img src="{{ asset('image/' . rawurlencode('logo galeri magang.png')) }}" alt="">
-    <span><b>Galeri</b><strong>Magang</strong><small>ADMIN PANEL</small></span>
+    <span><b>GALERI</b><strong>MAGANG</strong><small>PT EQUITYWORLD SURABAYA</small></span>
   </a>
 
   <nav class="nav" aria-label="Menu admin">

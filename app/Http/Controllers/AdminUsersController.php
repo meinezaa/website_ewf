@@ -13,26 +13,35 @@ use Illuminate\View\View;
 
 class AdminUsersController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
-        return view('admin.users.index', [
-            'users' => User::with('role')
-                ->whereHas('role', fn ($query) => $query->whereRaw('LOWER(role_name) != ?', ['admin']))
-                ->latest()
-                ->paginate(15),
+        $validated = $request->validate([
+            'role' => ['nullable', 'in:all,applicant,hrd'],
+        ]);
+        $roleFilter = $validated['role'] ?? 'all';
+        $users = User::with('role')
+            ->whereHas('role', fn ($query) => $query->whereRaw('LOWER(role_name) IN (?, ?)', ['applicant', 'hrd']));
+
+        if ($roleFilter !== 'all') {
+            $users->whereHas('role', fn ($query) => $query->whereRaw('LOWER(role_name) = ?', [$roleFilter]));
+        }
+
+        return view('admin.kelola_hrd.index', [
+            'users' => $users->latest()->paginate(15)->withQueryString(),
+            'roleFilter' => $roleFilter,
         ]);
     }
 
     public function create(): View
     {
-        return view('admin.users.create');
+        return view('admin.kelola_hrd.create');
     }
 
     public function edit(User $user): View
     {
         $this->ensureHrd($user);
 
-        return view('admin.users.edit', compact('user'));
+        return view('admin.kelola_hrd.edit', compact('user'));
     }
 
     public function store(Request $request): RedirectResponse
